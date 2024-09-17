@@ -1,0 +1,558 @@
+{
+   "prompt": "Este un modelo de ejemplo que tengo previsto para un software web, el cuál consiste en ser un administrador de cotizaciones de proyectos para desarrolladores freelance. Se contempla que el software permita que cada usuarios registrado pueda administrar sus proyectos de manera intuitiva y con todos los elementos necesarios para poder calcular el costo estimado aproximado para el desarrollo de cualquier software. Tengo contemplado, además del nombre del proyecto, las personas que van a trabajar (equipo de trabajo/areas), dichas áreas o equipo de trabajo ya está precargado pero el usuario puede ingresar las que él crea conveniente para su proyecto.  Las funcionalidades o actividades que se deberán realizar durante el proyecto, por cada funcionalidad se deberá poner el tiempo que se tardará cada persona en realizar dicha funcionalidad. También se contempla los gastos operativos que consisten en el pago de la luz, agua, renta, internet, herramientas como Jira, Figma, Zoom, etc, en concreto gastos que implican la operatividad del desarrollo. Tambien se contemplan los cargos asociados los cuales son costos que se cargan al cliente como lo es el pago del hosting, logotipo, manual de identidad, dominio, etc, practicamente cargos que pueden ser mensuales, anuales o pagos unicos de los cuales le cliente final debe saber que se le están cargando el cobro y que la recurrencia de esos pagos van por su cuenta. Por último, la comisión por venta, en caso de que tener algun convenio con algun vendedor, y el margen de ganancia para la empresa desarrolladora. Con respecto al costo final, se hacen un par de formulas las cuales ya se tienen contempladas, pero me interesa saber si la estructura de la información es la correcta y la necesaria para este sistema.",
+   "user": {
+      "_id": "66786e26d399c065162a0e61",
+      "name": "Juan Perez",
+      "email": "juan.perez@prueba.com",
+      "password": "$2a$10$LBVtSwEhr1m3GPQB1EH74e5zffl36l1L6q9mTYbbfqi/xIKeVIwaK",
+      "subscription_end_date": "2024-09-20",
+      "auth": {
+         "google": ""
+      },
+      "customer_ids": {
+         "stripe": ""
+      },
+      "verification": {
+         "token": null,
+         "experies_at": null,
+         "verified_at": null
+      }
+   },
+   "areas": [
+      {
+         "_id": "66e85eb5f5705d7ac2915548",
+         "area": "Frontend JS Junior"
+      },
+      {
+         "_id": "66e85ebfd328ce6fa6ba14a6",
+         "area": "Frontend JS Middle"
+      },
+      {
+         "_id": "66e85ec91b0daa6b97bb2955",
+         "area": "Frontend JS Senior"
+      },
+      {
+         "_id": "66e85ecfda5ca3d02f6d5228",
+         "area": "Backend JS Junior"
+      },
+      {
+         "_id": "66e85edf9a45822243294132",
+         "area": "Backend JS Middle"
+      },
+      {
+         "_id": "66e85ee46054e17e9c0c24c9",
+         "area": "Backend JS Senior"
+      },
+      {
+         "_id": "66e86fde9454f07c8097e3a8",
+         "area": "DBA (Administrador de Base de Datos)"
+      },
+      {
+         "_id": "66e86f427ae538fccdde8e02",
+         "area": "SRE (Site Reliability Engineer)"
+      },
+      {
+         "_id": "66e86f4f153df6d14f338631",
+         "area": "DevOps (Desarrollo y Operaciones)"
+      },
+      {
+         "_id": "66e8c6333fb73bde562c6254",
+         "area": "Scrum Master"
+      },
+      {
+         "_id": "66e8c656f890074f104cac28",
+         "area": "Tester / QA (Quality Assurance)"
+      },
+      {
+         "_id": "66e8c67790a2200f1ca911b6",
+         "area": "Especialista en Seguridad"
+      },
+      {
+         "_id": "66e8c6c1d69dd46f5df16441",
+         "area": "Especialista en SEO"
+      },
+      {
+         "_id": "66e8c6e4bf5361d8366f9e5c",
+         "area": "Especialista en Accesibilidad"
+      },
+      {
+         "_id": "66e8c6fe357322a24a66ad89",
+         "area": "Especialista en Rendimiento"
+      },
+      {
+         "_id": "66e8c71922e43a71f6196297",
+         "area": "Documentador Técnico"
+      },
+      {
+         "_id": "66e8c7310f2cfe58f4d8a566",
+         "area": "Product Owner"
+      },
+      {
+         "_id":"66e85ee85f1e06b6686b452f",
+         "area":"Diseñador gráfico",
+         "user_id": "66786e26d399c065162a0e61"
+      },
+      {
+         "_id": "66e8c5795298be72b79d0f0a",
+         "area": "Analista",
+         "user_id": "66786e26d399c065162a0e61"
+      }
+   ],
+   "project_status":[
+      {
+         "code": "pending",
+         "color":"#0ea5e9",
+         "translations": {
+            "es": "Pendiente",
+            "en": "Pending"
+         }
+      },
+      {
+         "code": "completed",
+         "color":"#22c55e",
+         "translations": {
+            "es": "Finalizado",
+            "en": "Completed"
+         }
+      },
+      {
+         "code": "in_review",
+         "color":"#eab308",
+         "translations": {
+            "es": "En revisión",
+            "en": "In review"
+         }
+      },
+      {
+         "code": "canceled",
+         "color":"#4c0519",
+         "translations": {
+            "es": "Cancelado",
+            "en": "Canceled"
+         }
+      }
+   ],
+   "types_recurring": [
+      {
+         "code":"nrc",
+         "translations": {
+            "es": "pago no recurrente",
+            "en": "non recurrent charge"
+         }
+      },
+      {
+         "code": "mrc",
+         "translations": {
+            "es": "pago mensual recurrente",
+            "en": "monthly recurrent charge"
+         }
+      },
+      {
+         "code": "arc",
+         "translations": {
+            "es": "pago anual recurrente",
+            "en": "anual recurrent charge"
+         }
+      }
+   ],
+   "projects": [
+      {
+         "_id":"66e85f0093e2a92da1ab51ca",
+         "owner_id":"66786e26d399c065162a0e61",
+         "name_project":"Cuponer Digital",
+         "status_project":"pending",
+         "type_project":"normal",
+         "team_project": [
+            {
+               "team": "Analista",
+               "hourly_rate": 65.63,
+               "work_hours_per_day": 3
+            },
+            {
+               "team": "Diseñador gráfico",
+               "hourly_rate": 60.16,
+               "work_hours_per_day": 4
+            },
+            {
+               "team":"Frontend JS Junior (Gloria)",
+               "hourly_rate":63.75,
+               "work_hours_per_day":5
+            },
+            {
+               "team": "Frontend JS Junior (Iván)",
+               "hourly_rate": 63.75,
+               "work_hours_per_day": 3
+            },
+            {
+               "team": "Backend JS Junior (Pedro)",
+               "hourly_rate": 75,
+               "work_hours_per_day": 3
+            },
+            {
+               "team": "Backend JS Junior (Berenice)",
+               "hourly_rate": 75,
+               "work_hours_per_day": 5
+            }
+         ],
+         "features_project": [
+            {
+               "feature": "Inicio de sesión",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 1
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 2
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 3
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 4
+                  }
+               ]
+            },
+            {
+               "feature": "Cierre de sesión",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 1
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 1
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 2
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 3
+                  }
+               ]
+            },
+            {
+               "feature": "Registro de usuario",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 2
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 2
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 3.5
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 5
+                  }
+               ]
+            },
+            {
+               "feature": "Generar QR",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 2.5
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 2
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 4
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 0
+                  }
+               ]
+            },
+            {
+               "feature": "Escaneo de QR",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 2.5
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 2
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 4
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 0
+                  }
+               ]
+            },
+            {
+               "feature": "Acumular puntaje",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 2
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 8
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 0
+                  }
+               ]
+            },
+            {
+               "feature": "Descontar puntaje",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 2
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 8
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 0
+                  }
+               ]
+            },
+            {
+               "feature": "Consultar puntaje histórico",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 3
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 3
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 4
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 0
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 6
+                  }
+               ]
+            },
+            {
+               "feature": "Pruebas QAS",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 0
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 0
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 10
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 10
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 10
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 10
+                  }
+               ]
+            },
+            {
+               "feature": "Documentación",
+               "team_feature": [
+                  {
+                     "team": "Analista",
+                     "time": 8
+                  },
+                  {
+                     "team": "Diseñador gráfico",
+                     "time": 7
+                  },
+                  {
+                     "team": "Frontend JS Junior (Gloria)",
+                     "time": 5
+                  },
+                  {
+                     "team": "Frontend JS Junior (Iván)",
+                     "time": 5
+                  },
+                  {
+                     "team": "Backend JS Junior (Pedro)",
+                     "time": 8
+                  },
+                  {
+                     "team": "Backend JS Junior (Berenice)",
+                     "time": 8
+                  }
+               ]
+            }
+         ],
+         "operating_expenses": [
+            {
+               "cost_name": "Renta",
+               "total_per_month": 120
+            },
+            {
+               "cost_name": "Luz",
+               "total_per_month": 163
+            },
+            {
+               "cost_name": "Agua",
+               "total_per_month": 400
+            },
+            {
+               "cost_name": "Internet",
+               "total_per_month": 630
+            },
+            {
+               "cost_name": "Mobiliario (computadora, impresora, etc.)",
+               "total_per_month": 710
+            },
+            {
+               "cost_name": "Jira",
+               "total_per_month": 815
+            }
+         ],
+         "associated_costs": [
+            {
+               "cost_name": "Logotipo",
+               "price_unity": 700,
+               "quantity": 1,
+               "type_recurring": "nrc",
+               "description": ""
+            },
+            {
+               "cost_name": "Dominio",
+               "price_unity": 800,
+               "quantity": 1,
+               "type_recurring": "arc",
+               "description": "cuponera.store"
+            },
+            {
+               "cost_name": "Hosting",
+               "price_unity": 100,
+               "quantity": 12,
+               "type_recurring": "mrc",
+               "description": "Almacenamiento de la página web y Seguridad SSL. 100 GB de Almacenamiento"
+            },
+            {
+               "cost_name": "Licencia Software/Librería",
+               "price_unity": 0,
+               "quantity": 0,
+               "type_recurring": "nrc",
+               "description": "En nugget algunas licencias son de paga. Como por ejemplo ConvertAPI"
+            },
+            {
+               "cost_name": "Equipo de cómputo/celular/tablet",
+               "price_unity": 0,
+               "quantity": 0,
+               "type_recurring": "nrc",
+               "description": "En algunos lugares en necesario compra de equipo de computo para el funcionamiento del sistema. pearPod E-321, 512GB SSD, 16GB de RAM, Procesador Potnt"
+            }
+         ],
+         "sale_comission": 0.10,
+         "profit": 0.15,
+         "tax": 0.16,
+         "notes": "<ul><li>El costo ya incluye el IVA.</li><li>El hosting solo almacena la página web.</li><li>Es costo no incluye almacenamiento de documentos ni bases de datos.</li><li>El dominio se debe de <strong>renovar</strong> al terminar el año (el precio puede variar al culminar el año).</li><li>Se requiere de un 50% de <strong>anticipado</strong>. El otro 50% al entregar la página en producción.</li><li>El <strong>tiempo de entrega</strong> es de 2 meses a partir de la fecha de pago del anticipo (favor de notificar al <strong>EMISOR</strong> en caso de requerir factura).</li><li>El costo no incluye cambios en el logotipo ni de la página web.</li><li>Se contemplan las siguientes secciones a desarrollar: <strong>Menú principal, Hero, Catálogo, Proyectos, Beneficios, Contacto, Pie de página</strong>.</li><li>La función de Contacto será por WhatsApp (no automatizado) o por Correo (pendiente a la solicitud del cliente).</li><li>No incluye <strong>branding page</strong>, <strong>identidad completa de la empresa</strong> (colores, tipografía, uso de marca, etc.), <strong>difusión de redes sociales</strong>, ni <strong>mantenimiento del software</strong>.</li></ul><p><strong>Datos de depósito:</strong></p><ul><li><strong>Nombre del titular:</strong> Juan Perez</li><li><strong>CLABE Interbancaria:</strong> 012345678901234567</li><li><strong>Banco:</strong> Grandote</li></ul>"
+      }
+   ]
+}
