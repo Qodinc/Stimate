@@ -7,13 +7,7 @@ export default function Input({ iconPosition = "none", type = "text", icon, plac
         className={`w-full rounded-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500
           ${iconPosition === 'left' ? 'pl-10' : ''} 
           ${iconPosition === 'right' ? 'pr-10' : ''}
-          ${type === 'number' ? 'appearance-none' : ''}
         `}
-        min={type === 'number' ? "0" : undefined}
-        style={type === 'number' ? { 
-          MozAppearance: 'textfield', 
-          WebkitAppearance: 'none' 
-        } : {}}
       />
   
       {iconPosition === 'left' && (
