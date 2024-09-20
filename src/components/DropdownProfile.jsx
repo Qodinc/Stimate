@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
+import {ReactComponent as IconLogOut} from '../assets/icons/cerrarSesion.svg'
+
+/* Este componente es una copia de Dropdown solo que aqui añadiremos los iconos svg para las opciones y prepararemos
+la imagen de perfil, esto con el fin de usarse para un navbar, tambien usaremos aqui mismo el arreglo de opciones */
 
 //Modo de uso al final(abajo) de este codigo
 
-const Dropdown = ({ options }) => {
+
+const dropdownOptions = [
+    { icon: '🏠', text: "Suscripción" },
+    { icon: <IconLogOut className="w-5 h-5" />, text: "Mi Opción Personalizada" },
+  ];
+
+const DropdownProfile = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -20,7 +30,7 @@ const Dropdown = ({ options }) => {
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
           <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            {options.map((option, index) => (
+            {dropdownOptions.map((option, index) => (
               <a
                 key={index}
                 href="#"
@@ -40,7 +50,7 @@ const Dropdown = ({ options }) => {
   );
 };
 
-export default Dropdown;
+export default DropdownProfile;
 
 // Se importa y despues se crean las opciones para despues llamarlas 
 /* import Dropdown from "@/components/Dropdown";
