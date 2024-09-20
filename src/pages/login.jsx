@@ -1,6 +1,7 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import IconGoogle from "@/components/googleIcon";
 
 export default function Login() {
     return (
@@ -24,6 +25,17 @@ export default function Login() {
                     </div>
                     <div className="flex justify-center items-center py-8">
                         <Button variant="default" size="default" >Iniciar Sesión</Button>
+                    </div>
+                    <div className="flex w-full p-4 justify-center items-center gap-4">
+                        <div className="border min-w-[50%]"></div>
+                        <div><p>o</p></div>
+                        <div className="border min-w-[50%]"></div>
+                    </div>
+                    <div className="flex w-full justify-center items-center p-4 bg-slate-500">
+                        <Link className="bg-[#F0F0FF] border rounded-xl flex justify-center items-center" href="#">
+                            <IconGoogle width="64px" height="64px"/>
+                            <span>Google</span>
+                        </Link>
                     </div>
                 </form>
             </div>
