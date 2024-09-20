@@ -1,7 +1,7 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import IconGoogle from "@/components/Icons/googleIcon";
+import ButtonGoogle from "@/components/ui/buttonGoogle";
 
 export default function Login() {
     return (
@@ -32,10 +32,7 @@ export default function Login() {
                         <div className="border min-w-[50%]"></div>
                     </div>
                     <div className="flex w-full justify-center items-center p-4">
-                        <Link className="bg-[#F0F0FF] gap-2 border min-w-32 min-h-12 border-accent rounded-lg flex justify-center items-center hover:bg-accentBackground"  href="#">
-                            <IconGoogle width="20px" height="20px" />
-                            <span>Google</span>
-                        </Link>
+                        <ButtonGoogle text="Google" href="#" />
                     </div>
                 </form>
             </div>
