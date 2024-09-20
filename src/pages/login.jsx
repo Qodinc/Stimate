@@ -1,7 +1,7 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import IconGoogle from "@/components/googleIcon";
+import IconGoogle from "@/components/Icons/googleIcon";
 
 export default function Login() {
     return (
@@ -18,7 +18,7 @@ export default function Login() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <span>Contraseña</span>
-                        <Input placeholder="Contraseña" type="password" />
+                        <Input placeholder="Contraseña" type="password" icon="Icons/icon-eye-off.svg" iconPosition="right" />
                     </div>
                     <div className="flex justify-end items-center">
                         <Link className="text-accent" href="#">Olvidaste tu contraseña?</Link>
@@ -31,9 +31,9 @@ export default function Login() {
                         <div><p>o</p></div>
                         <div className="border min-w-[50%]"></div>
                     </div>
-                    <div className="flex w-full justify-center items-center p-4 bg-slate-500">
-                        <Link className="bg-[#F0F0FF] border rounded-xl flex justify-center items-center" href="#">
-                            <IconGoogle width="64px" height="64px"/>
+                    <div className="flex w-full justify-center items-center p-4">
+                        <Link className="bg-[#F0F0FF] gap-2 border min-w-32 min-h-12 border-accent rounded-lg flex justify-center items-center hover:bg-accentBackground"  href="#">
+                            <IconGoogle width="20px" height="20px" />
                             <span>Google</span>
                         </Link>
                     </div>
