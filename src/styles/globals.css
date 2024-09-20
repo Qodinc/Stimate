@@ -6,3 +6,21 @@
     --radius: 0.5rem
   }
 }
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('../../public/Comfortaa-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+font-family: 'Comfortaa';
+src: url('../../public/Comfortaa-Bold.ttf') format('truetype');
+font-weight: 700; /* Bold */
+font-style: bold;
+}
+@font-face {
+font-family: 'Comfortaa';
+src: url('../../public/Comfortaa-Light.ttf') format('truetype');
+font-weight: 300; /* Light */
+font-style: light;
+}

@@ -24,8 +24,8 @@ module.exports = {
   			foreground: 'var(--foreground)',
 			baseColor: "#050315", //Text Primary Color
 			accent:"#2F27CE", //Primary Color
+			accent100:"#E0DFF9", //Primary 100 Color
 			lightAccent:"#443DFF", //Subtitle Color
-			background: "#FFFFFF", //Backgrond Color
 			accentBackground: "#F7F7FD", //Nav Fill Color
 			white: "#FFFFFF"
   		},
@@ -33,7 +33,10 @@ module.exports = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		  fontFamily: {
+			comfortaa: ['Comfortaa', 'sans-serif'],
+		  }
   	}
   },
   plugins: [require("tailwindcss-animate")],
