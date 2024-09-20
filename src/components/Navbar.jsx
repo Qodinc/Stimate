@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LogoStimate from './Icons/LogoStimate';
+import DropdownProfile from './DropdownProfile';
 
 const Navbar = () => {
   return (
@@ -8,15 +9,15 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" >
-              <LogoStimate width={100} height={40} />
+              <LogoStimate width={50} height={40} />
             </Link>
           </div>
-          <div className="font-comfortaa flex items-center">
+          <div className="font-comfortaa flex items-center ">
             <Link href="/ayuda" className="text-[#050315] hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
               Ayuda
             </Link>
-            <div className="ml-3">
-             {/*  <ProfileDropdown /> */}
+            <div >
+              <DropdownProfile />
             </div>
           </div>
         </div>
