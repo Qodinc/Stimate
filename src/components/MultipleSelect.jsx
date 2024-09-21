@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Plus } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import XCircle from './Icons/XCircle';
 
 /**
@@ -19,7 +19,7 @@ const MultipleSelect = ({
    onChange, 
    label, 
    // selectedOptions=[],
-   className="w-full max-w-3xl text-base text-baseColor", 
+   className="w-full text-base text-baseColor", 
    selectedOptionsClass="bg-accent100 text-slate-900 px-3 py-2 gap-1 rounded-3xl", 
    optionsClass="flex items-center px-3 py-2 rounded-3xl hover:bg-gray-100 cursor-pointer", 
    labelAddNew="Add",
@@ -88,61 +88,59 @@ const MultipleSelect = ({
 
    return (
       <div className={className}>
-         {label && <label className="mb-2">{label}</label>}
-         <div className="relative">
-            <div 
-               className="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-3xl bg-white cursor-pointer"
+         {label && <label>{label}</label>}
+         <div 
+            className="flex flex-wrap gap-3 mt-3 p-3 border border-gray-300 rounded-3xl bg-white cursor-pointer"
+            onClick={toggleList}
+         >
+            {selectedOptions.map((option) => (
+               <span
+                  key={option.value}
+                  className={`flex items-center ${selectedOptionsClass}`}
+               >
+                  {option.text}
+                  <button
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveOption(option);
+                     }}
+                     className="ml-1"
+                  >
+                     {iconRemove}
+                  </button>
+               </span>
+            ))}
+            <input
+               type="text"
+               value={inputValue}
+               onChange={handleInputChange}
                onClick={toggleList}
-            >
-               {selectedOptions.map((option) => (
-                  <span
+               className="outline-none"
+               placeholder={placeholder}
+            />
+         </div>
+         {isOpen && (
+            <ul className="w-full z-10 mt-1 py-3 bg-white border border-gray-300 rounded-3xl shadow-lg max-h-60 overflow-auto">
+               {filteredOptions.map((option) => (
+                  <li
                      key={option.value}
-                     className={`flex items-center ${selectedOptionsClass}`}
+                     onClick={() => handleOptionClick(option)}
+                     className={optionsClass}
                   >
                      {option.text}
-                     <button
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           handleRemoveOption(option);
-                        }}
-                        className="ml-1"
-                     >
-                        {iconRemove}
-                     </button>
-                  </span>
+                  </li>
                ))}
-               <input
-                  type="text"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onClick={toggleList}
-                  className="flex-grow outline-none"
-                  placeholder={placeholder}
-               />
-            </div>
-            {isOpen && (
-               <ul className="absolute z-10 w-full mt-1 p-2 bg-white border border-gray-300 rounded-3xl shadow-lg max-h-60 overflow-auto">
-                  {filteredOptions.map((option) => (
-                     <li
-                        key={option.value}
-                        onClick={() => handleOptionClick(option)}
-                        className={optionsClass}
-                     >
-                        {option.text}
-                     </li>
-                  ))}
-                  {labelAddNew && inputValue.trim() !== '' && (
-                     <li
-                        onClick={handleAddNewOption}
-                        className={optionsClass}
-                     >
-                        <Plus className="mr-2 h-4 w-4 text-blue-600" />
-                        {labelAddNew} {`"${inputValue}"`}
-                     </li>
-                  )}
-               </ul>
-            )}
-         </div>
+               {labelAddNew && inputValue.trim() !== '' && (
+                  <li
+                     onClick={handleAddNewOption}
+                     className={optionsClass}
+                  >
+                     <PlusCircle className="mr-2 h-4 w-4 text-accent" />
+                     {labelAddNew} {`"${inputValue}"`}
+                  </li>
+               )}
+            </ul>
+         )}
       </div>
    );
 };
