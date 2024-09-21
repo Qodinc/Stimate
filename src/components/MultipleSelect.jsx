@@ -1,27 +1,34 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Plus } from 'lucide-react';
-import Image from 'next/image';
-import xCircle from '../../public/Icons/x-circle.svg'
+import XCircle from './Icons/XCircle';
 
 /**
  * Componente MultipleSelect
  * 
- * @param {Object} props - Las propiedades del componente.
- * @param {string} props.className - Clases CSS adicionales.
- * @param {Array<{value: string, text: string}>} props.options - Las opciones disponibles, cada una debe tener un valor y texto.
- * @param {function} props.onChange - Función que se ejecuta cuando se selecciona una opción.
- * @param {string} [props.label] - Etiqueta opcional para el selector.
+ * @param {Array<{value: string, text: string}>} props.options - *Lista de opciones disponibles, cada opción debe tener la estructura objeto {value: string, text: string}.
+ * @param {function} props.onChange - *Función que se ejecuta cuando se selecciona una opción.
+ * @param {string} [props.label] - *Etiqueta opcional para el selector. (opcional)
+ * @param {string} props.className - Clases CSS personalizadas. (opcional)
+ * @param {string} props.selectedOptionsClass - Clases CSS personalizadas para las opciones seleccionadoas. (opcional)
+ * @param {string} props.optionsClass - Clases CSS personalizadas para las opciones. (opcional)
  * @param {string} [props.labelAddNew] - Etiqueta opcional para el texto que se mostrará para agregar un nuevo elemento a la lista. Si no se asigan un valor, no se podrá agregar más elementos a las opciones.
+ * @param {React.JSX.Element} [props.iconRemove] - Icono personalizado para deseleccionar opciones. (opcional)
  */
-const MultipleSelect = ({ 
-   className="w-full font-comfortaa max-w-3xl text-base text-baseColor", 
-   selectedOptionsClass="bg-accent100 text-slate-900 px-3 py-2 gap-1 rounded-3xl", 
-   optionsClass="flex items-center px-3 py-2 rounded-3xl hover:bg-gray-100 cursor-pointer", 
-   options, 
+const MultipleSelect = ({
+   options,  
    onChange, 
    label, 
+   // selectedOptions=[],
+   className="w-full max-w-3xl text-base text-baseColor", 
+   selectedOptionsClass="bg-accent100 text-slate-900 px-3 py-2 gap-1 rounded-3xl", 
+   optionsClass="flex items-center px-3 py-2 rounded-3xl hover:bg-gray-100 cursor-pointer", 
    labelAddNew="Add",
-   iconRemove=xCircle 
+   iconRemove = <XCircle
+      stroke="#2F27CE"
+      width={16}
+      height={16} 
+   />,
+   placeholder=""
 }) => {
    const [selectedOptions, setSelectedOptions] = useState([]);
    const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +73,7 @@ const MultipleSelect = ({
    const handleAddNewOption = () => {
       if (inputValue.trim() !== '') {
          const newOption = {
-            value: `new-${inputValue.trim().toLowerCase().replace(" ", "-")}`,
+            value: `${inputValue.trim().toLowerCase().replace(" ", "-")}`,
             text: inputValue.trim()
          };
          
@@ -100,12 +107,7 @@ const MultipleSelect = ({
                         }}
                         className="ml-1"
                      >
-                        <Image
-                           src={iconRemove}
-                           alt=""
-                           width={16}
-                           height={16}
-                        />
+                        {iconRemove}
                      </button>
                   </span>
                ))}
@@ -115,7 +117,7 @@ const MultipleSelect = ({
                   onChange={handleInputChange}
                   onClick={toggleList}
                   className="flex-grow outline-none"
-                  placeholder="Search or add option..."
+                  placeholder={placeholder}
                />
             </div>
             {isOpen && (
