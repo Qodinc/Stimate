@@ -15,7 +15,7 @@ export default function pricing() {
         "Define hasta 4 áreas por proyecto",
         "Solo 2 exportaciones por proyecto",
       ],
-      button: "¡Registrate ahora!",
+      button: "Continuar",
     },
     {
       title: "Premium",
