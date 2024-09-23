@@ -35,7 +35,7 @@ export default function pricing() {
   return (
     <div>
       <Navbar />
-      <div class="flex flex-col gap-8 max-w-full w-full py-8 lg:px-20 md:px-8 px-4 items-center justify-center">
+      <div class="flex flex-col gap-5 max-w-full w-full py-8 lg:px-20 md:px-8 px-4 items-center justify-center">
         <h2 className="text-accent text-center text-lg md:text-3xl font-poppins font-semibold">
           Elige el mejor plan para ti
         </h2>
@@ -60,13 +60,13 @@ export default function pricing() {
                   <p className="text-lg">{card.price} </p>
                 </div>
                 <div className="py-5">
-                  <ul className="px-4 flex flex-col justify-center align-center">
+                  <ul className="px-4 flex flex-col justify-center align-center gap-5">
                     {card.benefits.map((benefit, benefitIndex) => (
                       <li
                         key={benefitIndex}
-                        className="relative pl-6 py-1 md:py-3 xl:py-4 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-5 before:h-5 before:bg-center before:bg-contain before:bg-no-repeat before:bg-[url('/Icons/check.svg')]"
+                        className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-5 before:h-5 before:bg-center before:bg-contain before:bg-no-repeat before:bg-[url('/Icons/check.svg')]"
                       >
-                        <p>{benefit}</p>
+                        <p className="text-base/loose text-base font-comfortaa font-light">{benefit}</p>
                       </li>
                     ))}
                   </ul>
