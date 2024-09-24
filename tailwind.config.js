@@ -27,7 +27,8 @@ module.exports = {
 			accent100:"#E0DFF9", //Primary 100 Color
 			lightAccent:"#443DFF", //Subtitle Color
 			accentBackground: "#F7F7FD", //Nav Fill Color
-			white: "#FFFFFF"
+			white: "#FFFFFF",
+			bgSecondary: '#DEDCFF', // Background de tabs
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
