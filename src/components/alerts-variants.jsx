@@ -1,5 +1,5 @@
 import * as React from "react"
-
+import Trash from "./Icons/Trash";
 import {
     AlertDialogAction,
     AlertDialogCancel,
@@ -49,12 +49,12 @@ const Delete = React.forwardRef(({ elemento,link, onClick, asChild = false}, ref
     return (
       (<AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl">Confirmar Eliminar:{elemento}</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl">Confirmar Eliminar: {elemento}</AlertDialogTitle>
           <AlertDialogDescription>
             <p className="text-base">¿Estas seguro que quieres eliminar: {elemento}?</p>
             <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2">
-                <img src="Icons/trash-purple.webp" className="w-6 h-6"/>
-                <p className="text-base">Esta acción no se puede deshacer</p>
+              <Trash width={20} height={20} />
+              <p className="text-base">Esta acción no se puede deshacer</p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
