@@ -1,10 +1,10 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
-export default function CardGastosOperacion(cardID = 1) {
+export default function CardGastosOperacion({cardID}) {
     return (
-        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md shadow-xl min-w-[19rem]">
+        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] md:max-w-[19rem] shadow-[10px_10px_15px_rgba(0,0,0,0.1)]">
             <div className="flex flex-col gap-2 w-full">
-                <span>Nombre</span>
+                <span>Nombre {cardID} </span>
                 <div className="flex flex-col gap-1 w-full">
                     <Input placeholder="Nombre" type="text" />
                     <span className="text-baseM text-[#C03744]">*Este campo es obligatorio</span>
