@@ -1,10 +1,11 @@
 import Image from "next/image";
 
-export default function Input({ iconPosition = "none", type = "text", icon, placeholder = "Enter text", onChange, disabled }) {
+export default function Input({ iconPosition = "none", type = "text", icon, placeholder = "Enter text", onChange, disabled, ...props }) {
   return (
     <div className="relative flex items-center">
       <input
         type={type}
+        value={props.value}
         placeholder={placeholder}
         className={`w-full rounded-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-200
           ${iconPosition === 'left' ? 'pl-10' : ''} 
