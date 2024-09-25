@@ -1,6 +1,7 @@
 import CardGastosOperacion from "@/components/cardGastosOperacion";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import Plus from "@/components/Icons/Plus";
 
 
 export default function GastosOperacion() {
@@ -18,7 +19,7 @@ export default function GastosOperacion() {
                     ))}
             </div>
             <div className="flex justify-start items-center w-full">
-                <Button variant="default" size="default" onClick={addCard}>Agregar gasto</Button>
+                <Button variant="default" size="default" onClick={addCard}> { <Plus width={20} height={20} stroke="white" /> } Agregar gasto</Button>
             </div>
         </div>
     );

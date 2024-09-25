@@ -45,7 +45,7 @@ import {
     );
 }  
 
-const Delete = React.forwardRef(({ elemento,link, asChild = false}, ref) => {
+const Delete = React.forwardRef(({ elemento,link, onClick, asChild = false}, ref) => {
     return (
       (<AlertDialogContent>
         <AlertDialogHeader>
@@ -60,7 +60,7 @@ const Delete = React.forwardRef(({ elemento,link, asChild = false}, ref) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel variant="outline">Cancelar</AlertDialogCancel>
-          <AlertDialogAction  variant="destructive" link={link}>Confirmar</AlertDialogAction>
+          <AlertDialogAction  variant="destructive" onClick={onClick} link={link}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>)
     );
