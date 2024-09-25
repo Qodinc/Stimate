@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 export default function pricing() {
   const cards = [
     {
-      title: "Basic",
+      title: "Basico",
       price: "Gratis",
       background: "white",
       titleColor: "accent",
