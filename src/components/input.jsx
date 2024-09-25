@@ -6,6 +6,7 @@ export default function Input({ iconPosition = "none", type = "text", icon, plac
       <input
         type={type}
         value={props.value}
+        required={props.required}
         placeholder={placeholder}
         className={`w-full rounded-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-200
           ${iconPosition === 'left' ? 'pl-10' : ''} 

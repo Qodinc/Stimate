@@ -23,14 +23,14 @@ export default function CardGastosOperacion({cardID}) {
             <div className="flex flex-col gap-2 w-full">
                 <span>Nombre</span>
                 <div className="flex flex-col gap-1 w-full">
-                    <Input id={`nombre-${cardID}`} value={inputValue} onChange={(e) => {setInputValue(e.target.value)} } placeholder="Nombre" type="text"/>
+                    <Input id={`nombre-${cardID}`} value={inputValue} onChange={(e) => {setInputValue(e.target.value)} } placeholder="Nombre" type="text" required />
                     <span className="text-baseM text-[#C03744]">*Este campo es obligatorio</span>
                 </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
                 <span>Monto por Mes</span>
                 <div className="flex flex-col gap-1 w-full">
-                    <Input type="number" placeholder="Monto por Mes" icon={<Dinero width={20} height={20} />} onChange={handleMontoChange} iconPosition="left" />
+                    <Input type="number" placeholder="Monto por Mes" icon={<Dinero width={20} height={20} />} onChange={handleMontoChange} iconPosition="left" required />
                     <span className="text-baseM text-[#C03744]">*Este campo es obligatorio</span>
                 </div>
             </div>
