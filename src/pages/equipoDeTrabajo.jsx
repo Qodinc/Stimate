@@ -28,15 +28,15 @@ export default function EquipoDeTrabajo () {
                 <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0">Previsualizacion</button>
             </div>
 
-            <section className="flex border-2 h-24 rounded-xl mt-3 justify-between ">
-            <div className="w-[200px] h-12 mt-2">
+            <section className="lg:flex border-2 lg:h-24 rounded-xl mt-3 justify-between md:h-[200px] md:grid sm:grid-cols-3 grid grid-cols-2 h-72">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40 drop-shadow-none">
                 <span className="font-comfortaa text-base">Nombre del área</span>
                 <Input 
                 placeholder="Agregar área"
                 icon={<Timer width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Sueldo por hora</span>
                 <Input 
                 placeholder="Agregar sueldo"
@@ -44,7 +44,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Dinero width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Sueldo por mes</span>
                 <Input 
                 placeholder="Agregar sueldo"
@@ -53,7 +53,7 @@ export default function EquipoDeTrabajo () {
 
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas al día</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -62,7 +62,7 @@ export default function EquipoDeTrabajo () {
                 
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas a la semana</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -70,7 +70,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Timer width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas al mes</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -79,14 +79,14 @@ export default function EquipoDeTrabajo () {
                 />
             </div> 
             </section>
-            <section className="flex border-2 h-24 rounded-xl mt-3 justify-between ">
-            <div className="w-[200px] h-12 mt-2">
+            <section className="lg:flex border-2 lg:h-24 rounded-xl lg:mt-3 justify-between md:h-[200px] md:grid md:grid-cols-3 grid grid-cols-2 h-72 mt-7">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Nombre del área</span>
                 <Input 
                 placeholder="Agregar área"
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Sueldo por hora</span>
                 <Input 
                 placeholder="Agregar sueldo"
@@ -94,7 +94,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Dinero width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Sueldo por mes</span>
                 <Input 
                 placeholder="Agregar sueldo"
@@ -102,7 +102,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Dinero width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas al día</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -110,7 +110,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Timer width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas a la semana</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -118,7 +118,7 @@ export default function EquipoDeTrabajo () {
                 icon={<Timer width={24}/>}
                 />
             </div>
-            <div className="w-[200px] h-12 mt-2">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
                 <span className="font-comfortaa text-base">Horas al mes</span>
                 <Input 
                 placeholder="Agregar horas"
@@ -135,8 +135,6 @@ export default function EquipoDeTrabajo () {
                     />
                     Agregar área
                 </Button>
-
-
             </div>
         </div>
         </>
