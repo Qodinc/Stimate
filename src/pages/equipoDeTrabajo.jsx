@@ -2,7 +2,10 @@ import Navbar from "@/components/Navbar"
 import Save from "@/components/Icons/Save"
 import Input from "@/components/input"
 import Timer from "@/components/Icons/Timer"
-import Check from "@/components/Icons/Check"
+import Dinero from "@/components/Icons/DollarSign"
+import { Button } from "@/components/ui/button"
+import Plus from "@/components/Icons/Plus"
+
 
 
 export default function EquipoDeTrabajo () {
@@ -30,7 +33,7 @@ export default function EquipoDeTrabajo () {
                 <span className="font-comfortaa text-base">Nombre del área</span>
                 <Input 
                 placeholder="Agregar área"
-                iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -38,6 +41,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar sueldo"
                 iconPosition="left"
+                icon={<Dinero width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -45,6 +49,8 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar sueldo"
                 iconPosition="left"
+                icon={<Dinero width={24}/>}
+
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -52,6 +58,8 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
+                
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -59,6 +67,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -66,6 +75,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div> 
             </section>
@@ -74,7 +84,6 @@ export default function EquipoDeTrabajo () {
                 <span className="font-comfortaa text-base">Nombre del área</span>
                 <Input 
                 placeholder="Agregar área"
-                iconPosition="left"
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -82,6 +91,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar sueldo"
                 iconPosition="left"
+                icon={<Dinero width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -89,6 +99,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar sueldo"
                 iconPosition="left"
+                icon={<Dinero width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -96,6 +107,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -103,6 +115,7 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div>
             <div className="w-[200px] h-12 mt-2">
@@ -110,9 +123,21 @@ export default function EquipoDeTrabajo () {
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
+                icon={<Timer width={24}/>}
                 />
             </div> 
             </section>
+            <div className="mt-[40px]">
+                <Button>
+                    <Plus 
+                    width={24}
+                    stroke="white"
+                    />
+                    Agregar área
+                </Button>
+
+
+            </div>
         </div>
         </>
        
