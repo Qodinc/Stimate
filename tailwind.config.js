@@ -36,6 +36,7 @@ module.exports = {
   		},
 		  fontFamily: {
 			comfortaa: ['Comfortaa', 'sans-serif'],
+			poppins: ['Poppins', 'sans-serif'],
 		  }
   	}
   },

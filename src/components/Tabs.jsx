@@ -1,3 +1,5 @@
+// Tabs.jsx se usa en TabsMenu.jsx por lo tanto el componente a usar y modifcar es TabsMenu.jsx
+
 "use client"
 
 import * as React from "react"
