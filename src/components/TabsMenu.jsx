@@ -1,25 +1,14 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-
-const TabsMenu = ({ activeTab, onTabChange }) => {
-  const tabs = [
-    { value: "equipo", label: "Equipo de trabajo" },
-    { value: "funcionalidades", label: "Funcionalidades" },
-    { value: "gastos", label: "Gastos de operación" },
-    { value: "cargos", label: "Cargos asociados" },
-    { value: "preview", label: "Previsualización" },
-  ];
-
+const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
   return (
-    <Tabs defaultValue="equipo" className="w-full overflow-x-auto font-comfortaa">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full overflow-x-auto font-comfortaa">
       <TabsList className="w-max min-w-full flex">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            onClick={() => onTabChange(tab.value)}
             className="flex-shrink-0 whitespace-nowrap"
-            data-state={activeTab === tab.value ? "active" : "inactive"}
           >
             {tab.label}
           </TabsTrigger>
