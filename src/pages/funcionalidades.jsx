@@ -30,31 +30,31 @@ export default function Funcionalidades () {
 
             <section className="lg:flex border-2 lg:h-24 rounded-xl mt-3 justify-between md:h-[200px] md:grid sm:grid-cols-3 grid grid-cols-2 h-72">
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40 drop-shadow-none">
-                <span className="font-comfortaa text-base">Nombre del área</span>
+                <span className="font-comfortaa text-base">Funcionalidad</span>
                 <Input 
-                placeholder="Agregar área"
+                placeholder="Agregar funcionalidad"
                 icon={<Timer width={24}/>}
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Sueldo por hora</span>
+                <span className="font-comfortaa text-base">Analista</span>
                 <Input 
-                placeholder="Agregar sueldo"
+                placeholder="Agregar horas"
                 iconPosition="left"
-                icon={<Dinero width={24}/>}
+                icon={<Timer width={24}/>}
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Sueldo por mes</span>
+                <span className="font-comfortaa text-base">Front-End</span>
                 <Input 
-                placeholder="Agregar sueldo"
+                placeholder="Agregar horas"
                 iconPosition="left"
-                icon={<Dinero width={24}/>}
+                icon={<Timer width={24}/>}
 
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Horas al día</span>
+                <span className="font-comfortaa text-base">Back-End</span>
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
@@ -63,7 +63,7 @@ export default function Funcionalidades () {
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Horas a la semana</span>
+                <span className="font-comfortaa text-base">Diseño</span>
                 <Input 
                 placeholder="Agregar horas"
                 iconPosition="left"
@@ -71,19 +71,20 @@ export default function Funcionalidades () {
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Horas al mes</span>
+                <span className="font-comfortaa text-base">Horas totales</span>
                 <Input 
-                placeholder="Agregar horas"
+                placeholder="0"
                 iconPosition="left"
                 icon={<Timer width={24}/>}
                 />
             </div> 
             </section>
+            
             <section className="lg:flex border-2 lg:h-24 rounded-xl lg:mt-3 justify-between md:h-[200px] md:grid md:grid-cols-3 grid grid-cols-2 h-72 mt-7">
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Nombre del área</span>
+                <span className="font-comfortaa text-base">Funcionalidad</span>
                 <Input 
-                placeholder="Agregar área"
+                placeholder="Agregar funcionalidad"
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
@@ -119,9 +120,9 @@ export default function Funcionalidades () {
                 />
             </div>
             <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
-                <span className="font-comfortaa text-base">Horas al mes</span>
+                <span className="font-comfortaa text-base">Horas Totales</span>
                 <Input 
-                placeholder="Agregar horas"
+                placeholder="0"
                 iconPosition="left"
                 icon={<Timer width={24}/>}
                 />
@@ -136,6 +137,58 @@ export default function Funcionalidades () {
                     Agregar funcionalidad
                 </Button>
             </div>
+            
+            <section className="lg:flex border-2 lg:h-24 rounded-xl mt-3 justify-between md:h-[200px] md:grid sm:grid-cols-3 grid grid-cols-2 h-72">
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40 drop-shadow-none">
+                <span className="font-comfortaa text-base">Funcionalidad</span>
+                <Input 
+                placeholder="Agregar funcionalidad"
+                icon={<Timer width={24}/>}
+                />
+            </div>
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
+                <span className="font-comfortaa text-base">Analista</span>
+                <Input 
+                placeholder="Agregar horas"
+                iconPosition="left"
+                icon={<Timer width={24}/>}
+                />
+            </div>
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
+                <span className="font-comfortaa text-base">Front-End</span>
+                <Input 
+                placeholder="Agregar horas"
+                iconPosition="left"
+                icon={<Timer width={24}/>}
+
+                />
+            </div>
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
+                <span className="font-comfortaa text-base">Back-End</span>
+                <Input 
+                placeholder="Agregar horas"
+                iconPosition="left"
+                icon={<Timer width={24}/>}
+                
+                />
+            </div>
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
+                <span className="font-comfortaa text-base">Diseño</span>
+                <Input 
+                placeholder="Agregar horas"
+                iconPosition="left"
+                icon={<Timer width={24}/>}
+                />
+            </div>
+            <div className="sm:w-[200px] lg:h-12 mt-2 w-40">
+                <span className="font-comfortaa text-base">Horas totales</span>
+                <Input 
+                placeholder="0"
+                iconPosition="left"
+                icon={<Timer width={24}/>}
+                />
+            </div> 
+            </section>
         </div>
         </>
        
