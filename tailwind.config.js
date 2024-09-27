@@ -29,6 +29,8 @@ module.exports = {
 			accentBackground: "#F7F7FD", //Nav Fill Color
 			white: "#FFFFFF",
 			bgSecondary: '#DEDCFF', // Background de tabs
+			secondaryIcon: "#6660E1", // Primary500 
+			baseTextarea: "#FAFAFA"
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
