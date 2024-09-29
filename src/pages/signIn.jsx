@@ -29,8 +29,8 @@ export default function Login() {
                     <div className="flex flex-col gap-2">
                         <span>Contraseña</span>
                         <div className="flex flex-col gap-1">
-                            <Input placeholder="Contraseña" type="password" icon="Icons/icon-eye-off.svg" iconPosition="right" />
-                            <p className="text-[#C03744] text-xs">*Este compo es obligatorio</p>
+                            <Input placeholder="Contraseña" type="password" required icon="Icons/icon-eye-off.svg" iconPosition="right" />
+                            <p className="text-[#C03744] text-xs">*Este campo es obligatorio</p>
                         </div>
                     </div>
                     <div className="flex gap-2">
