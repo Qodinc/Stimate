@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import CargosContent from "@/components/tabContent/CargosContent";
 import EquipoContent from "@/components/tabContent/EquipoContent";
 import FuncionalidadesContent from "@/components/tabContent/FuncionalidadesContent";
@@ -35,9 +36,14 @@ export default function TabsPages() {
   }
 
     return (
-      <div>
-        <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
-        {renderContent()}
-      </div>
+      <>
+        <header>
+          <Navbar />
+        </header>
+        <div>
+          <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
+          {renderContent()}
+        </div>
+      </>
     );
   }

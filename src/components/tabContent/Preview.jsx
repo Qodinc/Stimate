@@ -7,6 +7,11 @@ import TextArea from "../Textarea";
 import Image from "next/image";
 
 const Preview = () => {
+
+  /* const handleInputChange = (e) => {
+    console.log('Nuevo valor:', e.target.value);
+  };  */
+
   return (
     <main className="max-sm:mx-3 sm:mx-10 mt-5">
       <div className="flex justify-end mb-6">
@@ -19,24 +24,64 @@ const Preview = () => {
             <div className="sm:grid sm:grid-cols-2 sm:gap-4 md:gap-6">
               <div className="space-y-2 mb-4 sm:mb-0">
                 <p>Comisión por venta</p>
-                <Input icon={<Percent width={20} height={20} />} iconPosition="right" placeholder="15.00" className="text-baseColor mb-2" />
-                <Input icon={<DollarSign width={20} height={20} className="text-secondaryIcon"/>} iconPosition="left" placeholder="3,222.14" disabled={true} />
+                <Input
+                  type="text"
+                  placeholder="Ingrese un numero"
+                  /* onChange={handleInputChange} */
+                  allowOnlyNumbers={true} // No permitimos letras
+                  icon={<Percent width={20} height={20} />} 
+                  iconPosition="right" 
+                  className="text-baseColor mb-2" 
+                />
+                <Input 
+                  icon={<DollarSign width={20} height={20} className="text-secondaryIcon"/>} 
+                  iconPosition="left" 
+                  placeholder="3,222.14" 
+                  disabled={true} 
+                />
               </div>
               <div className="space-y-2 mb-4 sm:mb-0">
                 <p>Margen de Ganancia</p>
-                <Input icon={<Percent width={20} height={20} />} iconPosition="right" placeholder="16.00" className="text-baseColor mb-2" />
-                <Input icon={<DollarSign width={20} height={20} className="text-secondaryIcon"/>} iconPosition="left" placeholder="6,808.18" disabled={true} />
+                <Input
+                  placeholder="Ingrese un numero"
+                  /* onChange={handleInputChange} */
+                  allowOnlyNumbers={true} // No permitimos letras
+                  icon={<Percent width={20} height={20} />} 
+                  iconPosition="right"
+                  className="text-baseColor mb-2" 
+                  />
+                <Input 
+                  icon={<DollarSign width={20} height={20} 
+                  className="text-secondaryIcon"/>} 
+                  iconPosition="left" placeholder="6,808.18" 
+                  disabled={true} 
+                  />
               </div>
               <div className="space-y-2 mb-4 sm:mb-0">
                 <p>IVA</p>
-                <Input icon={<Percent width={20} height={20} />} iconPosition="right" placeholder="10.00" className="text-baseColor mb-2" />
-                <Input icon={<DollarSign width={20} height={20} className="text-secondaryIcon"/>} iconPosition="left" placeholder="2.148.09" disabled={true} />
+                <Input
+                  placeholder="Ingrese un numero"
+                  /* onChange={handleInputChange} */
+                  allowOnlyNumbers={true} // No permitimos letras
+                  icon={<Percent width={20} height={20} />} 
+                  iconPosition="right" 
+                  className="text-baseColor mb-2" 
+                />
+                <Input 
+                  icon={<DollarSign width={20} height={20} className="text-secondaryIcon"/>} 
+                  iconPosition="left" 
+                  placeholder="2.148.09" 
+                  disabled={true} 
+                />
               </div>
             </div>
             
             <div className="space-y-2 w-full">
               <p>Notas</p>
-              <TextArea placeholder={"El costo ya incluye IVA"} />
+              <TextArea 
+                placeholder={"Añade alguna nota"} 
+                required={true}
+              />
               <p className="text-red-600 text-[12px]">*Este campo es obligatorio</p>
             </div>
           </div>
