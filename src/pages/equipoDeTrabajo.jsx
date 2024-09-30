@@ -35,9 +35,9 @@ export default function EquipoDeTrabajo() {
         </div>
 
         <Card size="lg" className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-24">
-          <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+          <div  className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
             <span className="font-comfortaa text-base">Nombre del área</span>
-            <Input placeholder="Agregar área" icon={<Timer width={24} />} />
+            <Input placeholder="Agregar área" required={true} icon={<Timer width={24} />} />
           </div>
           <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
             <span className="font-comfortaa text-base">Sueldo por hora</span>
