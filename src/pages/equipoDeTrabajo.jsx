@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
 import { Card, CardVariants } from "@/components/cardArea";
 import React, { useState } from "react";
+import Trash from "@/components/Icons/Trash";
 
 export default function EquipoDeTrabajo() {
-  const [cardData, setCardsData] = useState([]);
+  const [cardData, setCardData] = useState(['']);
+
 
   const handleAddCard = () => {
     const newCardData = {
@@ -21,8 +23,20 @@ export default function EquipoDeTrabajo() {
       horasMes: "0",
     };
 
-    setCardsData([...cardData, newCardData]);
+    setCardData([...cardData, newCardData]);
   };
+
+  const handleRemoveCard = (index) => {
+    const updatedCardData = [...cardData];
+    updatedCardData.splice(index, 1);
+    setCardData(updatedCardData);
+  };
+
+  const handleInputChange = (event,index) => {
+    const updatedCardData = [...cardData]
+    updatedCardData[index][event.target.value] 
+    setCardData(updatedCardData)
+  }
 
   return (
     <>
@@ -54,7 +68,7 @@ export default function EquipoDeTrabajo() {
           {cardData.map((cardData, index) => (
             <Card
               size="lg"
-              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-24 shadow-lg"
+              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-36 shadow-lg"
               key={index}
             >
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -63,11 +77,12 @@ export default function EquipoDeTrabajo() {
                 </span>
                 <Input
                   placeholder="Agregar área"
+                  name="areaName"
+                  type="text"
                   icon={<Timer width={24} />}
                   value={cardData.areaName}
-                  onChange={(e) => {
-                    cardData.areaName = e.target.value;
-                  }}
+                  onChange={(event) =>handleInputChange(event,index)}
+                  
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -79,6 +94,7 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   icon={<Dinero width={24} />}
+                  
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -88,6 +104,8 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   icon={<Dinero width={24} />}
+                  
+                  
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -97,6 +115,8 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   icon={<Timer width={24} />}
+                  
+                  
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
@@ -121,9 +141,17 @@ export default function EquipoDeTrabajo() {
                   icon={<Timer width={24} />}
                 />
               </div>
+
+              <div className="col-start-2 mt-3 sm:col-start-3 lg:col-start-6 ml-6">
+                <Button onClick={() => handleRemoveCard(index)}>
+                  <Trash width={24} stroke="white" />
+                  Eliminar
+                </Button>
+              </div>
             </Card>
           ))}
         </div>
+
         <div className="mt-[40px]">
           <Button onClick={handleAddCard}>
             <Plus width={24} stroke="white" />
