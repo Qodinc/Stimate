@@ -66,9 +66,9 @@ export default function Login() {
                             {errors.password && <p className="text-[#C03744] text-xs">*{errors.password}</p>}
                         </div>
                     </div>
-                    <div className="flex justify-end items-center">
+                    {/* <div className="flex justify-end items-center">
                         <Link className="text-accent" href="#">Olvidaste tu contraseña?</Link>
-                    </div>
+                    </div> */}
                     <div className="flex justify-center items-center py-8">
                         <Button variant="default" size="default" type="submit">Iniciar Sesión</Button>
                     </div>
