@@ -15,7 +15,7 @@ import {
 export default function PlanActual() {
     return (
         <>
-            <Navbar />
+          <Navbar />
             <Button className="m-5 font-poppins"><ReturnDash width={25} height={25} stroke="#FFFFFF"  /> Volver al dashboard</Button>
             <Card className="font-poppins text-baseColor flex flex-col max-sm:items-center rounded-3xl pt-4 pb-4 mt-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-t-transparent">
                 <CardHeader>

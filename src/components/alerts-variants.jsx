@@ -1,5 +1,5 @@
 import * as React from "react"
-
+import Info from "./Icons/info";
 import {
     AlertDialogAction,
     AlertDialogCancel,
@@ -45,15 +45,15 @@ import {
     );
 }  
 
-const Delete = React.forwardRef(({ elemento,link, asChild = false}, ref) => {
+const Delete = React.forwardRef(({ elemento,link, onClick, asChild = false}, ref) => {
     return (
       (<AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl">Confirmar Eliminar:{elemento}</AlertDialogTitle>
           <AlertDialogDescription>
             <p className="text-base">¿Estas seguro que quieres eliminar: {elemento}?</p>
-            <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2">
-                <img src="Icons/trash-purple.webp" className="w-6 h-6"/>
+            <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2" onClick={onClick}>
+                <Info width="20px" height="20px" stroke="#D0BB17"/>
                 <p className="text-base">Esta acción no se puede deshacer</p>
             </div>
           </AlertDialogDescription>
@@ -75,7 +75,7 @@ const Delete = React.forwardRef(({ elemento,link, asChild = false}, ref) => {
           <AlertDialogDescription>
             <p className="text-base">¿Estas seguro que quieres cancelar tu subscripción?</p>
             <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2">
-                <img src="Icons/trash-purple.webp" className="w-6 h-6"/>
+            <Info width="20px" height="20px" stroke="#D0BB17"/>
                 <p className="text-base">Esta acción no se puede deshacer</p>
             </div>
           </AlertDialogDescription>
