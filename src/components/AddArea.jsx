@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
+
 const { default: MultipleSelect } = require("./MultipleSelect");
 
-function AddArea({ areasSeleted }) {
+function AddArea({ areasSelected }) {
+   const [selectedOptions, setSelectedOptions] = useState([]);
 
    const areas = [
       {
@@ -88,12 +91,20 @@ function AddArea({ areasSeleted }) {
       text: area.area
    }));
 
-   const handleArea = (selectedAreas) => {
-      // Validar si el usuario tiene un pago activo
-      if ( selectedAreas.length < 5 ) {
-         console.log("Add Área", selectedAreas);
-         // setSelectedOptions
+   useEffect(() => {
+      areasSelected(selectedOptions);
+   }, [selectedOptions, areasSelected]);
+
+   const handleSelectedArea = (selectedArea) => {
+      if (selectedOptions.length < 4) {
+         setSelectedOptions(prev => [...prev, selectedArea]);
       }
+   }
+
+   const handleRemoveArea = (optionToRemove) => {
+      setSelectedOptions(prev =>
+         prev.filter((option) => option.value !== optionToRemove.value)
+      );
    }
 
    return (
@@ -101,9 +112,10 @@ function AddArea({ areasSeleted }) {
          label="Selecciona las áreas que trabajarán en el proyecto"
          labelAddNew="Añadir nueva área"
          placeholder="Buscar o añadir opción..."
-         onChange={handleArea}
+         onSelected={handleSelectedArea}
+         onRemove={handleRemoveArea}
          options={data}
-         selectedOptions={areasSeleted}
+         selectedOptions={selectedOptions}
       />
    )
 }

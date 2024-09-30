@@ -6,7 +6,7 @@ import XCircle from './Icons/XCircle';
  * Componente MultipleSelect
  * 
  * @param {Array<{value: string, text: string}>} props.options - *Lista de opciones disponibles, cada opción debe tener la estructura objeto {value: string, text: string}.
- * @param {function} props.onChange - *Función que se ejecuta cuando se selecciona una opción.
+ * @param {function} props.onSelected - *Función que se ejecuta cuando se selecciona una opción.
  * @param {string} [props.label] - *Etiqueta opcional para el selector. (opcional)
  * @param {string} props.className - Clases CSS personalizadas. (opcional)
  * @param {string} props.selectedOptionsClass - Clases CSS personalizadas para las opciones seleccionadoas. (opcional)
@@ -16,9 +16,10 @@ import XCircle from './Icons/XCircle';
  */
 const MultipleSelect = ({
    options,  
-   onChange, 
+   onSelected, 
+   onRemove, 
    label, 
-   // selectedOptions=[],
+   selectedOptions=[], // opciones seleccionadas
    className="w-full text-base text-baseColor", 
    selectedOptionsClass="bg-accent100 text-slate-900 px-3 py-2 gap-1 rounded-3xl", 
    optionsClass="flex items-center px-3 py-2 rounded-3xl hover:bg-gray-100 cursor-pointer", 
@@ -30,7 +31,6 @@ const MultipleSelect = ({
    />,
    placeholder=""
 }) => {
-   const [selectedOptions, setSelectedOptions] = useState([]);
    const [isOpen, setIsOpen] = useState(false);
    const [inputValue, setInputValue] = useState('');
    const [allOptions, setAllOptions] = useState(options);
@@ -49,22 +49,14 @@ const MultipleSelect = ({
    }, []);
 
    const handleOptionClick = useCallback((option) => {
-      setSelectedOptions((prev) => {
-         const newSelectedOptions = [...prev, option];
-         onChange(newSelectedOptions);
-         return newSelectedOptions;
-      });
+      onSelected(option)
       setInputValue('');
       setIsOpen(false);
-   }, [onChange]);
+   }, [onSelected]);
 
    const handleRemoveOption = useCallback((optionToRemove) => {
-      setSelectedOptions((prev) => {
-         const newSelectedOptions = prev.filter((option) => option.value !== optionToRemove.value);
-         onChange(newSelectedOptions);
-         return newSelectedOptions;
-      });
-   }, [onChange]);
+      onRemove(optionToRemove);
+   }, [onRemove]);
 
    const toggleList = () => {
       setIsOpen(!isOpen);
