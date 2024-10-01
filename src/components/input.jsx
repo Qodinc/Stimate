@@ -45,6 +45,9 @@ export default function Input({
           ${iconPosition === 'left' ? 'pl-10' : ''} 
           ${iconPosition === 'right' ? 'pr-10' : ''}
         `}
+        min={props.min}
+        max={props.max}
+        step={props.step}
         onChange={handleInputChange}
         disabled={disabled}
       />
