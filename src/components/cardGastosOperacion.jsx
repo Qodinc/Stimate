@@ -54,6 +54,8 @@ export default function CardGastosOperacion({ cardID, cost_name, total_per_month
                 <div className="flex flex-col gap-1 w-full">
                     <Input
                         type="number"
+                        min={0}
+                        step={0.01}
                         value={montoPorMes}
                         placeholder="Monto por Mes"
                         icon={<Dinero width={20} height={20} />}
