@@ -49,7 +49,7 @@ const Delete = React.forwardRef(({ elemento,link, onClick, asChild = false}, ref
     return (
       (<AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl">Confirmar Eliminar:{elemento}</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl">Confirmar Eliminar: {elemento}</AlertDialogTitle>
           <AlertDialogDescription>
             <p className="text-base">¿Estas seguro que quieres eliminar: {elemento}?</p>
             <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2" onClick={onClick}>
@@ -60,7 +60,7 @@ const Delete = React.forwardRef(({ elemento,link, onClick, asChild = false}, ref
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel variant="outline">Cancelar</AlertDialogCancel>
-          <AlertDialogAction  variant="destructive" link={link}>Confirmar</AlertDialogAction>
+          <AlertDialogAction  variant="destructive" onClick={onClick} link={link}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>)
     );
