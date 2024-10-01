@@ -3,35 +3,65 @@ import { Button } from "@/components/ui/button";
 import Dinero from "./Icons/DollarSign";
 import { useState } from "react";
 import Trash from "./Icons/Trash";
-import {AlertDialog, AlertDialogTrigger} from "@/components/ui/alert-dialog"
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 
-export default function CardGastosOperacion({cardID}) {
+export default function CardGastosOperacion({ cardID, cost_name, total_per_month }) {
+    const [montoPorMes, setMontoPorMes] = useState(total_per_month || 0);
+    const [total, setTotal] = useState(montoPorMes * 1.9);
+    const [inputValue, setInputValue] = useState(cost_name || "");
+    const [errors, setErrors] = useState({ nombre: "", montoPorMes: "" });
 
-    const [setMontoPorMes] = useState(0);
-    const [total, setTotal] = useState(0);
-    const [inputValue, setInputValue] = useState(null);
+    const handleMontoChange = (amount) => {
+        const monto = parseFloat(amount.target.value);
+        if (isNaN(monto) || monto < 0) {
+            setErrors((prev) => ({ ...prev, montoPorMes: "El monto debe ser un número mayor o igual a 0" }));
+        } else {
+            setErrors((prev) => ({ ...prev, montoPorMes: "" }));
+            setMontoPorMes(monto);
+            setTotal(monto * 1.9);
+        }
+    };
 
-    const handleMontoChange = (e) => {
-        const monto = parseFloat(e.target.value) || 0;
-        setMontoPorMes(monto);
-        setTotal(monto * 1.9);
+    const handleNombreChange = (name) => {
+        const nombre = name.target.value;
+        if (nombre.trim() === "") {
+            setErrors((prev) => ({ ...prev, nombre: "Este campo es obligatorio" }));
+        } else {
+            setErrors((prev) => ({ ...prev, nombre: "" }));
+        }
+        setInputValue(nombre);
     };
 
     return (
-        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] md:max-w-[19rem] shadow-[10px_10px_15px_rgba(0,0,0,0.1)]">
+        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] md:max-w-[19rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
             <div className="flex flex-col gap-2 w-full">
                 <span>Nombre</span>
                 <div className="flex flex-col gap-1 w-full">
-                    <Input id={`nombre-${cardID}`} value={inputValue} onChange={(e) => {setInputValue(e.target.value)} } placeholder="Nombre" type="text" required />
-                    <span className="text-baseM text-[#C03744]">*Este campo es obligatorio</span>
+                    <Input
+                        id={`nombre-${cardID}`}
+                        value={inputValue}
+                        onChange={handleNombreChange}
+                        placeholder="Nombre"
+                        type="text"
+                        className={errors.nombre ? "border-red-500" : ""}
+                    />
+                    {errors.nombre && <span className="text-baseM text-[#C03744]">*{errors.nombre}</span>}
                 </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
                 <span>Monto por Mes</span>
                 <div className="flex flex-col gap-1 w-full">
-                    <Input type="number" placeholder="Monto por Mes" icon={<Dinero width={20} height={20} />} onChange={handleMontoChange} iconPosition="left" required />
-                    <span className="text-baseM text-[#C03744]">*Este campo es obligatorio</span>
+                    <Input
+                        type="number"
+                        value={montoPorMes}
+                        placeholder="Monto por Mes"
+                        icon={<Dinero width={20} height={20} />}
+                        onChange={handleMontoChange}
+                        iconPosition="left"
+                        className={errors.montoPorMes ? "border-red-500" : ""}
+                    />
+                    {errors.montoPorMes && <span className="text-baseM text-[#C03744]">*{errors.montoPorMes}</span>}
                 </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
@@ -41,16 +71,13 @@ export default function CardGastosOperacion({cardID}) {
             <div className="flex justify-end items-center w-full">
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button>{ <Trash width={20} height={20} stroke="white" /> } Eliminar</Button>
+                        <Button>{<Trash width={20} height={20} stroke="white" />} Eliminar</Button>
                     </AlertDialogTrigger>
-                        <Delete
-                        elemento={inputValue ? inputValue : "Tarjeta"}
-                        onClick = {() => deleteCard(cardID)}
-                    />
+                    <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={() => deleteCard(cardID)} />
                 </AlertDialog>
             </div>
         </div>
-    )
+    );
 }
 
 function deleteCard(cardID) {
