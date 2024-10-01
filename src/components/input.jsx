@@ -41,7 +41,7 @@ export default function Input({
         type={type}
         value={inputValue}
         placeholder={placeholder}
-        className={`w-full rounded-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-200
+        className={`${props.className} w-full rounded-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-200
           ${iconPosition === 'left' ? 'pl-10' : ''} 
           ${iconPosition === 'right' ? 'pr-10' : ''}
         `}
