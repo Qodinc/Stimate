@@ -2,8 +2,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full overflow-x-auto font-comfortaa mt-16">
-      <TabsList className="w-max min-w-full flex">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="overflow-x-auto font-comfortaa mt-6">
+      <TabsList className="flex">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
