@@ -6,21 +6,52 @@ import Dinero from "@/components/Icons/DollarSign";
 import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
 import { Card, CardVariants } from "@/components/cardArea";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Trash from "@/components/Icons/Trash";
 
 export default function EquipoDeTrabajo() {
-  const [cardData, setCardData] = useState(['']);
+
+  const funcionalidades = [
+    {
+      "team": "Analista",
+      "hourly_rate": 65.63,
+      "work_hours_per_day": 3
+   },
+   {
+      "team": "Diseñador gráfico",
+      "hourly_rate": 60.16,
+      "work_hours_per_day": 4
+   },
+   {
+      "team":"Frontend JS Junior (Gloria)",
+      "hourly_rate":63.75,
+      "work_hours_per_day":5
+   },
+   {
+      "team": "Frontend JS Junior (Iván)",
+      "hourly_rate": 63.75,
+      "work_hours_per_day": 3
+   },
+   {
+      "team": "Backend JS Junior (Pedro)",
+      "hourly_rate": 75,
+      "work_hours_per_day": 3
+   },
+   {
+      "team": "Backend JS Junior (Berenice)",
+      "hourly_rate": 75,
+      "work_hours_per_day": 5
+   }
+  ]
+
+  const [cardData, setCardData] = useState(funcionalidades);
 
 
   const handleAddCard = () => {
     const newCardData = {
-      areaName: "",
-      sueldoHora: "",
-      sueldoMes: "",
-      horasDias: "",
-      horasSemana: "0",
-      horasMes: "0",
+      team:"",
+      hourly_rate:"",
+      work_hours_per_day:"",
     };
 
     setCardData([...cardData, newCardData]);
@@ -32,11 +63,15 @@ export default function EquipoDeTrabajo() {
     setCardData(updatedCardData);
   };
 
-  const handleInputChange = (event,index) => {
+  const handleInputChange = (event, index) => {
+    const { name, value } = event.target;
     const updatedCardData = [...cardData]
-    updatedCardData[index][event.target.value] 
-    setCardData(updatedCardData)
-  }
+    updatedCardData[index] = {
+      ...updatedCardData[index],
+      [name]: value,
+    };
+    setCardData(updatedCardData);
+  };
 
   return (
     <>
@@ -46,7 +81,7 @@ export default function EquipoDeTrabajo() {
           <Save width={24} height={24} />
         </div>
 
-        <div className="bg-[#DEDCFF] pb-0 rounded-t-[12px] rounded-b-none flex overflow-x-auto scrollbar-hide w-8/12 font-comfortaa">
+        <div className="bg-[#DEDCFF] pb-0 rounded-t-[12px] rounded-b-none flex overflow-x-auto scrollbar-hide w-6/12 font-comfortaa">
           <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0 bg-white ">
             Equipo de trabajo
           </button>
@@ -77,12 +112,11 @@ export default function EquipoDeTrabajo() {
                 </span>
                 <Input
                   placeholder="Agregar área"
-                  name="areaName"
+                  name="team"
                   type="text"
                   icon={<Timer width={24} />}
-                  value={cardData.areaName}
-                  onChange={(event) =>handleInputChange(event,index)}
-                  
+                  value={cardData.team}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -93,8 +127,10 @@ export default function EquipoDeTrabajo() {
                   placeholder="Agregar sueldo"
                   iconPosition="left"
                   type="number"
+                  name="hourly_rate"
                   icon={<Dinero width={24} />}
-                  
+                  value={cardData.hourly_rate}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -103,9 +139,10 @@ export default function EquipoDeTrabajo() {
                   placeholder="Agregar sueldo"
                   iconPosition="left"
                   type="number"
+                  name="sueldoMes"
                   icon={<Dinero width={24} />}
-                  
-                  
+                  value={cardData.sueldoMes}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -114,9 +151,10 @@ export default function EquipoDeTrabajo() {
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
+                  name="work_hours_per_day"
                   icon={<Timer width={24} />}
-                  
-                  
+                  value={cardData.work_hours_per_day}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
@@ -128,7 +166,9 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   disabled={true}
+                  name="work_hours_per_day"
                   icon={<Timer width={24} />}
+                  value={cardData.work_hours_per_day * 5 }
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -138,6 +178,7 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   disabled={true}
+                  value={cardData.work_hours_per_day * 22 }
                   icon={<Timer width={24} />}
                 />
               </div>
