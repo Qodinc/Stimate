@@ -17,7 +17,7 @@ export default function pricing() {
         "Solo 2 exportaciones por proyecto",
       ],
       button: "Continuar",
-      href: "/new-project"
+      href: "/crear-proyecto"
     },
     {
       title: "Premium",
