@@ -8,95 +8,105 @@ import Trash from "@/components/Icons/Trash";
 import { Card } from "@/components/cardArea";
 import { useState } from "react";
 
+function calculate(teams) {
+  return teams.reduce((total,team) => total + team.time, 0)
+}
 export default function Funcionalidades() {
-  const inicioSesion = [
+  const funcionalidad = [
     {
-      team: "Analista",
-      time: 1,
+      name: "Inicio de Sesión",
+      teams: [
+        {
+          team: "Analista",
+          time: 1,
+        },
+        {
+          team: "Diseñador gráfico",
+          time: 2,
+        },
+        {
+          team: "Frontend JS Junior (Gloria)",
+          time: 3,
+        },
+        {
+          team: "Frontend JS Junior (Iván)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Pedro)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Berenice)",
+          time: 4,
+        },
+      ],
     },
     {
-      team: "Diseñador gráfico",
-      time: 2,
+      name: "Cierre de Sesión",
+      teams: [
+        {
+          team: "Analista",
+          time: 1,
+        },
+        {
+          team: "Diseñador gráfico",
+          time: 1,
+        },
+        {
+          team: "Frontend JS Junior (Gloria)",
+          time: 2,
+        },
+        {
+          team: "Frontend JS Junior (Iván)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Pedro)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Berenice)",
+          time: 3,
+        },
+      ],
     },
     {
-      team: "Frontend JS Junior (Gloria)",
-      time: 3,
-    },
-    {
-      team: "Frontend JS Junior (Iván)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Pedro)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Berenice)",
-      time: 4,
+      name: "registro",
+      teams: [
+        {
+          team: "Analista",
+          time: 2,
+        },
+        {
+          team: "Diseñador gráfico",
+          time: 2,
+        },
+        {
+          team: "Frontend JS Junior (Gloria)",
+          time: 3.5,
+        },
+        {
+          team: "Frontend JS Junior (Iván)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Pedro)",
+          time: 0,
+        },
+        {
+          team: "Backend JS Junior (Berenice)",
+          time: 5,
+        },
+      ],
     },
   ];
 
-  const cierreSesion = [
-    {
-      team: "Analista",
-      time: 1,
-    },
-    {
-      team: "Diseñador gráfico",
-      time: 1,
-    },
-    {
-      team: "Frontend JS Junior (Gloria)",
-      time: 2,
-    },
-    {
-      team: "Frontend JS Junior (Iván)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Pedro)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Berenice)",
-      time: 3,
-    },
-  ];
-
-  const registro = [
-    {
-      team: "Analista",
-      time: 2,
-    },
-    {
-      team: "Diseñador gráfico",
-      time: 2,
-    },
-    {
-      team: "Frontend JS Junior (Gloria)",
-      time: 3.5,
-    },
-    {
-      team: "Frontend JS Junior (Iván)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Pedro)",
-      time: 0,
-    },
-    {
-      team: "Backend JS Junior (Berenice)",
-      time: 5,
-    },
-  ];
-  const [cardData, setCardData] = useState(
-    registro,
-    inicioSesion,
-    cierreSesion
-  );
+  const [cardData, setCardData] = useState(funcionalidad);
 
   const handleAddCard = () => {
     const newCardData = {
+      name:"",
       team: "",
       time: "",
     };
@@ -146,10 +156,10 @@ export default function Funcionalidades() {
         </div>
 
         <div className="flex flex-col gap-5 py-5">
-          {cardData.map((cardData, index) => (
+          {cardData.map((funcionalidad, index) => (
             <Card
               size="lg"
-              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-36 shadow-lg"
+              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-8 lg:h-34 shadow-lg"
               key={index}
             >
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -157,7 +167,9 @@ export default function Funcionalidades() {
                 <Input
                   placeholder="Agregar funcionalidad"
                   type="text"
+                  value={funcionalidad.name}
                   icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -166,34 +178,74 @@ export default function Funcionalidades() {
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
+                  value={funcionalidad.teams[0].time}
                   icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
-                <span className="font-comfortaa text-base">Diseñador gráfico</span>
+                <span className="font-comfortaa text-base">
+                  Diseñador gráfico
+                </span>
                 <Input
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
+                  value={funcionalidad.teams[1].time}
                   icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
-                <span className="font-comfortaa text-base">Frontend JS Junior (Gloria)</span>
+                <span className="font-comfortaa md:text-base text-[15px]">
+                  Frontend JS Junior
+                </span>
                 <Input
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
+                  value={funcionalidad.teams[2].time}
                   icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
-                <span className="font-comfortaa text-base">Frontend JS Junior (Iván)</span>
+                <span className="font-comfortaa text-base">
+                  Frontend JS Junior
+                </span>
                 <Input
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
+                  value={funcionalidad.teams[3].time}
                   icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
+                />
+              </div>
+              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+                <span className="font-comfortaa text-base">
+                  Backend JS Junior
+                </span>
+                <Input
+                  placeholder="Agregar horas"
+                  iconPosition="left"
+                  type="number"
+                  value={funcionalidad.teams[4].time}
+                  icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
+                />
+              </div>
+              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+                <span className="font-comfortaa md:text-base text-[14px]">
+                  Backend JS Junior
+                </span>
+                <Input
+                  placeholder="Agregar horas"
+                  iconPosition="left"
+                  type="number"
+                  value={funcionalidad.teams[5].time}
+                  icon={<Timer width={24} />}
+                  onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -202,11 +254,12 @@ export default function Funcionalidades() {
                   placeholder="0"
                   iconPosition="left"
                   disabled={true}
+                  value={calculate(funcionalidad.teams)}
                   icon={<Timer width={24} />}
                 />
               </div>
 
-              <div className="col-start-2 mt-3 sm:col-start-3 lg:col-start-6 ml-6">
+              <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-8 ml-6">
                 <Button onClick={() => handleRemoveCard(index)}>
                   <Trash width={24} stroke="white" />
                   Eliminar
