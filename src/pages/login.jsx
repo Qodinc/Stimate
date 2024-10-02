@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
 import { useState } from 'react';
+import LogoStimate from "@/components/Icons/LogoStimate";
 
 
 export default function Login() {
@@ -23,8 +24,6 @@ export default function Login() {
 
         if (!password) {
             formErrors.password = "La contraseña es obligatoria";
-        } else if (password.length < 6) {
-            formErrors.password = "La contraseña debe tener al menos 6 caracteres";
         }
 
         setErrors(formErrors);
@@ -41,8 +40,13 @@ export default function Login() {
             <div className="w-full h-screen hidden md:block lg:p-4">
                 <img className="opacity-40 lg:opacity-100 lg:rounded-xl lg:h-full object-cover w-full h-screen" src="imgLogin.jpg" alt="LoginImg" />
             </div>
-            <div className="flex bg-white font-comfortaa md:absolute lg:static md:py-20 md:max-w-96 lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-center justify-center w-full px-4 lg:px-12 gap-8">
-                <h1 className="font-bold text-2xl text-accent font-poppins" >Bienvenido!</h1>
+            <div className="flex bg-white font-comfortaa md:absolute lg:static md:py-8 md:max-w-96 lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-center justify-center w-full px-4 py-4 lg:px-12 gap-8">
+                <div className="flex flex-col items-center justify-center gap-8">
+                    <a href="https://stimate-landing-page.vercel.app/">
+                        <LogoStimate width={44} height={44} />
+                    </a>
+                    <h1 className="font-bold text-2xl text-accent font-poppins" >Bienvenido!</h1>
+                </div>
                 <form className="flex flex-col gap-4 w-full" action="#" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
                         <span>Correo Electrónico</span>
@@ -69,8 +73,11 @@ export default function Login() {
                     {/* <div className="flex justify-end items-center">
                         <Link className="text-accent" href="#">Olvidaste tu contraseña?</Link>
                     </div> */}
-                    <div className="flex justify-center items-center py-8">
+                    <div className="flex flex-col justify-center items-center py-8">
                         <Button variant="default" size="default" type="submit">Iniciar Sesión</Button>
+                        <div className="flex w-full p-4 justify-end items-center">
+                            <Link href={"/signIn"} className="text-accent">¿No tienes cuenta?</Link>
+                        </div>
                     </div>
                     <div className="flex w-full p-4 justify-center items-center gap-4">
                         <div className="border min-w-[50%]"></div>
