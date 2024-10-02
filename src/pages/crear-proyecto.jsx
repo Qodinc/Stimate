@@ -1,9 +1,11 @@
+require('dotenv').config()
 import React, { useState, useEffect, useCallback } from 'react';
 import AddArea from "@/components/AddArea";
 import Input from "@/components/input";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { ArrowRightCircle } from "lucide-react";
+import Router from "next/router"
 
 export default function NewProject() {
    const [projectName, setProjectName] = useState('');
@@ -17,7 +19,7 @@ export default function NewProject() {
    useEffect(() => {
       const newErrors = {
          project: projectName.trim() === '',
-         areas: areasSelected.length === 0, // acá no llega la asignación del setAreasSeleted cuando seleccioné un elemento
+         areas: areasSelected.length === 0
       };
       setErrors(newErrors);
 
@@ -25,7 +27,7 @@ export default function NewProject() {
       setIsFormValid(isValidated);
    }, [projectName, areasSelected]);
 
-   const handleProjectNameChange = (event) => {
+   const handleProjectNameChange = async (event) => {
       setProjectName(event.target.value);
    }
 
@@ -33,14 +35,34 @@ export default function NewProject() {
       setAreasSelected(selectedAreas);
    }
 
-   const submitProject = () => {
+   const submitProject = async () => {
       if (isFormValid) {
          const data = {
-            project: projectName,
-            areas: areasSelected
+            name_project: projectName,
+            areas_selected: areasSelected
          };
+         const requestOptions = {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+         };
+
+         const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, requestOptions);
+         if (!response.ok) {
+            throw new Error(
+               "Ocurrió un error al realizar la solicitud: " + response.status
+            );
+         }
+
+         // Estos datos se deben contextualizar
+         const data_context = await response.json();
+         console.log(data_context);
          
-         console.log("Datos del proyecto:", data);
+         
+         // Debe esperar a que el backend retorne el slug
+         Router.push('/editar/' + data_context.slug)
       }
    }
 
