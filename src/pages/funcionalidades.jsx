@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
 import Trash from "@/components/Icons/Trash";
 import { Card } from "@/components/cardArea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Delete } from "@/components/alerts-variants";
 
 function calculate(teams) {
-  return teams.reduce((total,team) => total + team.time, 0)
+  return teams.reduce((total, team) => total + team.time, 0);
 }
 export default function Funcionalidades() {
   const funcionalidad = [
@@ -30,11 +32,11 @@ export default function Funcionalidades() {
         },
         {
           team: "Frontend JS Junior (Iván)",
-          time: 0,
+          time: 2,
         },
         {
           team: "Backend JS Junior (Pedro)",
-          time: 0,
+          time: 1,
         },
         {
           team: "Backend JS Junior (Berenice)",
@@ -59,11 +61,11 @@ export default function Funcionalidades() {
         },
         {
           team: "Frontend JS Junior (Iván)",
-          time: 0,
+          time: 2,
         },
         {
           team: "Backend JS Junior (Pedro)",
-          time: 0,
+          time: 1,
         },
         {
           team: "Backend JS Junior (Berenice)",
@@ -72,7 +74,7 @@ export default function Funcionalidades() {
       ],
     },
     {
-      name: "registro",
+      name: "Registro",
       teams: [
         {
           team: "Analista",
@@ -88,11 +90,11 @@ export default function Funcionalidades() {
         },
         {
           team: "Frontend JS Junior (Iván)",
-          time: 0,
+          time: 4,
         },
         {
           team: "Backend JS Junior (Pedro)",
-          time: 0,
+          time: 1,
         },
         {
           team: "Backend JS Junior (Berenice)",
@@ -106,9 +108,15 @@ export default function Funcionalidades() {
 
   const handleAddCard = () => {
     const newCardData = {
-      name:"",
-      team: "",
-      time: "",
+      name: "",
+      teams: [
+        { team: "Analista", time: 0 },
+        { team: "Diseñador gráfico", time: 0 },
+        { team: "Frontend JS Junior", time: 0 },
+        { team: "Frontend JS Junior", time: 0 },
+        { team: "Backend JS Junior", time: 0 },
+        { team: "Backend JS Junior", time: 0 },
+      ],
     };
     setCardData([...cardData, newCardData]);
   };
@@ -121,9 +129,10 @@ export default function Funcionalidades() {
 
   const handleInputChange = (event, index) => {
     const { name, value } = event.target;
+    const teamIndex = parseInt(name.slice(-1));
     const updateCardData = [...cardData];
-    updateCardData[index] = {
-      ...updateCardData[index],
+    updateCardData[index].teams[teamIndex - 1] = {
+      ...updateCardData[index].teams[teamIndex - 1],
       [name]: value,
     };
     setCardData(updateCardData);
@@ -260,10 +269,18 @@ export default function Funcionalidades() {
               </div>
 
               <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-8 ml-6">
-                <Button onClick={() => handleRemoveCard(index)}>
-                  <Trash width={24} stroke="white" />
-                  Eliminar
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button>
+                      <Trash width={24} stroke="white" />
+                      Eliminar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <Delete
+                    elemento={funcionalidad.name}
+                    onClick={() => handleRemoveCard(index)}
+                  />
+                </AlertDialog>
               </div>
             </Card>
           ))}
