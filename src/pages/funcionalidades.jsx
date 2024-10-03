@@ -142,28 +142,6 @@ export default function Funcionalidades() {
     <>
       <Navbar />
       <div className="flex-row h-[85px] px-4 md:px-14 lg:px-20">
-        <div className="cursor-pointer">
-          <Save width={24} height={24} />
-        </div>
-
-        <div className="bg-[#DEDCFF] pb-0 rounded-t-[12px] rounded-b-none flex overflow-x-auto scrollbar-hide w-8/12 font-comfortaa">
-          <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0 ">
-            Equipo de trabajo
-          </button>
-          <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0 bg-white">
-            Funcionalidades
-          </button>
-          <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0">
-            Gastos de operacion
-          </button>
-          <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0">
-            Cargos Asociados
-          </button>
-          <button className="p-1 ml-2 mt-1 rounded-t-[12px] rounded-b-none flex-shrink-0">
-            Previsualizacion
-          </button>
-        </div>
-
         <div className="flex flex-col gap-5 py-5">
           {cardData.map((funcionalidad, index) => (
             <Card
