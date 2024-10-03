@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/cardArea";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 export default function pricing() {
   const cards = [
@@ -16,6 +17,7 @@ export default function pricing() {
         "Solo 2 exportaciones por proyecto",
       ],
       button: "Continuar",
+      href: "/crear-proyecto"
     },
     {
       title: "Premium",
@@ -29,6 +31,7 @@ export default function pricing() {
         "Agregar más áreas de trabajo por proyecto",
       ],
       button: "Contrata Ahora",
+      href: "/plan-actual"
     },
   ];
 
@@ -72,7 +75,9 @@ export default function pricing() {
                   </ul>
                 </div>
                 <div className="flex justify-center align-center py-10 ">
-                  <Button variant="" size="lg">{card.button} </Button>
+                  <Link href={card.href}>
+                    <Button variant="" size="lg" >{card.button} </Button>
+                  </Link>
                 </div>
               </Card>
             ))}
