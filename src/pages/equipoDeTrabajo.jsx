@@ -6,52 +6,52 @@ import Dinero from "@/components/Icons/DollarSign";
 import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
 import { Card, CardVariants } from "@/components/cardArea";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Trash from "@/components/Icons/Trash";
+import { Delete } from "@/components/alerts-variants";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function EquipoDeTrabajo() {
-
   const funcionalidades = [
     {
-      "team": "Analista",
-      "hourly_rate": 65.63,
-      "work_hours_per_day": 3
-   },
-   {
-      "team": "Diseñador gráfico",
-      "hourly_rate": 60.16,
-      "work_hours_per_day": 4
-   },
-   {
-      "team":"Frontend JS Junior (Gloria)",
-      "hourly_rate":63.75,
-      "work_hours_per_day":5
-   },
-   {
-      "team": "Frontend JS Junior (Iván)",
-      "hourly_rate": 63.75,
-      "work_hours_per_day": 3
-   },
-   {
-      "team": "Backend JS Junior (Pedro)",
-      "hourly_rate": 75,
-      "work_hours_per_day": 3
-   },
-   {
-      "team": "Backend JS Junior (Berenice)",
-      "hourly_rate": 75,
-      "work_hours_per_day": 5
-   }
-  ]
+      team: "Analista",
+      hourly_rate: 65.63,
+      work_hours_per_day: 3,
+    },
+    {
+      team: "Diseñador gráfico",
+      hourly_rate: 60.16,
+      work_hours_per_day: 4,
+    },
+    {
+      team: "Frontend JS Junior (Gloria)",
+      hourly_rate: 63.75,
+      work_hours_per_day: 5,
+    },
+    {
+      team: "Frontend JS Junior (Iván)",
+      hourly_rate: 63.75,
+      work_hours_per_day: 3,
+    },
+    {
+      team: "Backend JS Junior (Pedro)",
+      hourly_rate: 75,
+      work_hours_per_day: 3,
+    },
+    {
+      team: "Backend JS Junior (Berenice)",
+      hourly_rate: 75,
+      work_hours_per_day: 5,
+    },
+  ];
 
   const [cardData, setCardData] = useState(funcionalidades);
 
-
   const handleAddCard = () => {
     const newCardData = {
-      team:"",
-      hourly_rate:"",
-      work_hours_per_day:"",
+      team: "",
+      hourly_rate: "",
+      work_hours_per_day: "",
     };
 
     setCardData([...cardData, newCardData]);
@@ -65,7 +65,7 @@ export default function EquipoDeTrabajo() {
 
   const handleInputChange = (event, index) => {
     const { name, value } = event.target;
-    const updatedCardData = [...cardData]
+    const updatedCardData = [...cardData];
     updatedCardData[index] = {
       ...updatedCardData[index],
       [name]: value,
@@ -168,7 +168,7 @@ export default function EquipoDeTrabajo() {
                   disabled={true}
                   name="work_hours_per_day"
                   icon={<Timer width={24} />}
-                  value={cardData.work_hours_per_day * 5 }
+                  value={cardData.work_hours_per_day * 5}
                 />
               </div>
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -178,16 +178,24 @@ export default function EquipoDeTrabajo() {
                   iconPosition="left"
                   type="number"
                   disabled={true}
-                  value={cardData.work_hours_per_day * 22 }
+                  value={cardData.work_hours_per_day * 22}
                   icon={<Timer width={24} />}
                 />
               </div>
 
               <div className="col-start-2 mt-3 sm:col-start-3 lg:col-start-6 ml-6">
-                <Button onClick={() => handleRemoveCard(index)}>
-                  <Trash width={24} stroke="white" />
-                  Eliminar
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button>
+                      <Trash width={24} stroke="white" />
+                      Eliminar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <Delete
+                    elemento={cardData.team}
+                    onClick={() => handleRemoveCard(index)}
+                  />
+                </AlertDialog>
               </div>
             </Card>
           ))}
