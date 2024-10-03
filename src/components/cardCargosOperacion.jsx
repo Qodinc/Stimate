@@ -11,7 +11,6 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
@@ -19,19 +18,18 @@ import {
 
 export default function CardCargosOperacion({ cardID, cost_name, charge, quantity, type, description }) {
     const [Cargo, setCargo] = useState(charge || 0);
-    const [Cantidad, setCantidad] = useState(quantity || 1)
+    const [Cantidad, setCantidad] = useState(quantity || 0)
     const [total, setTotal] = useState(Cargo * Cantidad);
     const [tipo, settipo] = useState(type ? type.toUpperCase() : "")
     const [Descripcion, setDescripcion] = useState(description || "")
     const [inputValue, setInputValue] = useState(cost_name || "");
     const [errors, setErrors] = useState({ nombre: "", Cargo: "", Cantidad:"", Descripcion:"", tipo:""});
-
     const handleMontoChange = (amount) => {
         const monto = parseFloat(amount.target.value);
-        if (isNaN(monto) || monto < 0) {
-            setErrors((prev) => ({ ...prev, total: "El monto debe ser un número mayor o igual a 0" }));
+        if (isNaN(monto) || monto < 1) {
+            setErrors((prev) => ({ ...prev, Cargo: "El monto debe ser un número mayor a 0" }));
         } else {
-            setErrors((prev) => ({ ...prev, total: "" }));
+            setErrors((prev) => ({ ...prev, Cargo: "" }));
             setCargo(monto);
             setTotal(monto * Cantidad);
         }
@@ -49,11 +47,12 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
 
     const handleCantidadChange = (amount) => {
         const monto = parseFloat(amount.target.value);
-        if (isNaN(monto) || monto < 0) {
-            setErrors((prev) => ({ ...prev, total: "El monto debe ser un número mayor o igual a 0" }));
+        if (isNaN(monto) || monto < 1) {
+            setErrors((prev) => ({ ...prev, Cantidad: "El monto debe ser un número mayor a 0" }));
         } else {
-            setErrors((prev) => ({ ...prev, total: "" }));
+            setErrors((prev) => ({ ...prev, Cantidad: "" }));
             setCantidad(monto);
+            setTotal(monto * charge);
         }
     };
 
@@ -61,10 +60,21 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
         settipo(Tipo_r);
     };
 
+    const handleDescripcionChange = (D) => {
+        const Descripcion = D.target.value;
+        if (Descripcion.trim() === "") {
+            setErrors((prev) => ({ ...prev, Descripcion: "Este campo es obligatorio" }));
+        } else {
+            setErrors((prev) => ({ ...prev, Descripcion: "" }));
+        }
+        setDescripcion(Descripcion);
+    };
+
     return (
         <>
-        <Card size="lg">
-            <div className="flex flex-col gap-2 w-full">
+        <Card size="lg" id={`cardGO-${cardID}`} className="flex flex-col gap-5">
+            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 ">
+            <div className="flex flex-col gap-2 w-full px-1">
             <span>Nombre</span>
         <div className="flex flex-col gap-1 w-full">
             <Input 
@@ -74,9 +84,10 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
             placeholder="Nombre" 
             type="text" 
             className={errors.nombre ? "border-red-500" : ""}/>
+            {errors.nombre && <span className="text-baseM text-[#C03744]">*{errors.nombre}</span>}
         </div>
             </div>
-            <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col gap-2 w-full px-1">
                 <span>Costo Unitario</span>
                 <div className="flex flex-col gap-1 w-full">
                     <Input
@@ -94,7 +105,7 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
                 </div>
                 
                 </div>
-                <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-col gap-2 w-full px-1">
                 <span>Cantidad</span>
                 <div className="flex flex-col gap-1 w-full">
                     <Input
@@ -110,7 +121,7 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
                     {errors.Cantidad && <span className="text-baseM text-[#C03744]">*{errors.Cantidad}</span>}
                 </div>
                 </div>
-                <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-col gap-2 w-full px-1">
                 <span>Tipo de Recurrente</span>
                 <div className="flex flex-col gap-1 w-full">
                 <Select onChange={handleTipoChange}>
@@ -128,46 +139,44 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
                     {errors.tipo && <span className="text-baseM text-[#C03744]">*{errors.tipo}</span>}
                 </div>
                 </div>
+            </div>
+            <div className="flex flex-col lg:grid lg:grid-cols-2 ">
+            <div className="flex flex-col gap-2 w-full px-1">
+              <span>Descripción</span>
+              <input
+            className="w-full h-24 px-3 py-2 text-[#0A0A0B] bg-baseTextarea text-base border-2 rounded-3xl focus:outline-none focus:border-[#2F27CE] resize-none placeholder-[#5A5555]"
+        placeholder="Describe tu cargo"
+        onChange={handleDescripcionChange}
+        value={Descripcion}
+      />
+      {errors.Descripcion && <span className="text-baseM text-[#C03744]">*{errors.Descripcion}</span>}
+            </div>
+            <div className="flex flex-col gap-2 w-full px-1">
+                <span>Total</span>
+                <div className="flex flex-col gap-1 w-full max-w-md">
+                    <Input
+                        type="text"
+                        value={total}
+                        placeholder="Total"
+                        icon={<Dinero width={20} height={20} />}
+                        disabled
+                        iconPosition="left"
+                        className={errors.charge ? "border-red-500" : "text-[#777779] bg-baseTextarea text-base border-2 rounded-3xl focus:outline-none placeholder-[#5A5555] justify-start align-top "}
+                    />
+                </div>
+                
+                </div>
+            </div>
+            <div className="flex justify-end items-center w-full">
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button>{<Trash width={20} height={20} stroke="white" />} Eliminar</Button>
+                    </AlertDialogTrigger>
+                    <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={() => deleteCard(cardID)} />
+                </AlertDialog>
+            </div>
         </Card>
         </>
-        // <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] md:max-w-[19rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
-        //     <div className="flex flex-col gap-2 w-full">
-        //         <span>Nombre</span>
-        //         <div className="flex flex-col gap-1 w-full">
-        //             <Input id={`nombre-${cardID}`} value={inputValue} onChange={handleNombreChange} placeholder="Nombre" type="text" className={errors.nombre ? "border-red-500" : ""}/>
-        //             {errors.nombre && <span className="text-baseM text-[#C03744]">*{errors.nombre}</span>}
-        //         </div>
-        //     </div>
-            // <div className="flex flex-col gap-2 w-full">
-            //     <span>Monto por Mes</span>
-            //     <div className="flex flex-col gap-1 w-full">
-            //         <Input
-            //             type="number"
-            //             min={0}
-            //             step={0.01}
-            //             value={montoPorMes}
-            //             placeholder="Monto por Mes"
-            //             icon={<Dinero width={20} height={20} />}
-            //             onChange={handleMontoChange}
-            //             iconPosition="left"
-            //             className={errors.montoPorMes ? "border-red-500" : ""}
-            //         />
-            //         {errors.montoPorMes && <span className="text-baseM text-[#C03744]">*{errors.montoPorMes}</span>}
-            //     </div>
-            //     </div>
-        //     <div className="flex flex-col gap-2 w-full">
-        //         <span>Total</span>
-        //         <Input disabled type="number" placeholder="Total" icon={<Dinero width={20} height={20} />} iconPosition="left" value={total} />
-        //     </div>
-        //     <div className="flex justify-end items-center w-full">
-        //         <AlertDialog>
-        //             <AlertDialogTrigger asChild>
-        //                 <Button>{<Trash width={20} height={20} stroke="white" />} Eliminar</Button>
-        //             </AlertDialogTrigger>
-        //             <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={() => deleteCard(cardID)} />
-        //         </AlertDialog>
-        //     </div>
-        // </div>
     );
 }
 

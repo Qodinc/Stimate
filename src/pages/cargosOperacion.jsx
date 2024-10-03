@@ -46,7 +46,7 @@ export default function cargosOperacion() {
 
 
     const addCard = () => {
-        setCards([...cards, { id: cards.length + 1, cost_name: "", total_per_month: 0 }]);
+        setCards([...cards, { id: cards.length + 1, cost_name: ""}]);
     };
 
     return (
@@ -62,6 +62,7 @@ export default function cargosOperacion() {
                             charge={card.price_unity}
                             quantity={card.quantity}
                             type={card.type_recurring}
+                            description={card.description}
                         />
                     ))}
                 </div>
