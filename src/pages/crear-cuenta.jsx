@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Correo } from '@/components/alerts-variants';
 
-export default function Login() {
+export default function SignIn() {
 
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
@@ -125,12 +125,13 @@ export default function Login() {
                     </div>
                     <div className="flex gap-2 items-center">
                         <Input
+                            id="accept"
                             type="checkbox"
                             name="termsAccepted"
                             checked={termsAccepted}
                             onChange={(handle) => setTermsAccepted(handle.target.checked)}
                         />
-                        <span>Acepto los términos y condiciones</span>
+                        <label for="accept">Acepto los términos y condiciones</label>
                     </div>
                     {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}
                     <div className="flex flex-col justify-center items-center py-8">
@@ -141,7 +142,7 @@ export default function Login() {
                     </AlertDialog>
                         <Button type="submit" variant="default" size="default">Crear Cuenta</Button>
                         <div className="flex w-full p-4 justify-end items-center">
-                            <Link href={"/login"} className="text-accent">¿Ya tienes una cuenta?</Link>
+                            <Link href={"/iniciar-sesion"} className="text-accent">¿Ya tienes una cuenta?</Link>
                         </div>
                     </div>
                     <div className="flex w-full p-4 justify-center items-center gap-4">

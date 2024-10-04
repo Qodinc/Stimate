@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Plus from "@/components/Icons/Plus";
 import Navbar from "@/components/Navbar";
-import CardCargosOperacion from "@/components/cardCargosOperacion";
+import CardCargosOperacion from "@/components/cardCargosAsociados";
 
 export default function cargosOperacion() {
     const associated_costs = [

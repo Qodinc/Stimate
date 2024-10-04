@@ -4,6 +4,7 @@ import Link from "next/link";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
 import { useState } from 'react';
 import LogoStimate from "@/components/Icons/LogoStimate";
+import Router from "next/router";
 
 
 export default function Login() {
@@ -32,7 +33,9 @@ export default function Login() {
 
     const handleSubmit = (handle) => {
         handle.preventDefault();
-        if (validateForm(handle)) {}
+        if (validateForm(handle)) {
+            Router.push('/')
+        }
     };
 
     return (
@@ -76,7 +79,7 @@ export default function Login() {
                     <div className="flex flex-col justify-center items-center py-8">
                         <Button variant="default" size="default" type="submit">Iniciar Sesión</Button>
                         <div className="flex w-full p-4 justify-end items-center">
-                            <Link href={"/signIn"} className="text-accent">¿No tienes cuenta?</Link>
+                            <Link href={"/crear-cuenta"} className="text-accent">¿No tienes cuenta?</Link>
                         </div>
                     </div>
                     <div className="flex w-full p-4 justify-center items-center gap-4">

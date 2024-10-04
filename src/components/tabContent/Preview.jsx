@@ -13,7 +13,7 @@ const Preview = () => {
   };  */
 
   return (
-    <main className="mt-5 mb-10">
+    <section className="mt-5 mb-10">
       <div className="flex justify-end mb-6">
         <Button>Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
@@ -96,7 +96,7 @@ const Preview = () => {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 };
 

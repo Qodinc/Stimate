@@ -159,6 +159,7 @@
       {
          "_id":"66e85f0093e2a92da1ab51ca",
          "owner_id":"66786e26d399c065162a0e61",
+         "slug": "cuponera-digital-EUGAzT",
          "name_project":"Cuponer Digital",
          "status_project":"pending",
          "type_project":"normal",
@@ -553,6 +554,16 @@
          "profit": 0.15,
          "tax": 0.16,
          "notes": "<ul><li>El costo ya incluye el IVA.</li><li>El hosting solo almacena la página web.</li><li>Es costo no incluye almacenamiento de documentos ni bases de datos.</li><li>El dominio se debe de <strong>renovar</strong> al terminar el año (el precio puede variar al culminar el año).</li><li>Se requiere de un 50% de <strong>anticipado</strong>. El otro 50% al entregar la página en producción.</li><li>El <strong>tiempo de entrega</strong> es de 2 meses a partir de la fecha de pago del anticipo (favor de notificar al <strong>EMISOR</strong> en caso de requerir factura).</li><li>El costo no incluye cambios en el logotipo ni de la página web.</li><li>Se contemplan las siguientes secciones a desarrollar: <strong>Menú principal, Hero, Catálogo, Proyectos, Beneficios, Contacto, Pie de página</strong>.</li><li>La función de Contacto será por WhatsApp (no automatizado) o por Correo (pendiente a la solicitud del cliente).</li><li>No incluye <strong>branding page</strong>, <strong>identidad completa de la empresa</strong> (colores, tipografía, uso de marca, etc.), <strong>difusión de redes sociales</strong>, ni <strong>mantenimiento del software</strong>.</li></ul><p><strong>Datos de depósito:</strong></p><ul><li><strong>Nombre del titular:</strong> Juan Perez</li><li><strong>CLABE Interbancaria:</strong> 012345678901234567</li><li><strong>Banco:</strong> Grandote</li></ul>"
+      },
+      {
+         "slug": "ecommerce-zDxDUe",
+         "name_project": "Ecommerce",
+         "status_project": "completed"
+      },
+      {
+         "slug": "transporte-logistica-lS9teZ",
+         "name_project": "Transporte Logística",
+         "status_project": "Canceled"
       }
    ]
 }
