@@ -26,7 +26,7 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
     const [errors, setErrors] = useState({ nombre: "", Cargo: "", Cantidad:"", Descripcion:"", tipo:""});
     const handleMontoChange = (amount) => {
         const monto = parseFloat(amount.target.value);
-        if (isNaN(monto) || monto < 1) {
+        if (isNaN(monto) || monto <= 0) {
             setErrors((prev) => ({ ...prev, Cargo: "El monto debe ser un número mayor a 0" }));
         } else {
             setErrors((prev) => ({ ...prev, Cargo: "" }));
@@ -47,7 +47,7 @@ export default function CardCargosOperacion({ cardID, cost_name, charge, quantit
 
     const handleCantidadChange = (amount) => {
         const monto = parseFloat(amount.target.value);
-        if (isNaN(monto) || monto < 1) {
+        if (isNaN(monto) || monto <= 0) {
             setErrors((prev) => ({ ...prev, Cantidad: "El monto debe ser un número mayor a 0" }));
         } else {
             setErrors((prev) => ({ ...prev, Cantidad: "" }));
