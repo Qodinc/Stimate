@@ -1,5 +1,4 @@
 import ReturnDash from "@/components/Icons/ReturnDash"
-import AlertCancel from "@/components/Icons/AlertCancel"
 import Trash from "@/components/Icons/Trash"
 import Navbar from "@/components/Navbar"
 import { Button } from "@/components/ui/button"
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useState } from "react"
 import CheckCancel from "@/components/Icons/CheckCancel"
+import Info from "@/components/Icons/info"
 
 export default function PlanActual() {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
@@ -61,28 +61,26 @@ export default function PlanActual() {
       </Card>
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="font-poppins max-w-80 h-1/3">
+        <AlertDialogContent className="font-poppins">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl text-center">Cancelar Suscripción</AlertDialogTitle>
-            <AlertDialogDescription className="text-baseColor text-base text-center">
-              ¿Estas seguro que quieres cancelar tu suscripción?
-            </AlertDialogDescription>
-            <AlertDialogDescription className="text-[#D0BB17]">
-              <div className="flex gap-1 justify-center ml-3 px-10">
-                <AlertCancel width={13} height={13} />
-                <p>Esta acción no se puede deshacer.</p>
+            <AlertDialogTitle className="text-xl">Cancelar Subscripción</AlertDialogTitle>
+            <AlertDialogDescription>
+              <p className="text-base">¿Estas seguro que quieres cancelar tu subscripción?</p>
+              <div className="text-[#D0BB17] flex flex-row gap-3 align-middle py-2">
+                <Info width="20px" height="20px" stroke="#D0BB17" />
+                <p className="text-base">Esta acción no se puede deshacer</p>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-background hover:text-white text-baseColor border-[#666363] text-sm rounded-lg">Cerrar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCancelSubscription} className="bg-[#C03744] text-white border-[#666363] text-sm rounded-lg">Confirmar</AlertDialogAction>
+            <AlertDialogCancel variant="outline">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelSubscription} variant="destructive">Confirmar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <AlertDialogContent className="font-poppins max-w-80 h-1/3">
+        <AlertDialogContent className="font-poppins">
           <AlertDialogHeader>
             <AlertDialogTitle className="mx-auto"><CheckCancel width={50} height={50} /></AlertDialogTitle>
             <AlertDialogDescription className="text-baseColor text-sm text-center">
