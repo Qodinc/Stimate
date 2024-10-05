@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -73,8 +74,10 @@ const getStatusTranslation = (status) => {
 
 
 export default function Home() {
+  const router = useRouter()
+
   const handleEdit = (slug) => {
-    // Implementar lógica de edición
+    router.push(`/editar/${slug}`)
   };
 
   const handleDelete = (slug) => {
@@ -103,7 +106,11 @@ export default function Home() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-lg font-semibold text-accent">{project.name_project}</h3>
+                    <Link href={`/editar/${project.slug}`}>
+                      <h3 className="text-lg font-semibold text-accent cursor-pointer hover:underline">
+                        {project.name_project}
+                      </h3>
+                    </Link>
                     <p className="text-sm text-[#323F49]">Estatus: {statusTranslation}</p>
                   </div>
                   <div>
