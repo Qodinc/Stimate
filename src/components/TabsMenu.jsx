@@ -2,8 +2,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full overflow-x-auto font-comfortaa mt-16">
-      <TabsList className="w-max min-w-full flex">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="overflow-x-auto font-comfortaa mt-6">
+      <TabsList className="flex">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
@@ -20,37 +20,3 @@ const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
 
 
 export default TabsMenu
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// TabsMenu originalmente
-{/* <Tabs defaultValue="uno" className="w-full font-comfortaa">
-<div className="overflow-x-auto">
-  <TabsList className="w-max min-w-full flex">
-    <TabsTrigger value="uno" >Equipo de trabajo</TabsTrigger>
-    <TabsTrigger value="dos" >Funcionalidades</TabsTrigger>
-    <TabsTrigger value="tres" >Gastos de operación</TabsTrigger>
-    <TabsTrigger value="cuatro" >Cargos asociados</TabsTrigger>
-    <TabsTrigger value="preview" >Previsualización</TabsTrigger>
-  </TabsList>
-</div>
-<TabsContent value="uno">Contenido del equipo de trabajo.</TabsContent> ESTE COMPONENTE SE DEJO DE USAR
-<TabsContent value="dos">Contenido de funcionalidades.</TabsContent>
-<TabsContent value="tres">Contenido de gastos de operación.</TabsContent>
-<TabsContent value="cuatro">Contenido de cargos asociados.</TabsContent>
-<TabsContent value="preview">Contenido de previsualización.</TabsContent>
-</Tabs> */}

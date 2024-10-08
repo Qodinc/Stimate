@@ -9,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog"
+import Check from "./Icons/Check";
   
   export default function Cuenta() {
     return (
@@ -32,7 +33,7 @@ import {
         <AlertDialogContent>
             <AlertDialogHeader className="text-center justify-center gap-6">
               <div className="w-full flex justify-center">
-              <img src="Icons/check-purple.webp" className="w-20 h-20"/>
+              <Check height={80} width={80} />
               </div>                
                 <h2 className="text-lg text-accent font-extrabold">Verifica tu correo</h2>
                 <p className="text-base font-comfortaa font-normal">Hemos envíado un enlace de verificación a tu correo electrónico</p>

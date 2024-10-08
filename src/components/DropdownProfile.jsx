@@ -12,8 +12,8 @@ la imagen de perfil, esto con el fin de usarse para un navbar, tambien usaremos 
 
 
 const dropdownOptions = [
-    { href:'/pricing', icon: <Paywall width={25} height={25} fill="#2F27CE" />, text: "Suscripción" },
-    { href:'/login', icon: <LogOut width={20} height={20} fill="#2F27CE"/>, text: "Cerrar Sesión" },
+    { href:'/planes', icon: <Paywall width={25} height={25} fill="#2F27CE" />, text: "Suscripción" },
+    { href:'/iniciar-sesion', icon: <LogOut width={20} height={20} fill="#2F27CE"/>, text: "Cerrar Sesión" },
   ];
 
 

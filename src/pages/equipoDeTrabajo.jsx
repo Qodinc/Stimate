@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Save from "@/components/Icons/Save";
 import Input from "@/components/input";
 import Timer from "@/components/Icons/Timer";
 import Dinero from "@/components/Icons/DollarSign";
 import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
-import { Card } from "@/components/cardArea";
+import { Card, CardVariants } from "@/components/cardArea";
+import React, { useState } from "react";
 import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-const EquipoContent = () => {
+export default function EquipoDeTrabajo() {
   const funcionalidades = [
     {
       team: "Analista",
@@ -71,8 +73,10 @@ const EquipoContent = () => {
     setCardData(updatedCardData);
   };
 
-    return (
-      <section>
+  return (
+    <>
+      <Navbar />
+      <div className="flex-row h-[85px] px-4 md:px-14 lg:px-20">
         <div className="flex flex-col gap-5 py-5">
           {cardData.map((cardData, index) => (
             <Card
@@ -181,8 +185,7 @@ const EquipoContent = () => {
             Agregar área
           </Button>
         </div>
-      </section>
-    );
-  };
-  
-  export default EquipoContent;
+      </div>
+    </>
+  );
+}
