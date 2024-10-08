@@ -81,7 +81,7 @@ export default function EquipoDeTrabajo() {
           {cardData.map((cardData, index) => (
             <Card
               size="lg"
-              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-36 shadow-lg"
+              className="grid grid-cols-2 p-2 justify-items-center shadow-lg sm:grid-cols-3 lg:grid-cols-3 lg:h-56 xl:grid-cols-6 xl:h-36"
               key={index}
             >
               <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
@@ -160,8 +160,9 @@ export default function EquipoDeTrabajo() {
                   icon={<Timer width={24} />}
                 />
               </div>
+              
 
-              <div className="col-start-2 mt-3 sm:col-start-3 lg:col-start-6 ml-6">
+              <div className="col-start-2 mt-3 ml-6 sm:col-start-3 lg:col-start-3 xl:col-start-6">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button>
@@ -179,7 +180,7 @@ export default function EquipoDeTrabajo() {
           ))}
         </div>
 
-        <div className="mt-[40px]">
+        <div className="mt-[30px]">
           <Button onClick={handleAddCard}>
             <Plus width={24} stroke="white" />
             Agregar área
