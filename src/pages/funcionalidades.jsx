@@ -149,7 +149,7 @@ export default function Funcionalidades() {
               className="grid grid-cols-2 p-2 justify-items-center shadow-lg h-full sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-8"
               key={index}
             >
-              <div className="sm:w-[200px] h-full m-2 w-[155px]">
+              <div className="sm:w-[200px] h-full mb-4 w-[155px]">
                 <span className="font-comfortaa text-base">Funcionalidad</span>
                 <Input
                   placeholder="Agregar funcionalidad"
@@ -159,7 +159,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px] ">
                 <span className="font-comfortaa text-base">Analista</span>
                 <Input
                   placeholder="Agregar horas"
@@ -170,7 +170,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px] ">
                 <span className="font-comfortaa text-base">
                   Diseñador gráfico
                 </span>
@@ -183,7 +183,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px] ">
                 <span className="font-comfortaa md:text-base text-[15px]">
                   Frontend JS Junior
                 </span>
@@ -196,7 +196,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px]">
                 <span className="font-comfortaa text-base">
                   Frontend JS Junior
                 </span>
@@ -209,7 +209,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px]">
                 <span className="font-comfortaa text-base">
                   Backend JS Junior
                 </span>
@@ -222,7 +222,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px] ">
                 <span className="font-comfortaa md:text-base text-[14px]">
                   Backend JS Junior
                 </span>
@@ -235,7 +235,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12  w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12 mb-4 w-[155px] ">
                 <span className="font-comfortaa text-base">Horas totales</span>
                 <Input
                   placeholder="0"
@@ -246,7 +246,7 @@ export default function Funcionalidades() {
                 />
               </div>
 
-              <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-4 2xl:col-start-8 ml-6">
+              <div className="col-start-2 mt-5 2xl:mt-2 sm:col-start-3 lg:col-start-4 2xl:col-start-8 ml-6">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button>
