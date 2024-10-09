@@ -146,10 +146,10 @@ export default function Funcionalidades() {
           {cardData.map((funcionalidad, index) => (
             <Card
               size="lg"
-              className="grid grid-cols-2 p-2 justify-items-center shadow-lg lg:h-34 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"
+              className="grid grid-cols-2 p-2 justify-items-center shadow-lg h-full sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-8"
               key={index}
             >
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="sm:w-[200px] h-full m-2 w-[155px]">
                 <span className="font-comfortaa text-base">Funcionalidad</span>
                 <Input
                   placeholder="Agregar funcionalidad"
@@ -235,7 +235,7 @@ export default function Funcionalidades() {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="sm:w-[200px] lg:h-12  w-[155px] ">
                 <span className="font-comfortaa text-base">Horas totales</span>
                 <Input
                   placeholder="0"
@@ -246,7 +246,7 @@ export default function Funcionalidades() {
                 />
               </div>
 
-              <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-4 xl:col-start-8 ml-6">
+              <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-4 2xl:col-start-8 ml-6">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button>
