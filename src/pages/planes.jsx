@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/cardArea";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function pricing() {
   const cards = [
@@ -31,29 +32,33 @@ export default function pricing() {
         "Agregar más áreas de trabajo por proyecto",
       ],
       button: "Contrata Ahora",
-      href: "/plan-actual"
+      href: "/suscripcion"
     },
   ];
 
   return (
     <div>
       <Navbar />
-      <div class="flex flex-col gap-5 max-w-full w-full py-8 lg:px-20 md:px-8 px-4 items-center justify-center">
+      <div className="flex flex-col gap-5 max-w-full w-full py-8 lg:px-20 md:px-8 px-4 items-center justify-center">
         <h2 className="text-accent text-center text-lg md:text-3xl font-poppins font-semibold">
           Elige el mejor plan para ti
         </h2>
-        <div class="w-full lg:px-28 lg:py-24 relative">
-          <img
-            class="hidden lg:block absolute right-0 top-0"
+        <div className="w-full lg:px-28 lg:py-24 relative">
+          <Image
+            width={90}
+            height={82}
+            className="hidden lg:block absolute right-0 top-0"
             src="Icons/Vector8.svg"
             alt=""
           />
-          <img
-            class="hidden lg:block absolute left-0 bottom-0"
+          <Image
+            width={90}
+            height={82}
+            className="hidden lg:block absolute left-0 bottom-0"
             src="Icons/Vector7.svg"
             alt=""
           />
-          <div class="w-full flex flex-col md:flex-row justify-center items-center xl:items-end gap-16">
+          <div className="w-full flex flex-col md:flex-row justify-center items-center xl:items-end gap-16">
             {cards.map((card, index) => (
               <Card key={index}>
                 <div
