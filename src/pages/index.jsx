@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import PlusCircle from "@/components/Icons/PlusCircle";
 import MenuButton from "@/components/ui/menu-button";
-
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Delete } from "@/components/alerts-variants";
 
 const proyects = [
   {
@@ -61,7 +62,6 @@ const project_status = [
   }
 ];
 
-
 const getStatusColor = (status) => {
   const statusObj = project_status.find(s => s.code.toLowerCase() === status.toLowerCase());
   return statusObj ? statusObj.color : '#000000';
@@ -72,16 +72,20 @@ const getStatusTranslation = (status) => {
   return statusObj ? statusObj.translations.es : status;
 };
 
-
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
+  const [projectList, setProjectList] = useState(proyects);
 
   const handleEdit = (slug) => {
-    router.push(`/editar/${slug}`)
+    router.push(`/editar/${slug}`);
   };
 
   const handleDelete = (slug) => {
-    // Implementar lógica de eliminación
+    const updatedProjects = projectList.filter(proyecto => proyecto.slug !== slug);
+    setProjectList(updatedProjects);
+    setIsDialogOpen(false);
   };
 
   return (
@@ -97,10 +101,10 @@ export default function Home() {
         </Link>
       </div>
       <div className="p-4 space-y-4 md:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
-        {proyects.map((project) => {
+        {projectList.map((project) => {
           const borderColor = getStatusColor(project.status_project);
           const statusTranslation = getStatusTranslation(project.status_project);
-          
+
           return (
             <Card key={project.slug} className="border-2 font-comfortaa" style={{ borderColor }}>
               <CardHeader>
@@ -116,7 +120,7 @@ export default function Home() {
                   <div>
                     <MenuButton 
                       onEdit={() => handleEdit(project.slug)}
-                      onDelete={() => handleDelete(project.slug)}
+                      onDelete={() => { setIsDialogOpen(true); setProyecto(project); }}
                     />
                   </div>
                 </div>
@@ -127,6 +131,14 @@ export default function Home() {
             </Card>
           );
         })}
+
+        <div className="flex justify-end items-center w-full">
+          <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <AlertDialogTrigger asChild>
+            </AlertDialogTrigger>
+            <Delete elemento={`Proyecto ${proyecto.name_project}`} onClick={() => handleDelete(proyecto.slug)} />
+          </AlertDialog>
+        </div>
       </div>
     </>
   );
