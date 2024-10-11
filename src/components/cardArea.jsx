@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const CardVariants = cva(
-  "shadow-2xl rounded-3xl ",
+  "shadow-[5px_5px_7px_rgba(0,0,0,0.1)] rounded-md ",
   {
     variants: {
       size: {
