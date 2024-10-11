@@ -2,14 +2,19 @@ import { useState } from 'react';
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
+import LogoStimate from '@/components/Icons/LogoStimate';
+import Link from 'next/link';
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Correo } from '@/components/alerts-variants';
 
-export default function Login() {
+export default function SignIn() {
 
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const [errors, setErrors] = useState({});
 
@@ -48,7 +53,7 @@ export default function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log('Formulario válido. Puedes procesarlo ahora.');
+            setIsDialogOpen(true);
         } else {
             console.log('Errores en el formulario');
         }
@@ -59,9 +64,16 @@ export default function Login() {
             <div className="w-full h-screen hidden md:block lg:p-4">
                 <img className="opacity-40 md:opacity-20 lg:opacity-100 lg:rounded-xl lg:h-full object-cover w-full h-screen" src="imgLogin.jpg" alt="LoginImg" />
             </div>
-            <div className="flex font-comfortaa lg:h-screen md:absolute lg:static md:py-20 md:max-w-[35rem] lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-start justify-center w-full px-4 lg:px-12 gap-8"> 
-                <h1 className="font-bold text-2xl text-accent font-poppins">Crear Cuenta</h1>
-                <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
+            <div className="flex font-comfortaa lg:min-h-screen md:absolute lg:static lg:py-0 md:py-20 md:max-w-[35rem] lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-start justify-center w-full px-4 lg:px-12 gap-8"> 
+                <div className='flex flex-col gap-4 items-start justify-center w-full pt-4 md:pt-0 md:gap-8 lg:gap-4 lg:pt-4'>
+                    <div className='flex flex-col items-center justify-center w-full'>
+                        <a href="https://stimate-landing-page.vercel.app/">
+                            <LogoStimate width={44} height={44} />
+                        </a>
+                    </div>
+                    <h1 className="font-bold text-2xl text-accent font-poppins">Crear Cuenta</h1>
+                </div>
+                <form className="flex flex-col gap-1 w-full" action='#' onSubmit={handleSubmit}>
                     <div className="flex flex-col md:flex-row gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <span>Nombre</span>
@@ -113,16 +125,25 @@ export default function Login() {
                     </div>
                     <div className="flex gap-2 items-center">
                         <Input
+                            id="accept"
                             type="checkbox"
                             name="termsAccepted"
                             checked={termsAccepted}
                             onChange={(handle) => setTermsAccepted(handle.target.checked)}
                         />
-                        <span>Acepto los términos y condiciones</span>
+                        <label for="accept">Acepto los términos y condiciones</label>
                     </div>
                     {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}
-                    <div className="flex justify-center items-center py-8">
+                    <div className="flex flex-col justify-center items-center py-8">
+                    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <AlertDialogTrigger asChild>
+                        </AlertDialogTrigger>
+                        <Correo />
+                    </AlertDialog>
                         <Button type="submit" variant="default" size="default">Crear Cuenta</Button>
+                        <div className="flex w-full p-4 justify-end items-center">
+                            <Link href={"/iniciar-sesion"} className="text-accent">¿Ya tienes una cuenta?</Link>
+                        </div>
                     </div>
                     <div className="flex w-full p-4 justify-center items-center gap-4">
                         <div className="border border-gray-400 md:border-baseColor lg:border-gray-400 min-w-[50%]"></div>

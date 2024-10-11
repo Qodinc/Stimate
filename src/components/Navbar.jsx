@@ -12,10 +12,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="font-comfortaa flex items-center ">
-            <Link href="/ayuda" className="text-[#050315] hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-              Ayuda
-            </Link>
-            <div >
+            <div>
               <DropdownProfile />
             </div>
           </div>

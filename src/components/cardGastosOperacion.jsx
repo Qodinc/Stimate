@@ -34,7 +34,7 @@ export default function CardGastosOperacion({ cardID, cost_name, total_per_month
     };
 
     return (
-        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] md:max-w-[19rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
+        <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
             <div className="flex flex-col gap-2 w-full">
                 <span>Nombre</span>
                 <div className="flex flex-col gap-1 w-full">

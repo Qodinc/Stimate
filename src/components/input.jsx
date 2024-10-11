@@ -50,6 +50,8 @@ export default function Input({
         step={props.step}
         onChange={handleInputChange}
         disabled={disabled}
+        id={props.id}
+        required={props.required}
       />
   
       {iconPosition === 'left' && (

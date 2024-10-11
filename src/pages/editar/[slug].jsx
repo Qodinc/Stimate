@@ -74,25 +74,34 @@ export default function TabsPages() {
   }
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <div className="h-screen flex justify-center items-center font-comfortaa bg-white">
+      Cargando...
+    </div>;
   }
 
   if (!project) {
-    return <div>No se encontró el proyecto</div>;
+    return (
+      <>
+        <Navbar />
+        <div className="h-screen sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
+          No se encontró el proyecto
+        </div>;
+      </>
+    )
   }
 
   return (
     <>
       <Navbar />
-      <div className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
+      <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
         <h2>Nombre del proyecto: <strong>{project.name_project}</strong></h2>
         <h2>Tiempo estimado: <strong>{estimatedTime} meses</strong></h2>
         <h2>Costo estimado: <strong>${estimatedCost}</strong></h2>
-      </div>
-      <div className="px-4 md:px-14 lg:px-20">
+      </header>
+      <main className="px-4 md:px-14 lg:px-20">
         <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
         {renderContent()}
-      </div>
+      </main>
     </>
   );
 }

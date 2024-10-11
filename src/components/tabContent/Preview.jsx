@@ -13,7 +13,7 @@ const Preview = () => {
   };  */
 
   return (
-    <main className="mt-5">
+    <section className="mt-5 mb-10">
       <div className="flex justify-end mb-6">
         <Button>Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
@@ -82,7 +82,6 @@ const Preview = () => {
                 placeholder={"Añade alguna nota"} 
                 required={true}
               />
-              <p className="text-red-600 text-[12px]">*Este campo es obligatorio</p>
             </div>
           </div>
         </div>
@@ -97,7 +96,7 @@ const Preview = () => {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 };
 
