@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -8,24 +8,7 @@ import PlusCircle from "@/components/Icons/PlusCircle";
 import MenuButton from "@/components/ui/menu-button";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
-
-const proyects = [
-  {
-    "slug": "cuponera-digital-EUGAzT",
-    "name_project": "Cuponera Digital",
-    "status_project": "pending",
-  },
-  {
-    "slug": "ecommerce-zDxDUe",
-    "name_project": "Ecommerce",
-    "status_project": "completed",
-  },
-  {
-    "slug": "transporte-logistica-lS9teZ",
-    "name_project": "Transporte Logística",
-    "status_project": "canceled",
-  }
-];
+import Loading from '@/components/Loading';
 
 const project_status = [
   {
@@ -74,19 +57,47 @@ const getStatusTranslation = (status) => {
 
 export default function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
-  const [projectList, setProjectList] = useState(proyects);
+  const [proyectos, setProyectos] = useState([]);
+
+  useEffect(() => {
+    fetchProyectos()
+  }, [])
+
+  const fetchProyectos = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch project');
+      }
+      const data = await response.json();
+      setProyectos(data);
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = (slug) => {
     router.push(`/editar/${slug}`);
   };
 
   const handleDelete = (slug) => {
-    const updatedProjects = projectList.filter(proyecto => proyecto.slug !== slug);
-    setProjectList(updatedProjects);
+    // Función deleted con fetch
+    const updatedProjects = proyectos.filter(proyecto => proyecto.slug !== slug);
+    setProyecto(updatedProjects);
+    fetchProyectos();
     setIsDialogOpen(false);
   };
+
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -101,7 +112,7 @@ export default function Home() {
         </Link>
       </div>
       <div className="p-4 space-y-4 md:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
-        {projectList.map((project) => {
+        {proyectos.map((project) => {
           const borderColor = getStatusColor(project.status_project);
           const statusTranslation = getStatusTranslation(project.status_project);
 

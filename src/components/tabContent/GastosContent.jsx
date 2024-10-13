@@ -39,7 +39,7 @@ const GastosContent = () => {
 
   return (
     <section>
-      <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-4 w-full justify-center items-center py-5">
+      <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 w-full justify-center items-center py-5">
         {cards.map((card) => (
           <CardGastosOperacion
             key={card.id}

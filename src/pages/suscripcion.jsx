@@ -11,6 +11,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import Input from "@/components/input";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/Loading";
 
 export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
@@ -22,7 +23,7 @@ export default function Payment() {
             const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/config`);
 
             if (!response.ok) {
-               return setMessages('Failed to fetch config');
+               return setMessages(['Failed to fetch config']);
             }
 
             const { publishableKey, prices } = await response.json();
@@ -30,16 +31,14 @@ export default function Payment() {
             setStripePromise(loadStripe(publishableKey));
             setPrice(prices[0]);
          } catch (error) {
-            return setMessages('Error fetching Stripe config:', error.message);
+            return setMessages(['Error fetching Stripe config:', error.message]);
          }
       };
       fetchConfig();
    }, [])
 
    if (!stripePromise || !price) {
-      return <div className="h-screen flex justify-center items-center font-comfortaa bg-white">
-         Cargando...
-      </div>;
+      return <Loading />;
    }
 
    return (
@@ -63,8 +62,8 @@ export default function Payment() {
    );
 }
 
-function CheckoutForm({ price }) {
-   const [messages, setMessages] = useState('');
+function CheckoutForm({ price, setIsLoading }) {
+   const [messages, setMessages] = useState([]);
 
    // Datos del cliente
    const [name, setName] = useState('');
@@ -74,6 +73,7 @@ function CheckoutForm({ price }) {
       cardExpiry: false,
       cardCvc: false
    });
+   const [validated, setValidated] = useState(false)
 
    // Datos para crear transacción
    const [customer_id, setCustomerId] = useState(null);
@@ -106,7 +106,7 @@ function CheckoutForm({ price }) {
       });
 
       if (!response.ok) {
-         return setMessages('Falló al obtener el cliente');
+         return setMessages(['Falló al obtener el cliente']);
       }
 
       const data = await response.json();
@@ -127,7 +127,7 @@ function CheckoutForm({ price }) {
       });
 
       if (!response.ok) {
-         return setMessages('Failed to fetch subscription');
+         return setMessages(['Failed to fetch subscription']);
       }
 
       const { clientSecret } = await response.json();
@@ -141,25 +141,14 @@ function CheckoutForm({ price }) {
       if (!stripe || !elements) {
          // Stripe.js has not loaded yet. Make sure to disable
          // form submission until Stripe.js has loaded.
-         return setMessages('Stripe has not loaded yet. Please try again.');
+         return setMessages(['Stripe has not loaded yet. Please try again.']);
       }
 
       if (!price) {
-         return setMessages('No hay un plan seleccionado. Por favor, seleccione un plan.');
+         return setMessages(['No hay un plan seleccionado. Por favor, seleccione un plan.']);
       }
 
-      setMessages('')
-
-      // Validación de correo
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-         return setMessages("El formato del correo no es válido");
-      }
-
-      // Validación de datos de tarjeta
-      if (!cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc) {
-         return setMessages("Por favor, complete todos los campos de la tarjeta.");
-      }
+      setMessages([''])
 
       try {
          // Cliente
@@ -169,10 +158,10 @@ function CheckoutForm({ price }) {
          const clientSecret = await getSubscription(customerId);
 
          if (!clientSecret) {
-            return setMessages('Error: Payment intent not found');
+            return setMessages(['Error: Payment intent not found']);
          }
 
-         setMessages('Esperando...');
+         setMessages(['Esperando...']);
 
          // Elementos de tarjeta
          const cardElement = elements.getElement(CardNumberElement);
@@ -185,9 +174,9 @@ function CheckoutForm({ price }) {
          });
 
          if (error) { // 
-            setMessages(`Payment failed: ${error.message}`);
+            setMessages([`Payment failed: ${error.message}`]);
          } else {
-            setMessages('Payment successful! Se supone aquí debe mandar un modal y redireccionar al dashboard');
+            setMessages(['Payment successful! Se supone aquí debe mandar un modal y redireccionar al dashboard']);
 
             setName('')
             setEmail('')
@@ -201,7 +190,7 @@ function CheckoutForm({ price }) {
          }
 
       } catch (error) {
-         return setMessages(`Error: ${error.message}`);
+         return setMessages([`Error: ${error.message}`]);
       }
 
    };
@@ -214,6 +203,43 @@ function CheckoutForm({ price }) {
       })
       return formatter.format(value)
    }
+
+   // Validar la tarjeta cada vez que el estado de cardComplete cambie
+   useEffect(() => {
+      setValidated(getValidated({ name, email, cardComplete }));
+   }, [name, email, cardComplete]);
+
+   const getValidated = ({ name, email, cardComplete }) => {
+      const messages = []
+      // Validación de correo
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const validatedName = !!name
+      const validatedEmail = !!emailRegex.test(email)
+      const validatedCardNumber = cardComplete.cardNumber
+      const validatedCardExpiry = cardComplete.cardExpiry
+      const validatedCardCvc = cardComplete.cardCvc
+
+      if (!validatedName) {
+         messages.push('El campo Nombre Titular es requerido')
+      }
+      if (!validatedEmail) {
+         messages.push('El campo Correo es requerido')
+      }
+      if (!validatedCardNumber) {
+         messages.push('El campo Número de tarjeta es requerido')
+      }
+      if (!validatedCardExpiry) {
+         messages.push('El campo Fecha de Expiración es requerido')
+      }
+      if (!validatedCardCvc) {
+         messages.push('El campo CVC es requerido')
+      }
+
+      setMessages(messages)
+
+      return validatedName && validatedEmail && validatedCardNumber && validatedCardExpiry && validatedCardCvc
+   }
+
 
    const cardElementOptions = {
       style: {
@@ -261,25 +287,38 @@ function CheckoutForm({ price }) {
             </div>
 
             <div className="mb-4">
-               <label>Datos de tarjeta</label>
+               <label>Número de tarjeta</label>
                <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
                   <CardNumberElement options={cardElementOptions} onChange={handleCardChange} />
                </div>
-               <div className="md:flex">
-                  <div className="w-full rounded-full border border-gray-300 px-3 py-2 mb-2">
-                     <CardExpiryElement options={cardElementOptions} onChange={handleCardChange} />
+               <div className="md:flex gap-3">
+                  <div className="w-full">
+                     <label>Fecha de expiración</label>
+                     <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
+                        <CardExpiryElement options={cardElementOptions} onChange={handleCardChange} />
+                     </div>
                   </div>
-                  <div className="w-full rounded-full border border-gray-300 px-3 py-2 mb-2">
-                     <CardCvcElement options={cardElementOptions} onChange={handleCardChange} />
+                  <div className="w-full">
+                     <label>CVC</label>
+                     <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
+                        <CardCvcElement options={cardElementOptions} onChange={handleCardChange} />
+                     </div>
                   </div>
                </div>
             </div>
 
-            <div className="text-red-500 text-sm my-4">{messages}</div>
+            {messages && (
+               <ul className="list-disc list-inside text-red-500 text-sm my-4">
+                  {messages.map((message, index) => (
+                     <li key={index}>{message}</li>
+                  ))}
+               </ul>
+            )}
 
             <div className="flex justify-center font-poppins">
                <Button
                   type="submit"
+                  disabled={!validated}
                >
                   Pagar {currencyFormatter({ currency: price.currency, value: price.unit_amount / 100 })} {price.currency.toUpperCase()}
                </Button>

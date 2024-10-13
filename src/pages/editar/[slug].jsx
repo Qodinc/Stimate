@@ -7,14 +7,30 @@ import Preview from "@/components/tabContent/Preview";
 import TabsMenu from "@/components/TabsMenu";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Loading from "@/components/Loading";
+
+const ProjectInterfaz = {
+  owner_id: null,
+  slug: "",
+  name_project: "",
+  status_project: "",
+  team_project: [],
+  features_project: [],
+  operating_expenses: [],
+  associated_cost: [],
+  sale_comission: 0,
+  profit: 0,
+  tax: 0,
+  notes: ""
+}
 
 export default function TabsPages() {
   const router = useRouter();
   const { slug } = router.query;
   const [activeTab, setActiveTab] = useState("equipo");
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState(ProjectInterfaz);
   const [isLoading, setIsLoading] = useState(true);
-  const [estimatedTime, setEstimatedTime] = useState(0);
+  const [estimatedTime, setEstimatedTime] = useState(1.9);
   const [estimatedCost, setEstimatedCost] = useState(0);
 
   const tabs = [
@@ -26,6 +42,23 @@ export default function TabsPages() {
   ];
 
   useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch project');
+        }
+        const data = await response.json();
+        setProject(data);
+      } catch (error) {
+        console.error("Error fetching project:", error);
+        // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (slug) {
       fetchProject();
     }
@@ -39,51 +72,34 @@ export default function TabsPages() {
 
   }, [estimatedCost])
 
-  const fetchProject = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch project');
-      }
-      const data = await response.json();
-      setProject(data);
-    } catch (error) {
-      console.error("Error fetching project:", error);
-      // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
 
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
-        return <EquipoContent />
+        return <EquipoContent teamProject={project.team_project}/>
       case "funcionalidades":
-        return <FuncionalidadesContent />
+        return <FuncionalidadesContent featuresProject={project.features_project} />
       case "gastos":
-        return <GastosContent />
+        return <GastosContent operatingExpenses={project.operating_expenses} />
       case "cargos":
-        return <CargosContent />
+        return <CargosContent associatedCosts={project.associated_cost} />
       case "preview":
-        return <Preview />
+        return <Preview project={project}/>
       default:
         return null
     }
   }
 
   if (isLoading) {
-    return <div className="h-screen flex justify-center items-center font-comfortaa bg-white">
-      Cargando...
-    </div>;
+    return <Loading />;
   }
 
-  if (!project) {
+  if (!project.slug) {
     return (
       <>
         <Navbar />
-        <div className="h-screen sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
+        <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
           No se encontró el proyecto
         </div>;
       </>
