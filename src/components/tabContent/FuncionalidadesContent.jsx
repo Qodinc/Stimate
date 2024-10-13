@@ -172,7 +172,8 @@ const FuncionalidadesContent = () => {
                 Diseñador gráfico
               </span>
               <Input
-                placeholder="sm:max-w-full Agregar horas"
+                className="sm:max-w-full"
+                placeholder="Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[1].time}
@@ -185,7 +186,8 @@ const FuncionalidadesContent = () => {
                 Frontend JS Junior
               </span>
               <Input
-                placeholder="sm:max-w-full Agregar horas"
+                className="sm:max-w-full"
+                placeholder="Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[2].time}
@@ -198,7 +200,8 @@ const FuncionalidadesContent = () => {
                 Frontend JS Junior
               </span>
               <Input
-                placeholder="sm:max-w-full Agregar horas"
+                className="sm:max-w-full"
+                placeholder="Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[3].time}
