@@ -143,10 +143,10 @@ const FuncionalidadesContent = () => {
         {cardData.map((funcionalidad, index) => (
           <Card
             size="lg"
-            className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-8 lg:h-34 shadow-lg"
+            className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
             key={index}
           >
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">Funcionalidad</span>
               <Input
                 placeholder="Agregar funcionalidad"
@@ -156,7 +156,7 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">Analista</span>
               <Input
                 placeholder="Agregar horas"
@@ -167,12 +167,12 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">
                 Diseñador gráfico
               </span>
               <Input
-                placeholder="Agregar horas"
+                placeholder="sm:max-w-full Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[1].time}
@@ -180,12 +180,12 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa md:text-base text-[15px]">
                 Frontend JS Junior
               </span>
               <Input
-                placeholder="Agregar horas"
+                placeholder="sm:max-w-full Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[2].time}
@@ -193,12 +193,12 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">
                 Frontend JS Junior
               </span>
               <Input
-                placeholder="Agregar horas"
+                placeholder="sm:max-w-full Agregar horas"
                 iconPosition="left"
                 type="number"
                 value={funcionalidad.teams[3].time}
@@ -206,7 +206,7 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">
                 Backend JS Junior
               </span>
@@ -219,7 +219,7 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa md:text-base text-[14px]">
                 Backend JS Junior
               </span>
@@ -232,7 +232,7 @@ const FuncionalidadesContent = () => {
                 onChange={(event) => handleInputChange(event, index)}
               />
             </div>
-            <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+            <div className="xs:max-w-full sm:max-w-[200px] w-full">
               <span className="font-comfortaa text-base">Horas totales</span>
               <Input
                 placeholder="0"
@@ -243,7 +243,7 @@ const FuncionalidadesContent = () => {
               />
             </div>
 
-            <div className="col-start-2 mt-5 sm:col-start-3 lg:col-start-8 ml-6">
+            <div className="mt-5 sm:col-start-3 ml-6 absolute bottom-2 right-2">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button>
@@ -261,7 +261,7 @@ const FuncionalidadesContent = () => {
         ))}
       </div>
 
-      <div className="mt-[40px]">
+      <div className="">
         <Button onClick={handleAddCard}>
           <Plus width={24} stroke="white" />
           Agregar funcionalidad
