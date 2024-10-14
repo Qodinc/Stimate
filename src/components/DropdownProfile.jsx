@@ -2,33 +2,40 @@ import React, { useState } from 'react';
 import LogOut from './Icons/LogOut';
 import Paywall from './Icons/Paywall';
 import Link from 'next/link';
-
-/* Este componente es una copia de Dropdown solo que aqui añadiremos los iconos svg para las opciones y prepararemos
-la imagen de perfil, esto con el fin de usarse para un navbar, tambien usaremos aqui mismo el arreglo de opciones */
-
-// Se agrego el uso de Link para activar el cierre de sesion y supscripcion
-
-//Modo de uso al final(abajo) de este codigo
-
-
-const dropdownOptions = [
-    { href:'/planes', icon: <Paywall width={25} height={25} fill="#2F27CE" />, text: "Suscripción" },
-    { href:'/iniciar-sesion', icon: <LogOut width={20} height={20} fill="#2F27CE"/>, text: "Cerrar Sesión" },
-  ];
+import { signOut } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 
 
 const DropdownProfile = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+
+  if (!session) {
+    return null; // O renderiza un componente de "no autenticado"
+  }
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/iniciar-sesion' });
+  };
+
+  const dropdownOptions = [
+    { href: '/planes', icon: <Paywall width={25} height={25} fill="#2F27CE" />, text: 'Suscripción' },
+    {
+      onClick: () => handleSignOut(), // Aquí agregas la función de cierre de sesión
+      icon: <LogOut width={20} height={20} fill="#2F27CE" />,
+      text: 'Cerrar Sesión',
+    },
+  ];
 
   return (
     <div className="relative inline-block text-left">
       <div>
         <button
           type="button"
-          className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 shadow-sm  bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <span>▼</span>
+          <img src={session.user.image} alt={session.user.name} className="w-full h-full rounded-full object-cover"  />
         </button>
       </div>
 
@@ -38,7 +45,8 @@ const DropdownProfile = () => {
             {dropdownOptions.map((option, index) => (
               <Link
                 key={index}
-                href={option.href}
+                href={option.href || '#'}
+                onClick={option.onClick} // Agregamos la propiedad onClick si existe
                 className="block px-4 py-2 text-base text-[#050315] hover:bg-[#F4F4F5] hover:text-gray-900"
                 role="menuitem"
               >
@@ -56,28 +64,3 @@ const DropdownProfile = () => {
 };
 
 export default DropdownProfile;
-
-// Se importa y despues se crean las opciones para despues llamarlas 
-/* import Dropdown from "@/components/Dropdown";
-
-const dropdownOptions = [
-  { icon: '🏠', text: "Suscripción" },
-  { icon: '⚙️', text: "Cerrar Sesión" },
-];
-
-export default function Home() {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-        <main className="text-center">
-          <h1 className="text-5xl font-bold text-gray-800">
-            Welcome to Next.js!
-          </h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Get started by editing <code className="bg-gray-200 p-1 rounded">pages/index.jsx</code>
-          </p>
-
-          <Dropdown options={dropdownOptions} />
-        </main>
-      </div>
-    );
-  } */

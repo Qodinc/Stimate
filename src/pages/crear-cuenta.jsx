@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
@@ -8,15 +10,21 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Correo } from '@/components/alerts-variants';
 
 export default function SignIn() {
-
+    const { data: session, status } = useSession();
+    const router = useRouter()
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push('/');  // Redirige al index cuando la sesión está autenticada
+        }
+    }, [status, router]);
 
     const validateForm = () => {
         let formErrors = {};
@@ -58,6 +66,18 @@ export default function SignIn() {
             console.log('Errores en el formulario');
         }
     };
+
+    const handleGoogleSignIn = () => {
+        signIn('google', { callbackUrl: '/' });
+    };
+
+    if (status === "loading") {
+        return <div>Cargando...</div>;
+    }
+
+    if (status === "authenticated") {
+        return null;
+    }
 
     return (
         <div className="flex w-full min-h-screen md:relative justify-center items-center">
@@ -150,10 +170,10 @@ export default function SignIn() {
                         <div><p>o</p></div>
                         <div className="border border-gray-400 md:border-baseColor lg:border-gray-400 min-w-[50%]"></div>
                     </div>
-                    <div className="flex w-full justify-center items-center p-4">
-                        <ButtonGoogle text="Google" href="#" />
-                    </div>
                 </form>
+                <div className="flex w-full justify-center items-center p-4">
+                    <ButtonGoogle text="Google" onClick={handleGoogleSignIn} />
+                </div>
             </div>
         </div>
     );
