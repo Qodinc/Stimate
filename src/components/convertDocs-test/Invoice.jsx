@@ -16,16 +16,26 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     marginBottom: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#112131',
-    borderBottomStyle: 'solid',
-    alignItems: 'stretch',
+    justifyContent:'space-between',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     color: '#112131'
+  },
+  project: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: '#112131',
+    textAlign:'right', 
+    flexDirection:'column'
+  },
+  text: {
+    fontSize:12,
+    fontWeight:'bold',
+    flexDirection:'column', 
   },
   logo: {
     width: 74,
@@ -38,6 +48,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     marginBottom: 40,
+  },
+  dateSection: {
+    marginBottom:30,
+    flexDirection:'column'
   },
   invoiceDetails: {
     flexDirection: 'column',
@@ -107,21 +121,26 @@ const Invoice = ({ invoiceData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.title}>Factura</Text>
+        <Text style={styles.title}>Cotización</Text>
+        <Text style={styles.project}>Tacos Pepe</Text>
         {/* Aquí puedes agregar un logo si lo deseas */}
         {/* <Image style={styles.logo} src="/path-to-your-logo.png" /> */}
+      </View> 
+      <View style={styles.dateSection}>
+          <Text style={styles.text}>Fecha: {invoiceData.date}</Text>
+          <Text style={styles.text}>No: {invoiceData.invoiceNumber}</Text>
       </View>
-      
+
       <View style={styles.invoiceInfo}>
         <View style={styles.invoiceDetails}>
-          <Text style={styles.label}>Número de Factura:</Text>
-          <Text style={styles.value}>{invoiceData.invoiceNumber}</Text>
-          <Text style={styles.label}>Fecha:</Text>
-          <Text style={styles.value}>{invoiceData.date}</Text>
+          <Text style={styles.text}>Emisor:</Text>
+          <Text style={styles.text}>Juan Perez</Text>
+          <Text style={styles.text}>Calle Principal, Conocido</Text>
+          <Text style={styles.text}>Metropoli,CDMX</Text>
         </View>
         <View style={styles.invoiceDetails}>
-          <Text style={styles.label}>Cliente:</Text>
-          <Text style={styles.value}>{invoiceData.clientName}</Text>
+          <Text style={styles.text}>Receptor:</Text>
+          <Text style={styles.text}>{invoiceData.clientName}</Text>
         </View>
       </View>
 
