@@ -87,10 +87,9 @@ export default function Home() {
   };
 
   const handleDelete = (slug) => {
-    // Función deleted con fetch
+    // TODO: Función deleted con fetch
     const updatedProjects = proyectos.filter(proyecto => proyecto.slug !== slug);
-    setProyecto(updatedProjects);
-    fetchProyectos();
+    setProyectos(updatedProjects);
     setIsDialogOpen(false);
   };
 

@@ -8,21 +8,8 @@ import TabsMenu from "@/components/TabsMenu";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "@/components/Loading";
-
-const ProjectInterfaz = {
-  owner_id: null,
-  slug: "",
-  name_project: "",
-  status_project: "",
-  team_project: [],
-  features_project: [],
-  operating_expenses: [],
-  associated_cost: [],
-  sale_comission: 0,
-  profit: 0,
-  tax: 0,
-  notes: ""
-}
+import ProjectInterfaz from "@/interfaces/project.interface";
+import Head from "next/head";
 
 export default function TabsPages() {
   const router = useRouter();
@@ -83,7 +70,7 @@ export default function TabsPages() {
       case "gastos":
         return <GastosContent operatingExpenses={project.operating_expenses} />
       case "cargos":
-        return <CargosContent associatedCosts={project.associated_cost} />
+        return <CargosContent associatedCost={project.associated_costs} />
       case "preview":
         return <Preview project={project}/>
       default:
@@ -98,6 +85,9 @@ export default function TabsPages() {
   if (!project.slug) {
     return (
       <>
+        <Head>
+          <title>No se encontró el proyecto</title>
+        </Head>
         <Navbar />
         <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
           No se encontró el proyecto
@@ -108,6 +98,9 @@ export default function TabsPages() {
 
   return (
     <>
+      <Head>
+        <title>{project.name_project}</title>
+      </Head>
       <Navbar />
       <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
         <h2>Nombre del proyecto: <strong>{project.name_project}</strong></h2>

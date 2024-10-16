@@ -9,41 +9,8 @@ import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-const EquipoContent = () => {
-  const funcionalidades = [
-    {
-      team: "Analista",
-      hourly_rate: 65.63,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Diseñador gráfico",
-      hourly_rate: 60.16,
-      work_hours_per_day: 4,
-    },
-    {
-      team: "Frontend JS Junior (Gloria)",
-      hourly_rate: 63.75,
-      work_hours_per_day: 5,
-    },
-    {
-      team: "Frontend JS Junior (Iván)",
-      hourly_rate: 63.75,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Backend JS Junior (Pedro)",
-      hourly_rate: 75,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Backend JS Junior (Berenice)",
-      hourly_rate: 75,
-      work_hours_per_day: 5,
-    },
-  ];
-
-  const [cardData, setCardData] = useState(funcionalidades);
+const EquipoContent = ({ teamProject, setTeamProject }) => {
+  const [cardData, setCardData] = useState(teamProject);
 
   const handleAddCard = () => {
     const newCardData = {

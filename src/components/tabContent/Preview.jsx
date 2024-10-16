@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import TextArea from "../Textarea";
 import Image from "next/image";
 
-const Preview = () => {
+const Preview = ({ project }) => {
 
   /* const handleInputChange = (e) => {
     console.log('Nuevo valor:', e.target.value);
