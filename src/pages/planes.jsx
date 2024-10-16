@@ -22,7 +22,7 @@ export default function pricing() {
     },
     {
       title: "Premium",
-      price: "$10 usd",
+      price: "$10 usd /Mensual",
       background: "accent",
       titleColor: "white",
       benefits: [
