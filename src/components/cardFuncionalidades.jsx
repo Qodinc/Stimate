@@ -7,9 +7,9 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Trash from "./Icons/Trash";
 
-export default function CardFuncionalidades({ cardKey, name, teams }) {
+export default function CardFuncionalidades({ cardKey, feature, teams }) {
   const [errors, setErrors] = useState({ nombre: "", tipo: "" });
-  const [inputValue, setInputValue] = useState(name);
+  const [inputValue, setInputValue] = useState(feature);
 
   const handleRemoveCard = (cardKey) => {
     const card = document.getElementById(cardKey);

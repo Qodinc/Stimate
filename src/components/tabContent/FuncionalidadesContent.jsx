@@ -26,7 +26,7 @@ const FuncionalidadesContent = ({ featuresProject, setFeaturesProject }) => {
     <section>
       <div className="flex flex-col gap-5 py-5">
         {cardData.map((funcionalidad, index) => (
-          <CardFuncionalidades key={index} cardKey={funcionalidad.id} name={funcionalidad.name} teams={funcionalidad.teams} />
+          <CardFuncionalidades key={index} cardKey={funcionalidad.id} feature={funcionalidad.feature} teams={funcionalidad.team_feature} />
         ))}
       </div>
 
