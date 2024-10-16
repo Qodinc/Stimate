@@ -47,6 +47,7 @@ export default function Input({
         `}
         min={props.min}
         max={props.max}
+        maxLength={props.maxLength}
         step={props.step}
         onChange={handleInputChange}
         disabled={disabled}
