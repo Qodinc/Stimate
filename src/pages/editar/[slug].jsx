@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import Loading from "@/components/Loading";
 import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
+import httpServices from "@/lib/http-services";
 
 export default function TabsPages() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function TabsPages() {
     const fetchProject = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
+        const response = await httpServices.getProyect(slug);
         if (!response.ok) {
           throw new Error('Failed to fetch project');
         }

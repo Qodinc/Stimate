@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import HttpServices, { getProyects } from "../lib/http-services"
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import MenuButton from "@/components/ui/menu-button";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Loading from '@/components/Loading';
+import Head from 'next/head';
 
 const project_status = [
   {
@@ -63,20 +65,20 @@ export default function Home() {
   const [proyectos, setProyectos] = useState([]);
 
   useEffect(() => {
-    fetchProyectos()
+    getProyects()
   }, [])
 
-  const fetchProyectos = async () => {
+  const getProyects = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`);
+      const response = await HttpServices.getProyects();
       if (!response.ok) {
-        throw new Error('Failed to fetch project');
+        throw new Error('Failed to get project');
       }
       const data = await response.json();
       setProyectos(data);
     } catch (error) {
-      console.error("Error fetching project:", error);
+      console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -100,6 +102,9 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Inicio</title>
+      </Head>
       <Navbar />
       <div className="ml-9 mt-7 space-y-3">
         <h1 className="text-accent font-poppins font-semibold text-2xl">Mis Proyectos</h1>

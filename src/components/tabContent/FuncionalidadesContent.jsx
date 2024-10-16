@@ -10,8 +10,8 @@ const FuncionalidadesContent = ({ featuresProject, setFeaturesProject }) => {
   const handleAddCard = () => {
     const newCardData = {
       id: cardData.length + 1,
-      name: "",
-      teams: [
+      feature: "",
+      team_feature: [
         { team: "Analista", time: 0 },
         { team: "Diseñador gráfico", time: 0 },
         { team: "Frontend JS Junior", time: 0 },

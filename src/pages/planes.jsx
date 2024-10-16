@@ -3,6 +3,7 @@ import { Card } from "@/components/cardArea";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
 
 export default function pricing() {
   const cards = [
@@ -38,6 +39,9 @@ export default function pricing() {
 
   return (
     <div>
+      <Head>
+        <title>Planes</title>
+      </Head>
       <Navbar />
       <div className="flex flex-col gap-5 max-w-full w-full py-8 lg:px-20 md:px-8 px-4 items-center justify-center">
         <h2 className="text-accent text-center text-lg md:text-3xl font-poppins font-semibold">

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
+import httpServices from '@/lib/http-services';
 
 export default function NewProject() {
    const [projectName, setProjectName] = useState('');
@@ -41,27 +42,15 @@ export default function NewProject() {
             name_project: projectName,
             areas_selected: areasSelected
          };
-         const requestOptions = {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-         };
 
-         const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, requestOptions);
+         const response = await httpServices.createProyect(data);
          if (!response.ok) {
             throw new Error(
                "Ocurrió un error al realizar la solicitud: " + response.status
             );
          }
 
-         // Estos datos se deben contextualizar
          const data_context = await response.json();
-         console.log(data_context);
-         
-         
-         // Debe esperar a que el backend retorne el slug
          Router.push('/editar/' + data_context.slug)
       }
    }

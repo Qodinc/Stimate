@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+import { useRouter } from "next/router";
+import HttpServices from "../lib/http-services"
 import {
    Elements,
    useStripe,
@@ -12,37 +14,60 @@ import Input from "@/components/input";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading";
+import Head from "next/head";
+import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import { AlertDialogContent } from "@/components/ui/alert-dialog";
 
 export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
    const [price, setPrice] = useState([]);
+   const [error, setError] = useState(null);
 
    useEffect(() => {
-      const fetchConfig = async () => {
+      const getConfigPayment = async () => {
          try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/config`);
+            const response = await HttpServices.configPayment();
 
             if (!response.ok) {
-               return setMessages(['Failed to fetch config']);
+               setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
             }
 
-            const { publishableKey, prices } = await response.json();
+            const { data } = await response.json();
 
-            setStripePromise(loadStripe(publishableKey));
-            setPrice(prices[0]);
+            setStripePromise(loadStripe(data.publishableKey));
+            setPrice(data.prices[0]);
          } catch (error) {
-            return setMessages(['Error fetching Stripe config:', error.message]);
+            setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
          }
       };
-      fetchConfig();
+      getConfigPayment();
    }, [])
 
    if (!stripePromise || !price) {
-      return <Loading />;
+      return <>
+         <Loading />;
+      </>
+   }
+
+   if (error) {
+      return (
+         <>
+            <Head>
+               <title>Error...</title>
+            </Head>
+            <Navbar />
+            <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
+               {error}
+            </div>;
+         </>
+      )
    }
 
    return (
       <>
+         <Head>
+            <title>Suscripción</title>
+         </Head>
          <Navbar />
          <div className="font-comfortaa flex min-h-full flex-col items-center bg-white px-4 md:px-14 lg:px-20 pt-16">
             <main className="w-full max-w-2xl flex flex-col gap-6">
@@ -62,7 +87,9 @@ export default function Payment() {
    );
 }
 
-function CheckoutForm({ price, setIsLoading }) {
+function CheckoutForm({ price, setIsLoading = true, ...props }) {
+   const router = useRouter();
+   const [isDialogOpen, setIsDialogOpen] = useState(false);
    const [messages, setMessages] = useState([]);
 
    // Datos del cliente
@@ -97,13 +124,7 @@ function CheckoutForm({ price, setIsLoading }) {
    const getCustomer = async () => {
       if (customer_id) return customer_id;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/customer/create`, {
-         method: 'post',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ email }),
-      });
+      const response = await HttpServices.createCustomer({ email });
 
       if (!response.ok) {
          return setMessages(['Falló al obtener el cliente']);
@@ -118,16 +139,10 @@ function CheckoutForm({ price, setIsLoading }) {
    const getSubscription = async (customerId) => {
       if (client_secret) return client_secret;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/subscription/create`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ price: price.id, customer: customerId }),
-      });
+      const response = await HttpServices.createSubscription({ price, customerId });
 
       if (!response.ok) {
-         return setMessages(['Failed to fetch subscription']);
+         return setMessages(['Failed to create subscription']);
       }
 
       const { clientSecret } = await response.json();
@@ -176,6 +191,7 @@ function CheckoutForm({ price, setIsLoading }) {
          if (error) { // 
             setMessages([`Payment failed: ${error.message}`]);
          } else {
+            setIsDialogOpen(true)
             setMessages(['Payment successful! Se supone aquí debe mandar un modal y redireccionar al dashboard']);
 
             setName('')
@@ -187,6 +203,10 @@ function CheckoutForm({ price, setIsLoading }) {
 
             setCustomerId(null)
             setClientSecret(null)
+
+            setTimeout(() => {
+               router.push(`/`);
+            }, 5000);
          }
 
       } catch (error) {
@@ -324,6 +344,16 @@ function CheckoutForm({ price, setIsLoading }) {
                </Button>
             </div>
          </form>
+
+         <div className="flex justify-end items-center w-full">
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+               <AlertDialogTrigger asChild>
+               </AlertDialogTrigger>
+               <AlertDialogContent>
+                  <p>Págo exitoso</p>
+               </AlertDialogContent>
+            </AlertDialog>
+         </div>
       </div>
    );
 }
