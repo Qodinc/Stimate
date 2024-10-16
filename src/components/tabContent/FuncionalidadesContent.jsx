@@ -96,6 +96,7 @@ const FuncionalidadesContent = () => {
 
   const [cardData, setCardData] = useState(funcionalidad.map((func, index) => ({id: index + 1, ...func,})));
 
+  // TODO: Debe obtener la información del componente Equipo de Trabajo 
   const handleAddCard = () => {
     const newCardData = {
       id: cardData.length + 1,

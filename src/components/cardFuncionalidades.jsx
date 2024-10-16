@@ -7,11 +7,9 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Trash from "./Icons/Trash";
 
-export default function CardFuncionalidades({ cardKey, name, teams, setTeams }) {
+export default function CardFuncionalidades({ cardKey, name, teams }) {
   const [errors, setErrors] = useState({ nombre: "", tipo: "" });
   const [inputValue, setInputValue] = useState(name);
-  const [team, setTeam] = useState(setTeams);
-  const [sum, setSum] = useState(0);
 
   const handleRemoveCard = (cardKey) => {
     const card = document.getElementById(cardKey);
@@ -27,9 +25,7 @@ export default function CardFuncionalidades({ cardKey, name, teams, setTeams }) 
 
         if (!isNaN(monto) && monto >= 0) {
             setErrors((prev) => ({ ...prev, [`team${index}`]: "" }));  
-            newTeams[index].time = monto;  
-            setTeam(newTeams); 
-            setSum(calculate(newTeams));
+            newTeams[index].time = monto;
         } else {
             setErrors((prev) => ({ ...prev, [`team${index}`]: "El monto debe ser mayor a 0" }));
         }
@@ -50,7 +46,7 @@ export default function CardFuncionalidades({ cardKey, name, teams, setTeams }) 
   };
 
   function calculate(teams) {
-    return teams.reduce((total, team) => total + (parseFloat(team.time) || 0), 0);
+    return teams.reduce((total, team) => total + (parseFloat(team.time) || 0), 0).toFixed(2);
   }
 
   return (
@@ -81,7 +77,7 @@ export default function CardFuncionalidades({ cardKey, name, teams, setTeams }) 
               placeholder="Agregar horas"
               iconPosition="left"
               type="number"
-              value={team.time}
+              value={team.time.toFixed(2)}
               icon={<Timer width={24} />}
               min={0}
               step={0.01}
