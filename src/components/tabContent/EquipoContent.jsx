@@ -9,41 +9,8 @@ import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-const EquipoContent = () => {
-  const funcionalidades = [
-    {
-      team: "Analista",
-      hourly_rate: 65.63,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Diseñador gráfico",
-      hourly_rate: 60.16,
-      work_hours_per_day: 4,
-    },
-    {
-      team: "Frontend JS Junior (Gloria)",
-      hourly_rate: 63.75,
-      work_hours_per_day: 5,
-    },
-    {
-      team: "Frontend JS Junior (Iván)",
-      hourly_rate: 63.75,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Backend JS Junior (Pedro)",
-      hourly_rate: 75,
-      work_hours_per_day: 3,
-    },
-    {
-      team: "Backend JS Junior (Berenice)",
-      hourly_rate: 75,
-      work_hours_per_day: 5,
-    },
-  ];
-
-  const [cardData, setCardData] = useState(funcionalidades);
+const EquipoContent = ({ teamProject, setTeamProject }) => {
+  const [cardData, setCardData] = useState(teamProject);
 
   const handleAddCard = () => {
     const newCardData = {
@@ -77,10 +44,10 @@ const EquipoContent = () => {
           {cardData.map((cardData, index) => (
             <Card
               size="lg"
-              className="grid grid-cols-2 p-2 justify-items-center sm:grid-cols-3 lg:grid-cols-6 lg:h-36 shadow-lg"
+              className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
               key={index}
             >
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="w-full">
                 <span className="font-comfortaa text-base">
                   Nombre del área
                 </span>
@@ -93,7 +60,7 @@ const EquipoContent = () => {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="w-full">
                 <span className="font-comfortaa text-base">
                   Sueldo por hora
                 </span>
@@ -107,7 +74,7 @@ const EquipoContent = () => {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="w-full">
                 <span className="font-comfortaa text-base">Sueldo por mes</span>
                 <Input
                   placeholder="Agregar sueldo"
@@ -119,7 +86,7 @@ const EquipoContent = () => {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="w-full">
                 <span className="font-comfortaa text-base">Horas al día</span>
                 <Input
                   placeholder="Agregar horas"
@@ -131,7 +98,7 @@ const EquipoContent = () => {
                   onChange={(event) => handleInputChange(event, index)}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px] ">
+              <div className="w-full">
                 <span className="font-comfortaa  md:text-base text-[15px]">
                   Horas a la semana
                 </span>
@@ -145,7 +112,7 @@ const EquipoContent = () => {
                   value={cardData.work_hours_per_day * 5}
                 />
               </div>
-              <div className="sm:w-[200px] lg:h-12 m-2 w-[155px]">
+              <div className="w-full">
                 <span className="font-comfortaa text-base">Horas al mes</span>
                 <Input
                   placeholder="0"
@@ -157,7 +124,7 @@ const EquipoContent = () => {
                 />
               </div>
 
-              <div className="col-start-2 mt-3 sm:col-start-3 lg:col-start-6 ml-6">
+              <div className="mt-5 sm:col-start-3 ml-6 absolute bottom-2 right-2">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button>

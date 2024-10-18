@@ -47,10 +47,12 @@ export default function Input({
         `}
         min={props.min}
         max={props.max}
+        maxLength={props.maxLength}
         step={props.step}
         onChange={handleInputChange}
         disabled={disabled}
         id={props.id}
+        required={props.required}
       />
   
       {iconPosition === 'left' && (

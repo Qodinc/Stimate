@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import HttpServices, { getProyects } from "../lib/http-services"
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -6,25 +7,10 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import PlusCircle from "@/components/Icons/PlusCircle";
 import MenuButton from "@/components/ui/menu-button";
-
-
-const proyects = [
-  {
-    "slug": "cuponera-digital-EUGAzT",
-    "name_project": "Cuponera Digital",
-    "status_project": "pending",
-  },
-  {
-    "slug": "ecommerce-zDxDUe",
-    "name_project": "Ecommerce",
-    "status_project": "completed",
-  },
-  {
-    "slug": "transporte-logistica-lS9teZ",
-    "name_project": "Transporte Logística",
-    "status_project": "canceled",
-  }
-];
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Delete } from "@/components/alerts-variants";
+import Loading from '@/components/Loading';
+import Head from 'next/head';
 
 const project_status = [
   {
@@ -61,7 +47,6 @@ const project_status = [
   }
 ];
 
-
 const getStatusColor = (status) => {
   const statusObj = project_status.find(s => s.code.toLowerCase() === status.toLowerCase());
   return statusObj ? statusObj.color : '#000000';
@@ -72,20 +57,54 @@ const getStatusTranslation = (status) => {
   return statusObj ? statusObj.translations.es : status;
 };
 
-
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
+  const [proyectos, setProyectos] = useState([]);
+
+  useEffect(() => {
+    getProyects()
+  }, [])
+
+  const getProyects = async () => {
+    try {
+      setIsLoading(true);
+      const response = await HttpServices.getProyects();
+      if (!response.ok) {
+        throw new Error('Failed to get project');
+      }
+      const { data } = await response.json();
+      setProyectos(data.projects);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = (slug) => {
-    router.push(`/editar/${slug}`)
+    router.push(`/editar/${slug}`);
   };
 
   const handleDelete = (slug) => {
-    // Implementar lógica de eliminación
+    // TODO: Función deleted con fetch
+    const updatedProjects = proyectos.filter(proyecto => proyecto.slug !== slug);
+    setProyectos(updatedProjects);
+    setIsDialogOpen(false);
   };
+
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
+      <Head>
+        <title>Inicio</title>
+      </Head>
       <Navbar />
       <div className="ml-9 mt-7 space-y-3">
         <h1 className="text-accent font-poppins font-semibold text-2xl">Mis Proyectos</h1>
@@ -97,10 +116,10 @@ export default function Home() {
         </Link>
       </div>
       <div className="p-4 space-y-4 md:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
-        {proyects.map((project) => {
+        {proyectos.map((project) => {
           const borderColor = getStatusColor(project.status_project);
           const statusTranslation = getStatusTranslation(project.status_project);
-          
+
           return (
             <Card key={project.slug} className="border-2 font-comfortaa" style={{ borderColor }}>
               <CardHeader>
@@ -116,7 +135,7 @@ export default function Home() {
                   <div>
                     <MenuButton 
                       onEdit={() => handleEdit(project.slug)}
-                      onDelete={() => handleDelete(project.slug)}
+                      onDelete={() => { setIsDialogOpen(true); setProyecto(project); }}
                     />
                   </div>
                 </div>
@@ -127,6 +146,14 @@ export default function Home() {
             </Card>
           );
         })}
+
+        <div className="flex justify-end items-center w-full">
+          <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <AlertDialogTrigger asChild>
+            </AlertDialogTrigger>
+            <Delete elemento={`Proyecto ${proyecto.name_project}`} onClick={() => handleDelete(proyecto.slug)} />
+          </AlertDialog>
+        </div>
       </div>
     </>
   );
