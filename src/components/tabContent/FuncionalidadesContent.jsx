@@ -3,35 +3,30 @@ import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 import CardFuncionalidades from "../cardFuncionalidades";
 
-const FuncionalidadesContent = ({ featuresProject, setFeaturesProject }) => {
-  const [cardData, setCardData] = useState(featuresProject);
+const FuncionalidadesContent = ({ features_project, team_project, onUpdateFeaturesProject }) => {
+  // TODO: Debe obtener la información del componente Equipo de Trabajo   
 
-  // TODO: Debe obtener la información del componente Equipo de Trabajo 
-  const handleAddCard = () => {
-    const newCardData = {
-      id: cardData.length + 1,
-      feature: "",
-      team_feature: [
-        { team: "Analista", time: 0 },
-        { team: "Diseñador gráfico", time: 0 },
-        { team: "Frontend JS Junior", time: 0 },
-        { team: "Frontend JS Junior", time: 0 },
-        { team: "Backend JS Junior", time: 0 },
-        { team: "Backend JS Junior", time: 0 },
-      ],
-    };
-    setCardData([...cardData, newCardData]);
-  };
+  const handleChangeFeaturesProject = (event, index) => {
+    // onUpdateFeaturesProject
+  }
+
+  const handleAddFeaturesProject = () => {
+    // onUpdateFeaturesProject
+  }
+
+  const handleRemoveFeaturesProject = (index) => {
+    // onUpdateFeaturesProject
+  }
   return (
     <section>
       <div className="flex flex-col gap-5 py-5">
-        {cardData.map((funcionalidad, index) => (
+        {features_project.map((funcionalidad, index) => (
           <CardFuncionalidades key={index} cardKey={funcionalidad.id} feature={funcionalidad.feature} teams={funcionalidad.team_feature} />
         ))}
       </div>
 
       <div className="">
-        <Button onClick={handleAddCard}>
+        <Button onClick={handleChangeFeaturesProject}>
           <Plus width={24} stroke="white" />
           Agregar funcionalidad
         </Button>

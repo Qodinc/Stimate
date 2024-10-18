@@ -60,14 +60,27 @@ export default function TabsPages() {
 
   }, [estimatedCost])
 
-  
+
+  const updateTeamProject = (teamProject) => {
+    setProject((prevProject) => ({
+      ...prevProject,
+      team_project: teamProject,
+    }));
+  }
+
+  const updateFeaturesProject = (featuresProject) => {
+    setProject((prevProject) => ({
+      ...prevProject,
+      features_project: featuresProject,
+    }));
+  }
 
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
-        return <EquipoContent teamProject={project.team_project}/>
+        return <EquipoContent team_project={project.team_project} onUpdateTeamProject={updateTeamProject} />
       case "funcionalidades":
-        return <FuncionalidadesContent featuresProject={project.features_project} />
+        return <FuncionalidadesContent features_project={project.features_project} team_project={project.team_project} onUpdateFeaturesProject={updateFeaturesProject} />
       case "gastos":
         return <GastosContent operatingExpenses={project.operating_expenses} />
       case "cargos":
