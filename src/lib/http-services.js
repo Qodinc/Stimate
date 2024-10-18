@@ -58,13 +58,13 @@ class HttpServices {
       });
    }
 
-   cancelSubscription = async ({ price, customerId }) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/create`, {
+   cancelSubscription = async (subscriptionId) => {
+      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/cancel`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
          },
-         body: JSON.stringify({ price: price.id, customer: customerId })
+         body: JSON.stringify({ subscriptionId })
       });
    }
 

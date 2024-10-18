@@ -75,8 +75,8 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Failed to get project');
       }
-      const data = await response.json();
-      setProyectos(data);
+      const { data } = await response.json();
+      setProyectos(data.projects);
     } catch (error) {
       console.error("Error:", error);
     } finally {

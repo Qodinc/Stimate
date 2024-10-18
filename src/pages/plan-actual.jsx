@@ -24,36 +24,49 @@ import { useEffect, useState } from "react"
 import CheckCancel from "@/components/Icons/CheckCancel"
 import Info from "@/components/Icons/info"
 import httpServices from "@/lib/http-services"
+import { useRouter } from "next/router"
 
 export default function PlanActual() {
-  const customer = "cus_R0xn9s2rvsRYxq" // cus_R0xn9s2rvsRYxq:1 cus_R1k54bidHk6zn0:0 cus_R0FB19JAWESla8 cus_R0O8Cy98KgKpPc
+  const router = useRouter();
+  const customer = "cus_R0O8Cy98KgKpPc" // cus_R0xn9s2rvsRYxq:1 cus_R1k54bidHk6zn0:0 cus_R0FB19JAWESla8 cus_R0O8Cy98KgKpPc
   const [misPlanes, setMisPlanes] = useState([])
   const [plan, setPlan] = useState({
     id: null,
     name: ""
   })
   const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
   useEffect(() => {
-    const getPlanes = async () => {
-      const response = await httpServices.getPlanesCustomer({ customer })
-
-      const { data } = await response.json()
-
-      setMisPlanes(data.subscriptions)
-    }
-
     getPlanes()
   }, [])
 
-  const handleCancelSubscription = () => {
-    // TODO: const response = await httpServices.cancelSubscription({plan.id})
-    // !response.ok 
+  const getPlanes = async () => {
+    const response = await httpServices.getPlanesCustomer({ customer })
+
+    const { data } = await response.json()
+
+    setMisPlanes(data.subscriptions)
+  }
+
+  const handleCancelSubscription = async () => {
+    const response = await httpServices.cancelSubscription(plan.id)
+
+    if (!response.ok) {
+      return setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
+    }
+
+    const { data } = await response.json()
 
     setShowCancelDialog(false)
     setShowSuccessDialog(true)
+    getPlanes()
   };
+
+  if (misPlanes && !!!misPlanes.length) {
+    router.push(`/suscripcion`);
+  }
 
   return (
     <>
@@ -124,6 +137,22 @@ export default function PlanActual() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction onClick={() => setShowSuccessDialog(false)} className=" text-sm rounded-lg">Entendido</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <AlertDialogContent className="font-poppins">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="mx-auto">
+              <CheckCancel width={50} height={50} />
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-baseColor text-sm text-center">
+              Tu suscripción ha sido cancelada. Mantendrás acceso a las funciones premium hasta el final de tu período de facturación actual.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowErrorDialog(false)} className=" text-sm rounded-lg">Entendido</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
