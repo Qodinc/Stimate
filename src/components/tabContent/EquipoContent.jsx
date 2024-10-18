@@ -10,7 +10,7 @@ import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const EquipoContent = ({ teamProject, setTeamProject }) => {
-  const [cardData, setCardData] = useState(teamProject);
+  const [team, setTeam] = useState(teamProject);
 
   const handleAddCard = () => {
     const newCardData = {
@@ -19,7 +19,7 @@ const EquipoContent = ({ teamProject, setTeamProject }) => {
       work_hours_per_day: "",
     };
 
-    setCardData([...cardData, newCardData]);
+    // setCardData([...cardData, newCardData]);
   };
 
   const handleRemoveCard = (index) => {
@@ -30,18 +30,61 @@ const EquipoContent = ({ teamProject, setTeamProject }) => {
 
   const handleInputChange = (event, index) => {
     const { name, value } = event.target;
+    const numericValue = parseFloat(value);
     const updatedCardData = [...cardData];
     updatedCardData[index] = {
       ...updatedCardData[index],
       [name]: value,
     };
-    setCardData(updatedCardData);
+    // setCardData(updatedCardData);
+
+    setTeam((prevTeam) => {
+      if (!Array.isArray(prevTeam)) {
+        return [];
+      }
+
+      const updatedAreas = prevTeam.map((area, i) => {
+        if (i === index) {
+          if (name === "hourly_charge") {
+            return {
+              ...area,
+              hourly_charge: value,
+              mouthly_charge: !isNaN(numericValue) ? (numericValue * 160).toFixed(2) : "",
+            };
+          } else if (name === "mouthly_charge") {
+            return {
+              ...area,
+              mouthly_charge: value,
+              hourly_charge: !isNaN(numericValue) ? (numericValue / 160).toFixed(2) : "",
+            };
+          } else if (name === "area") {
+
+            return {
+              ...area,
+              area: {
+                ...area.area,
+                area: value
+              },
+            };
+          } else {
+            return {
+              ...area,
+              [name]: value,
+            };
+          }
+        }
+
+        return area;
+      });
+
+      return updatedAreas;
+    });
   };
 
     return (
       <section>
         <div className="flex flex-col gap-5 py-5">
-          {cardData.map((cardData, index) => (
+          {team.map((cardData, index) => (
             <Card
               size="lg"
               className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
@@ -68,7 +111,7 @@ const EquipoContent = ({ teamProject, setTeamProject }) => {
                   placeholder="Agregar sueldo"
                   iconPosition="left"
                   type="number"
-                  name="hourly_rate"
+                  name="hourly_charge"
                   icon={<Dinero width={24} />}
                   value={cardData.hourly_rate}
                   onChange={(event) => handleInputChange(event, index)}
@@ -80,7 +123,7 @@ const EquipoContent = ({ teamProject, setTeamProject }) => {
                   placeholder="Agregar sueldo"
                   iconPosition="left"
                   type="number"
-                  name="sueldoMes"
+                  name="mouthly_charge"
                   icon={<Dinero width={24} />}
                   value={cardData.sueldoMes}
                   onChange={(event) => handleInputChange(event, index)}
@@ -92,7 +135,7 @@ const EquipoContent = ({ teamProject, setTeamProject }) => {
                   placeholder="Agregar horas"
                   iconPosition="left"
                   type="number"
-                  name="work_hours_per_day"
+                  name="hours_work_per_day"
                   icon={<Timer width={24} />}
                   value={cardData.work_hours_per_day}
                   onChange={(event) => handleInputChange(event, index)}
