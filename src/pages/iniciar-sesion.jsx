@@ -53,10 +53,28 @@ export default function Login() {
         return Object.keys(formErrors).length === 0;
     };
 
-    const handleSubmit = (handle) => {
-        handle.preventDefault();
-        if (validateForm(handle)) {
-            Router.push('/')
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (validateForm()) {
+            try {
+                const result = await signIn('credentials', {
+                    redirect: false,
+                    email,
+                    password,
+                    isSignUp: false,
+                    redirect: false, 
+                });
+    
+                if (result.error) {
+                    console.error("Error al iniciar sesión:", result.error);
+                } else {
+                    Router.push('/'); // Redirigir a la página deseada
+                }
+            } catch (error) {
+                console.error("Error al iniciar sesión:", error);
+            }
+        } else {
+            console.log('Errores en el formulario');
         }
     };
 

@@ -9,7 +9,6 @@ import { useSession } from "next-auth/react";
 const DropdownProfile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
-
   if (!session) {
     return null; // O renderiza un componente de "no autenticado"
   }
@@ -35,7 +34,7 @@ const DropdownProfile = () => {
           className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 shadow-sm  bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <img src={session.user.image} alt={session.user.name} className="w-full h-full rounded-full object-cover"  />
+          <img src={session.user.picture } alt={session.user.name} className="w-full h-full rounded-full object-cover"  />
         </button>
       </div>
 

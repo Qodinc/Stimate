@@ -58,17 +58,80 @@ export default function SignIn() {
         return Object.keys(formErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        
         if (validateForm()) {
-            setIsDialogOpen(true);
+            try {
+                const registerResponse = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, apellido, email, password }),
+                });
+    
+                // Si la respuesta es exitosa, redirige al home
+                if (registerResponse.ok) {
+                    router.push('/');
+                } else {
+                    // En caso de error, muestra el mensaje de error
+                    const errorData = await registerResponse.json();
+                    console.error("Error al crear la cuenta:", errorData.error);
+                }
+            } catch (error) {
+                console.error("Error en el proceso de registro:", error);
+            }
         } else {
             console.log('Errores en el formulario');
         }
     };
 
-    const handleGoogleSignIn = () => {
+
+   /*  const handleGoogleSignIn =  () => {
         signIn('google', { callbackUrl: '/' });
+        console.log(token.user)
+    }; */
+
+    const handleGoogleSignIn = async () => {
+        try {
+            const result = await signIn('google', { callbackUrl: '/', redirect: false });
+            
+            if (result?.error) {
+                console.error('Error en el inicio de sesión con Google:', result.error);
+                return;
+            }
+    
+            // Esperar a que la sesión se actualice
+            await new Promise(resolve => setTimeout(resolve, 1000));
+    
+            // Obtener la sesión actualizada
+            const session = await getSession();
+    
+            if (session?.user) {
+                const response = await fetch('/api/auth/register-google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: session.user.name,
+                        email: session.user.email,
+                        isGoogleAuth: true
+                    })
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Registro con Google exitoso:', data);
+                    // Manejar el éxito
+                } else {
+                    console.error('Error en el registro con Google');
+                    // Manejar el error
+                }
+            } else {
+                console.error('No se pudo obtener la información del usuario después del inicio de sesión');
+            }
+        } catch (error) {
+            console.error('Error en el proceso de inicio de sesión/registro con Google:', error);
+            // Manejar el error
+        }
     };
 
     if (status === "loading") {
@@ -93,7 +156,7 @@ export default function SignIn() {
                     </div>
                     <h1 className="font-bold text-2xl text-accent font-poppins">Crear Cuenta</h1>
                 </div>
-                <form className="flex flex-col gap-1 w-full" action='#' onSubmit={handleSubmit}>
+                <form className="flex flex-col gap-1 w-full"  onSubmit={handleSubmit}>
                     <div className="flex flex-col md:flex-row gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <span>Nombre</span>
