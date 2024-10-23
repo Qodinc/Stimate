@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
@@ -22,9 +22,9 @@ export default function SignIn() {
 
     useEffect(() => {
         if (status === "authenticated") {
-            router.push('/');  // Redirige al index cuando la sesión está autenticada
+            registerResponse();
         }
-    }, [status, router]);
+    }, [status]);
 
     const validateForm = () => {
         let formErrors = {};
@@ -58,6 +58,27 @@ export default function SignIn() {
         return Object.keys(formErrors).length === 0;
     };
 
+    const registerResponse = async () => {
+        try {
+            const registerResponse = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: session.user?.name, apellido, email, password }),
+            });
+
+            // Si la respuesta es exitosa, redirige al home
+            if (registerResponse.ok) {
+                router.push('/');
+            } else {
+                // En caso de error, muestra el mensaje de error
+                const errorData = await registerResponse.json();
+                console.error("Error al crear la cuenta:", errorData.error);
+            }
+        } catch (error) {
+            console.error("Error en el proceso de registro:", error);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -86,52 +107,8 @@ export default function SignIn() {
     };
 
 
-   /*  const handleGoogleSignIn =  () => {
-        signIn('google', { callbackUrl: '/' });
-        console.log(token.user)
-    }; */
-
-    const handleGoogleSignIn = async () => {
-        try {
-            const result = await signIn('google', { callbackUrl: '/', redirect: false });
-            
-            if (result?.error) {
-                console.error('Error en el inicio de sesión con Google:', result.error);
-                return;
-            }
-    
-            // Esperar a que la sesión se actualice
-            await new Promise(resolve => setTimeout(resolve, 1000));
-    
-            // Obtener la sesión actualizada
-            const session = await getSession();
-    
-            if (session?.user) {
-                const response = await fetch('/api/auth/register-google', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: session.user.name,
-                        email: session.user.email,
-                        isGoogleAuth: true
-                    })
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Registro con Google exitoso:', data);
-                    // Manejar el éxito
-                } else {
-                    console.error('Error en el registro con Google');
-                    // Manejar el error
-                }
-            } else {
-                console.error('No se pudo obtener la información del usuario después del inicio de sesión');
-            }
-        } catch (error) {
-            console.error('Error en el proceso de inicio de sesión/registro con Google:', error);
-            // Manejar el error
-        }
+    const handleGoogleSignIn = () => {
+        signIn('google', { redirect: false });
     };
 
     if (status === "loading") {

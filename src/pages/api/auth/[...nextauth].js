@@ -26,6 +26,8 @@ export const authOptions = {
       session.user.id = token.id;
       session.user.email = token.user?.email;  // Usamos token.user.email en lugar de token.email
       session.user.name = token.user?.name;    // Usamos token.user.name en lugar de token.name
+      session.user.picture = token.picture;    // Usamos token.user.name en lugar de token.name 
+      
       return session; // Retornamos explícitamente la sesión
     },
   },
