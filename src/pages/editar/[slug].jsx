@@ -37,8 +37,8 @@ export default function TabsPages() {
         if (!response.ok) {
           throw new Error('Failed to fetch project');
         }
-        const data = await response.json();
-        setProject(data);
+        const {data} = await response.json();
+        setProject(data.project);
       } catch (error) {
         console.error("Error fetching project:", error);
         // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario

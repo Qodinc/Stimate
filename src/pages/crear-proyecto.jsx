@@ -38,20 +38,20 @@ export default function NewProject() {
 
    const submitProject = async () => {
       if (isFormValid) {
-         const data = {
+         const dataProject = {
             name_project: projectName,
             areas_selected: areasSelected
          };
 
-         const response = await httpServices.createProyect(data);
+         const response = await httpServices.createProyect(dataProject);
          if (!response.ok) {
             throw new Error(
                "Ocurrió un error al realizar la solicitud: " + response.status
             );
          }
 
-         const data_context = await response.json();
-         Router.push('/editar/' + data_context.slug)
+         const {data} = await response.json(); 
+         Router.push('/editar/' + data.project.slug);
       }
    }
 
