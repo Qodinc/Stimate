@@ -88,11 +88,22 @@ export default function Home() {
     router.push(`/editar/${slug}`);
   };
 
-  const handleDelete = (slug) => {
-    // TODO: Función deleted con fetch
-    const updatedProjects = proyectos.filter(proyecto => proyecto.slug !== slug);
-    setProyectos(updatedProjects);
-    setIsDialogOpen(false);
+  const handleDelete = async (slug) => {
+    try {
+      setIsLoading(true);
+      const responseDelete = await HttpServices.deleteProyect(slug);
+      if (!responseDelete.ok) {
+        throw new Error(
+          "Ocurrió un error al realizar la solicitud: " + response.status
+        );
+      }
+      getProyects();
+
+    } catch (error) {
+      console.error("Error:", error);
+    } finally{
+      setIsLoading(false);
+    }
   };
 
 

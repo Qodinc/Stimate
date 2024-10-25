@@ -1,83 +1,100 @@
-require('dotenv').config()
+require("dotenv").config();
 
 class HttpServices {
-   // ### Project_status
+  // ### Project_status
 
-   // ### Areas
+  // ### Areas
 
-   // ### Types_recurrent
+  // ### Types_recurrent
 
-   // ### Users 
+  // ### Users
 
-   // ### Projects
+  // ### Projects
 
-   createProyect = async ({ name_project, areas_selected }) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({ name_project, areas_selected })
-      });
-   }
+  createProyect = async ({ name_project, areas_selected }) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name_project, areas_selected }),
+    });
+  };
 
-   getProyects = async () => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`);
-   }
+  getProyects = async () => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`);
+  };
 
-   getProyect = async (slug) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
-   }
+  getProyect = async (slug) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
+  };
 
-   // ### Payments ###
-   /**
-    * 
-    * @returns 
-    */
-   configPayment = async () => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/config`);
-   }
+  deleteProyect = async (slug) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
+      method: "DELETE",
+    });
+  };
 
-   createCustomer = async ({ email }) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/customer/create`, {
-         method: 'post',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ email })
-      });
-   }
+  // ### Payments ###
+  /**
+   *
+   * @returns
+   */
+  configPayment = async () => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/config`);
+  };
 
-   createSubscription = async ({ price, customerId }) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/create`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ price: price.id, customer: customerId })
-      });
-   }
+  createCustomer = async ({ email }) => {
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_END_POINT}/payment/customer/create`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+  };
 
-   cancelSubscription = async (subscriptionId) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/cancel`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ subscriptionId })
-      });
-   }
+  createSubscription = async ({ price, customerId }) => {
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ price: price.id, customer: customerId }),
+      }
+    );
+  };
 
-   getPlanesCustomer = async ({ customer }) => {
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/subscriptions/customer`, {
-         method: 'post',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ customer })
-      });
-   }
+  cancelSubscription = async (subscriptionId) => {
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/cancel`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ subscriptionId }),
+      }
+    );
+  };
 
+  getPlanesCustomer = async ({ customer }) => {
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscriptions/customer`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ customer }),
+      }
+    );
+  };
 }
 
-module.exports = new HttpServices()
+module.exports = new HttpServices();
