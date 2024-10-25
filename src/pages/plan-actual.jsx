@@ -25,11 +25,12 @@ import CheckCancel from "@/components/Icons/CheckCancel"
 import Info from "@/components/Icons/info"
 import httpServices from "@/lib/http-services"
 import { useRouter } from "next/router"
+import Head from "next/head"
 
 export default function PlanActual() {
   const router = useRouter();
-  const customer = "cus_R0O8Cy98KgKpPc" // cus_R0xn9s2rvsRYxq:1 cus_R1k54bidHk6zn0:0 cus_R0FB19JAWESla8 cus_R0O8Cy98KgKpPc
-  const [misPlanes, setMisPlanes] = useState([])
+  const customer = "cus_R0FB19JAWESla8" // cus_R0xn9s2rvsRYxq:1 cus_R1k54bidHk6zn0:0 cus_R0FB19JAWESla8 cus_R0O8Cy98KgKpPc
+  const [misPlanes, setMisPlanes] = useState(null)
   const [plan, setPlan] = useState({
     id: null,
     name: ""
@@ -64,49 +65,67 @@ export default function PlanActual() {
     getPlanes()
   };
 
-  if (misPlanes && !!!misPlanes.length) {
-    router.push(`/suscripcion`);
+  // if (misPlanes && !!!misPlanes.length) {
+  //   router.push(`/suscripcion`);
+  // }
+
+  const unsubscription = () => {
+    return (
+      <div className="flex flex-col items-center">
+        <p className="text-xl text-center my-5">Actualmente, no cuentas con un plan de suscripción</p>
+        <Button onClick={() => { router.push(`/suscripcion`) }}>
+          Suscribirse
+        </Button>
+      </div>
+    )
   }
 
   return (
     <>
+      <Head>
+        <title>Plan Actual</title>
+      </Head>
       <Navbar />
-      <Link href={"/"}>
-        <Button className="m-5 font-poppins"><ReturnDash width={25} height={25} stroke="#FFFFFF" /> Volver al dashboard</Button>
-      </Link>
+      <div className="font-comfortaa flex min-h-full flex-col bg-white px-4 md:px-14 lg:px-20 pt-8">
+        <Link href={"/"}>
+          <Button className="font-poppins"><ReturnDash width={25} height={25} stroke="#FFFFFF" /> Volver al dashboard</Button>
+        </Link>
 
-      {misPlanes && misPlanes.map((miPlan, index) => {
-        const fecha = new Date(miPlan.current_period_end * 1000)
-        const opciones = {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        };
-        const userLocale = navigator.language;
-        const proximoCorte = fecha.toLocaleString(userLocale, opciones)
-        return (
-          <Card key={index} className="font-poppins text-baseColor flex flex-col max-sm:items-center rounded-3xl pt-4 pb-4 mt-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-t-transparent">
-            <CardHeader>
-              <CardTitle>Tu Suscripción</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Gestiona tu plan de suscripción</p>
-            </CardContent>
-            <CardContent>
-              <p>Tu plan actual: {miPlan.plan.product.name}</p>
-            </CardContent>
-            <CardContent>
-              <p>Proximo corte: {proximoCorte}</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => { setPlan(miPlan); setShowCancelDialog(true) }}>
-                <Trash width={25} height={25} stroke="#FFFFFF" />
-                Cancelar Suscripción
-              </Button>
-            </CardFooter>
-          </Card>
-        )
-      })}
+        {misPlanes && misPlanes.map((miPlan, index) => {
+          const fecha = new Date(miPlan.current_period_end * 1000)
+          const opciones = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          };
+          const userLocale = navigator.language;
+          const proximoCorte = fecha.toLocaleString(userLocale, opciones)
+          return (
+            <Card key={index} className="font-poppins text-baseColor flex flex-col max-sm:items-center rounded-3xl pt-4 pb-4 mt-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-t-transparent">
+              <CardHeader>
+                <CardTitle>Tu Suscripción</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Gestiona tu plan de suscripción</p>
+              </CardContent>
+              <CardContent>
+                <p>Tu plan actual: {miPlan.plan.product.name}</p>
+              </CardContent>
+              <CardContent>
+                <p>Proximo corte: {proximoCorte}</p>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={() => { setPlan(miPlan); setShowCancelDialog(true) }}>
+                  <Trash width={25} height={25} stroke="#FFFFFF" />
+                  Cancelar Suscripción
+                </Button>
+              </CardFooter>
+            </Card>
+          )
+        })}
+
+        {misPlanes && !!!misPlanes.length && unsubscription()}
+      </div>
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent className="font-poppins">

@@ -11,6 +11,7 @@ import Loading from "@/components/Loading";
 import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
 import httpServices from "@/lib/http-services";
+import Save from "@/components/Icons/Save";
 
 export default function TabsPages() {
   const router = useRouter();
@@ -37,8 +38,9 @@ export default function TabsPages() {
         if (!response.ok) {
           throw new Error('Failed to fetch project');
         }
-        const {data} = await response.json();
-        setProject(data.project);
+        const { data } = await response.json();
+        if (data.project)
+          setProject(data.project);
       } catch (error) {
         console.error("Error fetching project:", error);
         // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
@@ -86,10 +88,15 @@ export default function TabsPages() {
       case "cargos":
         return <CargosContent associatedCost={project.associated_costs} />
       case "preview":
-        return <Preview project={project}/>
+        return <Preview project={project} />
       default:
         return null
     }
+  }
+
+  const saveProject = () => {
+    // TODO: Intentar actualizar a la base de datos 
+    console.log(project);
   }
 
   if (isLoading) {
@@ -117,6 +124,10 @@ export default function TabsPages() {
       </Head>
       <Navbar />
       <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
+        <div className="flex items-center" onClick={() => saveProject()}>
+          <Save width={24} />
+          <span className="hidden md:block text-base ml-2">Guardar</span>
+        </div>
         <h2>Nombre del proyecto: <strong>{project.name_project}</strong></h2>
         <h2>Tiempo estimado: <strong>{estimatedTime} meses</strong></h2>
         <h2>Costo estimado: <strong>${estimatedCost}</strong></h2>

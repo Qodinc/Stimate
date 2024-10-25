@@ -17,6 +17,7 @@ import Loading from "@/components/Loading";
 import Head from "next/head";
 import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { AlertDialogContent } from "@/components/ui/alert-dialog";
+import PaymentSuccessful from "@/components/Icons/PaymentSuccessful";
 
 export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
@@ -26,6 +27,7 @@ export default function Payment() {
    useEffect(() => {
       const getConfigPayment = async () => {
          try {
+            // validar si el usuario ya cuenta con un pago
             const response = await HttpServices.configPayment();
 
             if (!response.ok) {
@@ -130,9 +132,9 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
          return setMessages(['Falló al obtener el cliente']);
       }
 
-      const data = await response.json();
-      setCustomerId(data.id);
-      return data.id;
+      const { data } = await response.json();
+      setCustomerId(data.customer.id);
+      return data.customer.id;
    }
 
    // Obtener Suscripción
@@ -145,9 +147,9 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
          return setMessages(['Failed to create subscription']);
       }
 
-      const { clientSecret } = await response.json();
-      setClientSecret(clientSecret);
-      return clientSecret;
+      const { data } = await response.json();
+      setClientSecret(data.clientSecret);
+      return data.clientSecret;
    }
 
    const handleSubmit = async (e) => {
@@ -192,7 +194,7 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
             setMessages([`Payment failed: ${error.message}`]);
          } else {
             setIsDialogOpen(true)
-            setMessages(['Payment successful! Se supone aquí debe mandar un modal y redireccionar al dashboard']);
+            setMessages(['Payment successful!']);
 
             setName('')
             setEmail('')
@@ -205,8 +207,10 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
             setClientSecret(null)
 
             setTimeout(() => {
-               router.push(`/`);
-            }, 5000);
+               // TODO: si el usuario tiene proyectos, entonces ir al dashboard
+               // si no, ir a crear-proyecto
+               router.push(`/crear-proyecto`);
+            }, 3000);
          }
 
       } catch (error) {
@@ -350,7 +354,10 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
                <AlertDialogTrigger asChild>
                </AlertDialogTrigger>
                <AlertDialogContent>
-                  <p>Págo exitoso</p>
+                  <div className="flex flex-col items-center">
+                     <PaymentSuccessful width={325} height={325}/>
+                     <p className="font-comfortaa font-bold text-lg text-accent">Págo exitoso</p>
+                  </div>
                </AlertDialogContent>
             </AlertDialog>
          </div>
