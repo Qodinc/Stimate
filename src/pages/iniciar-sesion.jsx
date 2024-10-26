@@ -6,25 +6,49 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
 import LogoStimate from "@/components/Icons/LogoStimate";
-import Router from "next/router";
+
 
 
 export default function Login() {
-
+    const [formData, setFormData] = useState({
+        email:'',
+        password: '',
+    })
     const { data: session, status } = useSession();
     const router = useRouter()
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+/*     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState(''); */
     const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-        if (status === "authenticated") {
-            router.push('/');  // Redirige al index cuando la sesión está autenticada
-        }
-    }, [status, router]);
+    
 
     const handleGoogleSignIn = () => {
         signIn('google', { callbackUrl: '/' });
+    };
+
+    // Handler para login con credenciales
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (validateForm()) {
+            try {
+                const result = await signIn('credentials', {
+                    email: formData.email,
+                    password: formData.password,
+                    redirect: false,
+                });
+
+                if (result.error) {
+                    console.error('Error de autenticación:', result.error);
+                } else {
+                    router.push('/dashboard');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        } else {
+            console.log('Errores en el formulario');
+        }
     };
 
     if (status === "loading") {
@@ -32,20 +56,21 @@ export default function Login() {
     }
 
     if (status === "authenticated") {
+        router.push('/');
         return null;
     }
 
     const validateForm = () => {
-        console.log('Validando formulario...');
         let formErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email) {
+
+        if (!formData.email) {
             formErrors.email = "El correo electrónico es obligatorio";
-        } else if (!emailRegex.test(email)) {
+        } else if (!emailRegex.test(formData.email)) {
             formErrors.email = "El formato del correo no es válido";
         }
 
-        if (!password) {
+        if (!formData.password) {
             formErrors.password = "La contraseña es obligatoria";
         }
 
@@ -53,11 +78,11 @@ export default function Login() {
         return Object.keys(formErrors).length === 0;
     };
 
-    const handleSubmit = async (e) => {
+    /* const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const result = await signIn('credentials', {
+                const result = ('credentials', {
                     redirect: false,
                     email,
                     password,
@@ -76,7 +101,7 @@ export default function Login() {
         } else {
             console.log('Errores en el formulario');
         }
-    };
+    }; */
 
     return (
         <div className="flex w-full min-h-screen md:relative justify-center items-center">
@@ -95,8 +120,8 @@ export default function Login() {
                         <span>Correo Electrónico</span>
                         <div className="flex flex-col gap-1">
                             <Input placeholder="Correo Electrónico" 
-                                value={email}
-                                onChange={(handle) => setEmail(handle.target.value)}
+                                value={formData.email}
+                                onChange={(e) => setFormData({...formData, email: e.target.value})}
                                 className={`border ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.email && <p className="text-[#C03744] text-xs">*{errors.email}</p>}
@@ -106,8 +131,8 @@ export default function Login() {
                         <span>Contraseña</span>
                         <div className="flex flex-col gap-1">
                             <Input placeholder="Contraseña" type='password' icon="Icons/icon-eye-off.svg" iconPosition="right" 
-                                value={password}
-                                onChange={(handle) => setPassword(handle.target.value)}
+                                value={formData.password}
+                                onChange={(e) => setFormData({...formData, password: e.target.value})}
                                 className={`border ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.password && <p className="text-[#C03744] text-xs">*{errors.password}</p>}

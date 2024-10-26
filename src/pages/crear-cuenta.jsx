@@ -8,6 +8,7 @@ import LogoStimate from '@/components/Icons/LogoStimate';
 import Link from 'next/link';
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Correo } from '@/components/alerts-variants';
+import { registerUser } from '@/utils/auth';
 
 export default function SignIn() {
     const { data: session, status } = useSession();
@@ -18,66 +19,80 @@ export default function SignIn() {
     const [password, setPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({
+        nombre: '',
+        apellido: '',
+        email: '',
+        password: '',
+      });
 
-    useEffect(() => {
-        if (status === "authenticated") {
-            registerResponse();
-        }
-    }, [status]);
-
-    const validateForm = () => {
+      const validateForm = () => {
         let formErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!nombre) {
-            formErrors.nombre = "El nombre es obligatorio";
+    
+        if (!formData.nombre) {
+          formErrors.nombre = "El nombre es obligatorio";
         }
-
-        if (!apellido) {
-            formErrors.apellido = "El apellido es obligatorio";
+    
+        if (!formData.apellido) {
+          formErrors.apellido = "El apellido es obligatorio";
         }
-
-        if (!email) {
-            formErrors.email = "El correo electrónico es obligatorio";
-        } else if (!emailRegex.test(email)) {
-            formErrors.email = "El formato del correo no es válido";
+    
+        if (!formData.email) {
+          formErrors.email = "El correo electrónico es obligatorio";
+        } else if (!emailRegex.test(formData.email)) {
+          formErrors.email = "El formato del correo no es válido";
         }
-
-        if (!password) {
-            formErrors.password = "La contraseña es obligatoria";
-        } else if (password.length < 6) {
-            formErrors.password = "La contraseña debe tener al menos 6 caracteres";
+    
+        if (!formData.password) {
+          formErrors.password = "La contraseña es obligatoria";
+        } else if (formData.password.length < 6) {
+          formErrors.password = "La contraseña debe tener al menos 6 caracteres";
         }
-
+    
         if (!termsAccepted) {
-            formErrors.termsAccepted = "Debes aceptar los términos y condiciones";
+          formErrors.termsAccepted = "Debes aceptar los términos y condiciones";
         }
-
+    
         setErrors(formErrors);
         return Object.keys(formErrors).length === 0;
-    };
+      };
 
-    const registerResponse = async () => {
+    
+    /* useEffect(() => {
+        if (status === "authenticated" && !loading) {
+            registerResponse();
+        }
+    }, [status]); */
+      
+    /* const registerResponse = async () => {
+        setLoading(true);
         try {
-            const registerResponse = await fetch('/api/auth/register', {
+            console.log("Datos de sesión:", session.user); // Añade este log
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre: session.user?.name, apellido, email, password }),
+                body: JSON.stringify({ 
+                    name: session.user?.name, 
+                    email: session.user?.email,
+                    isGoogleAuth: true
+                }),
             });
 
-            // Si la respuesta es exitosa, redirige al home
-            if (registerResponse.ok) {
+            if (response.ok) {
                 router.push('/');
             } else {
-                // En caso de error, muestra el mensaje de error
-                const errorData = await registerResponse.json();
-                console.error("Error al crear la cuenta:", errorData.error);
+                console.error("Error al crear la cuenta");
             }
         } catch (error) {
             console.error("Error en el proceso de registro:", error);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -104,7 +119,47 @@ export default function SignIn() {
         } else {
             console.log('Errores en el formulario');
         }
-    };
+    }; */
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        if (!validateForm()) {
+            setIsLoading(false);
+            return;
+          }
+        
+        try {
+           // Combinamos nombre y apellido antes de enviar
+           const userData = {
+            name: `${formData.nombre} ${formData.apellido}`.trim(), // El trim() elimina espacios extras
+            email: formData.email,
+            password: formData.password
+          };
+            
+          // 1. Primero registramos al usuario
+          const user = await registerUser(userData);
+          
+          // 2. Si el registro es exitoso, hacemos login automáticamente
+          const result = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+          });
+    
+          if (result.error) {
+            // Manejar error de login
+            console.error('Error al iniciar sesión:', result.error);
+          } else {
+            // Redirigir al usuario a la página deseada
+            router.push('/');
+          }
+        } catch (error) {
+          // Manejar error de registro
+          console.error('Error en el registro:', error.message);
+        }
+      };
 
 
     const handleGoogleSignIn = () => {
@@ -139,9 +194,8 @@ export default function SignIn() {
                             <span>Nombre</span>
                             <Input
                                 placeholder="Nombre"
-                                name="nombre"
-                                value={nombre}
-                                onChange={(handle) => setNombre(handle.target.value)}
+                                value={formData.nombre}
+                                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
                                 className={`border ${errors.nombre ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre}</p>}
@@ -151,8 +205,8 @@ export default function SignIn() {
                             <Input
                                 placeholder="Apellido"
                                 name="apellido"
-                                value={apellido}
-                                onChange={(handle) => setApellido(handle.target.value)}
+                                value={formData.apellido}
+                                onChange={(e) => setFormData({...formData, apellido: e.target.value})}
                                 className={`border ${errors.apellido ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.apellido && <p className="text-red-500 text-xs">{errors.apellido}</p>}
@@ -163,8 +217,8 @@ export default function SignIn() {
                         <Input
                             placeholder="Correo Electrónico"
                             name="email"
-                            value={email}
-                            onChange={(handle) => setEmail(handle.target.value)}
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
                             className={`border ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                         />
                         {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
@@ -176,8 +230,8 @@ export default function SignIn() {
                                 placeholder="Contraseña"
                                 type="password"
                                 name="password"
-                                value={password}
-                                onChange={(handle) => setPassword(handle.target.value)}
+                                value={formData.password}
+                                onChange={(e) => setFormData({...formData, password: e.target.value})}
                                 className={`border ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
@@ -185,13 +239,13 @@ export default function SignIn() {
                     </div>
                     <div className="flex gap-2 items-center">
                         <Input
-                            id="accept"
+                            id="terms"
                             type="checkbox"
                             name="termsAccepted"
                             checked={termsAccepted}
-                            onChange={(handle) => setTermsAccepted(handle.target.checked)}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
                         />
-                        <label for="accept">Acepto los términos y condiciones</label>
+                        <label for="terms">Acepto los términos y condiciones</label>
                     </div>
                     {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}
                     <div className="flex flex-col justify-center items-center py-8">
@@ -200,7 +254,7 @@ export default function SignIn() {
                         </AlertDialogTrigger>
                         <Correo />
                     </AlertDialog>
-                        <Button type="submit" variant="default" size="default">Crear Cuenta</Button>
+                        <Button type="submit" disabled={isLoading} variant="default" size="default">{isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}</Button>
                         <div className="flex w-full p-4 justify-end items-center">
                             <Link href={"/iniciar-sesion"} className="text-accent">¿Ya tienes una cuenta?</Link>
                         </div>
