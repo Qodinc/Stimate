@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getSession, signIn, useSession } from 'next-auth/react';
+import { useState} from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,9 @@ import { Correo } from '@/components/alerts-variants';
 import { registerUser } from '@/utils/auth';
 
 export default function SignIn() {
-    const { data: session, status } = useSession();
     const router = useRouter()
-    const [nombre, setNombre] = useState('');
-    const [apellido, setApellido] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
@@ -61,66 +55,6 @@ export default function SignIn() {
         return Object.keys(formErrors).length === 0;
       };
 
-    
-    /* useEffect(() => {
-        if (status === "authenticated" && !loading) {
-            registerResponse();
-        }
-    }, [status]); */
-      
-    /* const registerResponse = async () => {
-        setLoading(true);
-        try {
-            console.log("Datos de sesión:", session.user); // Añade este log
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    name: session.user?.name, 
-                    email: session.user?.email,
-                    isGoogleAuth: true
-                }),
-            });
-
-            if (response.ok) {
-                router.push('/');
-            } else {
-                console.error("Error al crear la cuenta");
-            }
-        } catch (error) {
-            console.error("Error en el proceso de registro:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (validateForm()) {
-            try {
-                const registerResponse = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, apellido, email, password }),
-                });
-    
-                // Si la respuesta es exitosa, redirige al home
-                if (registerResponse.ok) {
-                    router.push('/');
-                } else {
-                    // En caso de error, muestra el mensaje de error
-                    const errorData = await registerResponse.json();
-                    console.error("Error al crear la cuenta:", errorData.error);
-                }
-            } catch (error) {
-                console.error("Error en el proceso de registro:", error);
-            }
-        } else {
-            console.log('Errores en el formulario');
-        }
-    }; */
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -131,17 +65,18 @@ export default function SignIn() {
           }
         
         try {
-           // Combinamos nombre y apellido antes de enviar
            const userData = {
-            name: `${formData.nombre} ${formData.apellido}`.trim(), // El trim() elimina espacios extras
+            name: `${formData.nombre} ${formData.apellido}`.trim(),
             email: formData.email,
             password: formData.password
           };
             
-          // 1. Primero registramos al usuario
           const user = await registerUser(userData);
-          
-          // 2. Si el registro es exitoso, hacemos login automáticamente
+
+          if (!user) {
+            throw new Error('Error al registrar usuario');
+        }
+
           const result = await signIn('credentials', {
             email: formData.email,
             password: formData.password,
@@ -149,14 +84,11 @@ export default function SignIn() {
           });
     
           if (result.error) {
-            // Manejar error de login
             console.error('Error al iniciar sesión:', result.error);
           } else {
-            // Redirigir al usuario a la página deseada
             router.push('/');
           }
         } catch (error) {
-          // Manejar error de registro
           console.error('Error en el registro:', error.message);
         }
       };
@@ -165,14 +97,6 @@ export default function SignIn() {
     const handleGoogleSignIn = () => {
         signIn('google', { redirect: false });
     };
-
-    if (status === "loading") {
-        return <div>Cargando...</div>;
-    }
-
-    if (status === "authenticated") {
-        return null;
-    }
 
     return (
         <div className="flex w-full min-h-screen md:relative justify-center items-center">
