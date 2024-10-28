@@ -95,6 +95,8 @@ export default function TabsPages() {
       };
     });
 
+    sumHoursByTeam(updatedFeaturesProject)
+
     // Actualiza el estado completo del proyecto
     setProject({
       ...updatedProject,
@@ -129,9 +131,9 @@ export default function TabsPages() {
       // Buscar costo por hora del area
       const team_project = project.team_project.find(team_project => team_project.team == team)
       const wage = totalTime * team_project.hourly_rate
-      const totalDailyWorkHours = totalTime / team_project.work_hours_per_day
-      const totalWeeklyWorkHours = totalTime / (team_project.work_hours_per_day * 5)
-      const totalMonthlyWorkHours = totalTime / (team_project.work_hours_per_day * 20)
+      const totalDailyWorkHours = !!team_project.work_hours_per_day ? totalTime / team_project.work_hours_per_day : 0
+      const totalWeeklyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 5) : 0
+      const totalMonthlyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 20) : 0
 
       return {
         team,

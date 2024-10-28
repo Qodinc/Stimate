@@ -57,18 +57,20 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdateF
         hours_team && (
           <div className="my-2 p-2 bg-gray-300 rounded-lg">
             <h3 className="text-lg font-bold">Total de horas</h3>
-            {hours_team && hours_team.map((team, index) => {
-              return (
-                <div key={index}>
-                  <p className="font-bold">{team.team}</p>
-                  <p>Horas totales: {team.totalTime.toFixed(2)}</p>
-                  <p>Salario: $ {team.wage.toFixed(2)}</p>
-                  <p>Días estimados: {team.totalDailyWorkHours.toFixed(3)}</p>
-                  <p>Semanas estimadas: {team.totalWeeklyWorkHours.toFixed(3)}</p>
-                  <p>Meses estimados: {team.totalMonthlyWorkHours.toFixed(3)}</p>
-                </div>
-              )
-            })}
+            <div className="flex gap-5">
+              {hours_team && hours_team.map((team, index) => {
+                return (
+                  <div key={index}>
+                    <p className="font-bold">{team.team}</p>
+                    <p>Horas totales: {team.totalTime.toFixed(2)}</p>
+                    <p>Salario: $ {team.wage.toFixed(2)}</p>
+                    <p>Días estimados: {team.totalDailyWorkHours.toFixed(3)}</p>
+                    <p>Semanas estimadas: {team.totalWeeklyWorkHours.toFixed(3)}</p>
+                    <p>Meses estimados: {team.totalMonthlyWorkHours.toFixed(3)}</p>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         )
       }
