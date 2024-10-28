@@ -35,6 +35,16 @@ class HttpServices {
     });
   };
 
+  updateProyect = async (slug, project) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(project),
+    });
+  };
+
   // ### Payments ###
   /**
    *
