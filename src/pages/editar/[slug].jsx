@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import CargosContent from "@/components/tabContent/CargosContent";
 import EquipoContent from "@/components/tabContent/EquipoContent";
-import FuncionalidadesContent from "@/components/tabContent/FuncionalidadesContent";
+import Funcionalidades from "@/components/tabContent/FuncionalidadesContent";
 import GastosContent from "@/components/tabContent/GastosContent";
 import Preview from "@/components/tabContent/Preview";
 import TabsMenu from "@/components/TabsMenu";
@@ -19,8 +19,12 @@ export default function TabsPages() {
   const [activeTab, setActiveTab] = useState("equipo");
   const [project, setProject] = useState(ProjectInterfaz);
   const [isLoading, setIsLoading] = useState(true);
-  const [estimatedTime, setEstimatedTime] = useState(1.9);
+  const [estimatedTime, setEstimatedTime] = useState(0);
+  const [estimatedWages, setEstimatedWages] = useState(0);
+  const [estimatedOperatingExpenses, setEstimatedOperatingExpenses] = useState(0);
+  const [estimatedAssociatedCost, setEstimatedAssociatedCost] = useState(0);
   const [estimatedCost, setEstimatedCost] = useState(0);
+  const [hoursTeam, setHoursTeam] = useState(null)
 
   const tabs = [
     { value: "equipo", label: "Equipo de trabajo" },
@@ -54,41 +58,116 @@ export default function TabsPages() {
     }
   }, [slug]);
 
-  useEffect(() => {
+  const updateTeamProject = (updatedTeamProject) => {
+    // Actualiza el equipo
+    const updatedProject = {
+      ...project,
+      team_project: updatedTeamProject
+    };
 
-  }, [estimatedTime])
+    // Actualiza las funcionalidades
+    const updatedFeaturesProject = project.features_project.map(feature => {
 
-  useEffect(() => {
+      // Para cada funcionalidad, creamos un nuevo array de team_features
+      const updatedTeamFeatures = updatedTeamProject.map((newTeam, newIndex) => {
 
-  }, [estimatedCost])
+        // Buscamos si existe un tiempo previo para este equipo
+        const existingTeamFeature = feature.team_features.find(
+          (tf, indexTeamFeature) => {
+            const originalTeamIndex = project.team_project.findIndex(
+              originalTeam => originalTeam.team === tf.team
+            );
+            return originalTeamIndex === newIndex;
+          }
+        );
 
+        // Si existe, mantenemos el tiempo, si no, usamos 0
+        return {
+          team: newTeam.team,
+          time: existingTeamFeature ? existingTeamFeature.time : 0
+        };
+      });
 
-  const updateTeamProject = (teamProject) => {
-    setProject((prevProject) => ({
-      ...prevProject,
-      team_project: teamProject,
-    }));
+      // Retorna la funcionalidad actualizada
+      return {
+        ...feature,
+        team_features: updatedTeamFeatures
+      };
+    });
+
+    // Actualiza el estado completo del proyecto
+    setProject({
+      ...updatedProject,
+      features_project: updatedFeaturesProject
+    });
   }
 
   const updateFeaturesProject = (featuresProject) => {
+    sumHoursByTeam(featuresProject)
+
     setProject((prevProject) => ({
       ...prevProject,
       features_project: featuresProject,
     }));
   }
 
+  const sumHoursByTeam = (features) => {
+    const teamHoursMap = {};
+
+    features.forEach((feature) => {
+      feature.team_features.forEach((teamFeature) => {
+        const { team, time } = teamFeature;
+        if (teamHoursMap[team]) {
+          teamHoursMap[team] += time;
+        } else {
+          teamHoursMap[team] = time;
+        }
+      });
+    });
+
+    const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
+      // Buscar costo por hora del area
+      const team_project = project.team_project.find(team_project => team_project.team == team)
+      const wage = totalTime * team_project.hourly_rate
+      const totalDailyWorkHours = totalTime / team_project.work_hours_per_day
+      const totalWeeklyWorkHours = totalTime / (team_project.work_hours_per_day * 5)
+      const totalMonthlyWorkHours = totalTime / (team_project.work_hours_per_day * 20)
+
+      return {
+        team,
+        totalTime,
+        wage,
+        totalDailyWorkHours,
+        totalWeeklyWorkHours,
+        totalMonthlyWorkHours,
+      }
+    });
+
+    const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
+    const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
+    
+    setEstimatedWages(estimatedWage)
+    setEstimatedTime(estimatedMonthlyWork)
+    setHoursTeam(teamHoursArray)
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
         return <EquipoContent team_project={project.team_project} onUpdateTeamProject={updateTeamProject} />
       case "funcionalidades":
-        return <FuncionalidadesContent features_project={project.features_project} team_project={project.team_project} onUpdateFeaturesProject={updateFeaturesProject} />
+        return <Funcionalidades features_project={project.features_project} team_project={project.team_project} hours_team={hoursTeam} onUpdateFeaturesProject={updateFeaturesProject} />
       case "gastos":
         return <GastosContent operatingExpenses={project.operating_expenses} />
       case "cargos":
         return <CargosContent associatedCost={project.associated_costs} />
       case "preview":
-        return <Preview project={project} />
+        return <Preview 
+          project={project} 
+          hours_team={hoursTeam} 
+          estimated_wages={estimatedWages} 
+          estimated_operating_expenses={estimatedOperatingExpenses}
+          estimated_associated_cost={estimatedAssociatedCost} />
       default:
         return null
     }
@@ -128,9 +207,9 @@ export default function TabsPages() {
           <Save width={24} />
           <span className="hidden md:block text-base ml-2">Guardar</span>
         </div>
-        <h2>Nombre del proyecto: <strong>{project.name_project}</strong></h2>
-        <h2>Tiempo estimado: <strong>{estimatedTime} meses</strong></h2>
-        <h2>Costo estimado: <strong>${estimatedCost}</strong></h2>
+        <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
+        <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
+        <h2>Costo estimado:</h2> <strong>$ {(estimatedWages + estimatedOperatingExpenses + estimatedAssociatedCost).toFixed(2)}</strong>
       </header>
       <main className="px-4 md:px-14 lg:px-20">
         <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />

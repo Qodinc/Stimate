@@ -24,8 +24,8 @@ const GastosContent = ({ operatingExpenses, setOperatingExpenses }) => {
         ))}
       </div>
 
-      <div className="flex justify-start items-center w-full">
-        <Button variant="default" size="default" onClick={addCard}>
+      <div>
+        <Button onClick={addCard}>
           {<Plus width={20} height={20} stroke="white" />} Agregar gasto
         </Button>
       </div>

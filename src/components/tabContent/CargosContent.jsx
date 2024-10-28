@@ -12,7 +12,7 @@ const CargosContent = ({ associatedCost, setAssociatedCost }) => {
 
   return (
     <section>
-      <div className="flex flex-col gap-4 w-full justify-center items-center">
+      <div className="flex flex-col gap-4 w-full justify-center items-center py-5">
         {cards.map((card, index) => (
           <CardCargosAsociados
             key={index}
@@ -25,9 +25,10 @@ const CargosContent = ({ associatedCost, setAssociatedCost }) => {
           />
         ))}
       </div>
-      <div className="flex justify-start items-center w-full">
-        <Button variant="default" size="default" onClick={addCard}>
-          {<Plus width={20} height={20} stroke="white" />} Agregar gasto
+
+      <div>
+        <Button onClick={addCard}>
+          {<Plus width={20} height={20} stroke="white" />} Agregar cargo
         </Button>
       </div>
     </section>

@@ -1,38 +1,79 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
-import CardFuncionalidades from "../cardFuncionalidades";
+import Funcionalidad from "../Funcionalidad";
 
-const FuncionalidadesContent = ({ features_project, team_project, onUpdateFeaturesProject }) => {
-  // TODO: Debe obtener la información del componente Equipo de Trabajo   
+const Funcionalidades = ({ features_project, team_project, hours_team, onUpdateFeaturesProject }) => {
 
-  const handleChangeFeaturesProject = (event, index) => {
-    // onUpdateFeaturesProject
+  const handleFeatureUpdate = (updatedFeature, featureIndex) => {
+    const updatedFeatures = features_project.map((feature, index) =>
+      index === featureIndex ? updatedFeature : feature
+    );
+    onUpdateFeaturesProject(updatedFeatures);
   }
 
-  const handleAddFeaturesProject = () => {
-    // onUpdateFeaturesProject
-  }
+  const handleAddFeature = () => {
+    const team_features = team_project.map(team => ({
+      team: team.team,
+      time: 0
+    }));
 
-  const handleRemoveFeaturesProject = (index) => {
-    // onUpdateFeaturesProject
-  }
+    const newFeature = {
+      feature: "",
+      team_features
+    };
+
+    onUpdateFeaturesProject([...features_project, newFeature]);
+  };
+
+  const handleRemoveFeature = (featureIndex) => {
+    const updatedFeatures = features_project.filter((_, index) => index !== featureIndex);
+    onUpdateFeaturesProject(updatedFeatures);
+  };
+
   return (
     <section>
       <div className="flex flex-col gap-5 py-5">
         {features_project.map((funcionalidad, index) => (
-          <CardFuncionalidades key={index} cardKey={funcionalidad.id} feature={funcionalidad.feature} teams={funcionalidad.team_feature} />
+          <Funcionalidad
+            key={index}
+            featureIndex={index}
+            feature={funcionalidad.feature}
+            teamFeatures={funcionalidad.team_features}
+            onUpdate={(updatedFeature) => handleFeatureUpdate(updatedFeature, index)}
+            onRemove={() => handleRemoveFeature(index)}
+          />
         ))}
       </div>
 
-      <div className="">
-        <Button onClick={handleChangeFeaturesProject}>
+      <div>
+        <Button onClick={handleAddFeature}>
           <Plus width={24} stroke="white" />
           Agregar funcionalidad
         </Button>
       </div>
+
+      {
+        hours_team && (
+          <div className="my-2 p-2 bg-gray-300 rounded-lg">
+            <h3 className="text-lg font-bold">Total de horas</h3>
+            {hours_team && hours_team.map((team, index) => {
+              return (
+                <div key={index}>
+                  <p className="font-bold">{team.team}</p>
+                  <p>Horas totales: {team.totalTime.toFixed(2)}</p>
+                  <p>Salario: $ {team.wage.toFixed(2)}</p>
+                  <p>Días estimados: {team.totalDailyWorkHours.toFixed(3)}</p>
+                  <p>Semanas estimadas: {team.totalWeeklyWorkHours.toFixed(3)}</p>
+                  <p>Meses estimados: {team.totalMonthlyWorkHours.toFixed(3)}</p>
+                </div>
+              )
+            })}
+          </div>
+        )
+      }
     </section>
   );
 };
 
-export default FuncionalidadesContent;
+export default Funcionalidades;

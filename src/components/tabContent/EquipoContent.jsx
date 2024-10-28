@@ -171,7 +171,7 @@ const EquipoContent = ({ team_project, onUpdateTeamProject }) => {
         ))}
       </div>
 
-      <div className="mt-[40px]">
+      <div>
         <Button onClick={handleAddTeamProject}>
           <Plus width={24} stroke="white" />
           Agregar área
