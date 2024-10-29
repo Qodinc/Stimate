@@ -1,7 +1,6 @@
-import Input from "@/components/input";
-import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/router";
+import HttpServices from "../lib/http-services"
 import {
    Elements,
    useStripe,
@@ -11,45 +10,76 @@ import {
    CardCvcElement
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import Input from "@/components/input";
+import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import Loading from "@/components/Loading";
+import Head from "next/head";
+import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import { AlertDialogContent } from "@/components/ui/alert-dialog";
+import PaymentSuccessful from "@/components/Icons/PaymentSuccessful";
 
 export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
    const [price, setPrice] = useState([]);
+   const [error, setError] = useState(null);
+
    useEffect(() => {
-      const fetchConfig = async () => {
+      const getConfigPayment = async () => {
          try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/config`);
+            // validar si el usuario ya cuenta con un pago
+            const response = await HttpServices.configPayment();
 
             if (!response.ok) {
-               return setMessages('Failed to fetch config');
+               setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
             }
 
-            const { publishableKey, prices } = await response.json();
+            const { data } = await response.json();
 
-            setStripePromise(loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY));
-            setPrice(prices[0]);
+            setStripePromise(loadStripe(data.publishableKey));
+            setPrice(data.prices[0]);
          } catch (error) {
-            return setMessages('Error fetching Stripe config:', error.message);
+            setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
          }
       };
-      fetchConfig();
+      getConfigPayment();
    }, [])
-   if (!stripePromise) {
-      return <div>Loading...</div>;
+
+   if (!stripePromise || !price) {
+      return <>
+         <Loading />;
+      </>
+   }
+
+   if (error) {
+      return (
+         <>
+            <Head>
+               <title>Error...</title>
+            </Head>
+            <Navbar />
+            <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
+               {error}
+            </div>;
+         </>
+      )
    }
 
    return (
       <>
+         <Head>
+            <title>Suscripción</title>
+         </Head>
          <Navbar />
          <div className="font-comfortaa flex min-h-full flex-col items-center bg-white px-4 md:px-14 lg:px-20 pt-16">
-            <main className="w-full max-w-4xl flex flex-col gap-6">
+            <main className="w-full max-w-2xl flex flex-col gap-6">
                <div className="flex flex-col gap-3">
                   <h2 className="font-poppins font-semibold text-accent text-center text-xl md:text-3xl">Completar Pago</h2>
                   <p>Ingresa los detalles de tu tarjeta para procesar el pago</p>
                </div>
 
                <Elements stripe={stripePromise}>
-                  <PaymentForm
+                  <CheckoutForm
                      price={price}
                   />
                </Elements>
@@ -59,30 +89,32 @@ export default function Payment() {
    );
 }
 
-function PaymentForm({ price }) {
-   const [messages, setMessages] = useState('');
+function CheckoutForm({ price, setIsLoading = true, ...props }) {
+   const router = useRouter();
+   const [isDialogOpen, setIsDialogOpen] = useState(false);
+   const [messages, setMessages] = useState([]);
 
    // Datos del cliente
-   const [fullName, setFullName] = useState('');
+   const [name, setName] = useState('');
    const [email, setEmail] = useState('');
    const [cardComplete, setCardComplete] = useState({
       cardNumber: false,
       cardExpiry: false,
       cardCvc: false
    });
+   const [validated, setValidated] = useState(false)
 
    // Datos para crear transacción
-   const [customer, setCustomer] = useState(null);
+   const [customer_id, setCustomerId] = useState(null);
 
    // Datos de la transacción
-   const [clientSecret, setClientSecret] = useState(null);
-   const [subscriptionId, setSubscriptionId] = useState(null);
+   const [client_secret, setClientSecret] = useState(null);
 
    // Datos para realizar el pago
    const stripe = useStripe();
    const elements = useElements();
 
-   // 
+   // Evento para obtener datos de la tarjeta
    const handleCardChange = (event) => {
       setCardComplete({
          ...cardComplete,
@@ -90,103 +122,146 @@ function PaymentForm({ price }) {
       });
    };
 
+   // Obtener Cliente
+   const getCustomer = async () => {
+      if (customer_id) return customer_id;
+
+      const response = await HttpServices.createCustomer({ email });
+
+      if (!response.ok) {
+         return setMessages(['Falló al obtener el cliente']);
+      }
+
+      const { data } = await response.json();
+      setCustomerId(data.customer.id);
+      return data.customer.id;
+   }
+
+   // Obtener Suscripción
+   const getSubscription = async (customerId) => {
+      if (client_secret) return client_secret;
+
+      const response = await HttpServices.createSubscription({ price, customerId });
+
+      if (!response.ok) {
+         return setMessages(['Failed to create subscription']);
+      }
+
+      const { data } = await response.json();
+      setClientSecret(data.clientSecret);
+      return data.clientSecret;
+   }
+
    const handleSubmit = async (e) => {
       e.preventDefault();
 
       if (!stripe || !elements) {
          // Stripe.js has not loaded yet. Make sure to disable
          // form submission until Stripe.js has loaded.
-         return setMessages('Stripe has not loaded yet. Please try again.');
+         return setMessages(['Stripe has not loaded yet. Please try again.']);
       }
 
-      setMessages('')
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-         return setMessages("El formato del correo no es válido");
+      if (!price) {
+         return setMessages(['No hay un plan seleccionado. Por favor, seleccione un plan.']);
       }
 
-      if (!cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc) {
-         return setMessages("Por favor, complete todos los campos de la tarjeta.");
-      }
+      setMessages([''])
 
       try {
          // Cliente
-         setCustomer(await getCustomer())
+         const customerId = await getCustomer();
 
          // Transacción
-         const subscription = await getSubscription()
-         if (!subscription.clientSecret || !subscription.subscriptionId) {
-            return setMessages('Error: Payment intent not found');
+         const clientSecret = await getSubscription(customerId);
+
+         if (!clientSecret) {
+            return setMessages(['Error: Payment intent not found']);
          }
 
-         setSubscriptionId(subscription.subscriptionId);
-         setClientSecret(subscription.clientSecret);
+         setMessages(['Esperando...']);
 
          // Elementos de tarjeta
          const cardElement = elements.getElement(CardNumberElement);
          // Realizar Suscripción
-         const { error } = await stripe.confirmCardPayment(subscription.clientSecret, {
+         const { error } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
-               card: elements.getElement(CardNumberElement),
-               billing_details: {
-                  name: fullName,
-               }
+               card: cardElement,
+               billing_details: { name }
             }
          });
 
-         if (error) {
-            return setMessages(error.message);
+         if (error) { // 
+            setMessages([`Payment failed: ${error.message}`]);
+         } else {
+            setIsDialogOpen(true)
+            setMessages(['Payment successful!']);
+
+            setName('')
+            setEmail('')
+
+            elements.getElement(CardNumberElement).clear();
+            elements.getElement(CardExpiryElement).clear();
+            elements.getElement(CardCvcElement).clear();
+
+            setCustomerId(null)
+            setClientSecret(null)
+
+            setTimeout(() => {
+               // TODO: si el usuario tiene proyectos, entonces ir al dashboard
+               // si no, ir a crear-proyecto
+               router.push(`/crear-proyecto`);
+            }, 3000);
          }
 
       } catch (error) {
-         if (error) {
-            return setMessages(`Error: ${error.message}`);
-         }
+         return setMessages([`Error: ${error.message}`]);
       }
 
    };
 
-   // Obtener Cliente
-   const getCustomer = async () => {
-      if (customer)
-         return customer
-
-      const resCustomer = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/customer/create`, {
-         method: 'post',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({ email }),
-      });
-
-      if (!resCustomer.ok) {
-         return setMessages('Falló al obtener el cliente');
-      }
-      return await resCustomer.json();
+   const currencyFormatter = ({ currency, value }) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+         style: 'currency',
+         minimumFractionDigits: 2,
+         currency
+      })
+      return formatter.format(value)
    }
 
-   // Obtener Suscripción
-   const getSubscription = async () => {
-      if (subscriptionId)
-         return { subscriptionId, clientSecret }
+   // Validar la tarjeta cada vez que el estado de cardComplete cambie
+   useEffect(() => {
+      setValidated(getValidated({ name, email, cardComplete }));
+   }, [name, email, cardComplete]);
 
-      const resSubscription = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/stripe/subscription/create`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({
-            price: price.id,
-            customer: customer.id
-         }),
-      });
+   const getValidated = ({ name, email, cardComplete }) => {
+      const messages = []
+      // Validación de correo
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const validatedName = !!name
+      const validatedEmail = !!emailRegex.test(email)
+      const validatedCardNumber = cardComplete.cardNumber
+      const validatedCardExpiry = cardComplete.cardExpiry
+      const validatedCardCvc = cardComplete.cardCvc
 
-      if (!resSubscription.ok) {
-         return setMessages('Failed to fetch subscription');
+      if (!validatedName) {
+         messages.push('El campo Nombre Titular es requerido')
+      }
+      if (!validatedEmail) {
+         messages.push('El campo Correo es requerido')
+      }
+      if (!validatedCardNumber) {
+         messages.push('El campo Número de tarjeta es requerido')
+      }
+      if (!validatedCardExpiry) {
+         messages.push('El campo Fecha de Expiración es requerido')
+      }
+      if (!validatedCardCvc) {
+         messages.push('El campo CVC es requerido')
       }
 
-      return await resSubscription.json()
+      setMessages(messages)
+
+      return validatedName && validatedEmail && validatedCardNumber && validatedCardExpiry && validatedCardCvc
    }
 
 
@@ -219,8 +294,8 @@ function PaymentForm({ price }) {
                   type="text"
                   name="full_name"
                   placeholder="Escriba su nombre..."
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required />
             </div>
 
@@ -236,28 +311,56 @@ function PaymentForm({ price }) {
             </div>
 
             <div className="mb-4">
-               <label>Datos de tarjeta</label>
+               <label>Número de tarjeta</label>
                <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
                   <CardNumberElement options={cardElementOptions} onChange={handleCardChange} />
                </div>
-               <div className="flex space-x-2">
-                  <div className="w-1/2 rounded-full border border-gray-300 px-3 py-2">
-                     <CardExpiryElement options={cardElementOptions} onChange={handleCardChange} />
+               <div className="md:flex gap-3">
+                  <div className="w-full">
+                     <label>Fecha de expiración</label>
+                     <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
+                        <CardExpiryElement options={cardElementOptions} onChange={handleCardChange} />
+                     </div>
                   </div>
-                  <div className="w-1/2 rounded-full border border-gray-300 px-3 py-2">
-                     <CardCvcElement options={cardElementOptions} onChange={handleCardChange} />
+                  <div className="w-full">
+                     <label>CVC</label>
+                     <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">
+                        <CardCvcElement options={cardElementOptions} onChange={handleCardChange} />
+                     </div>
                   </div>
                </div>
             </div>
 
-            <div className="text-red-500 text-sm my-4">{messages}</div>
+            {messages && (
+               <ul className="list-disc list-inside text-red-500 text-sm my-4">
+                  {messages.map((message, index) => (
+                     <li key={index}>{message}</li>
+                  ))}
+               </ul>
+            )}
 
-            <Button
-               type="submit"
-            >
-               Pagar
-            </Button>
+            <div className="flex justify-center font-poppins">
+               <Button
+                  type="submit"
+                  disabled={!validated}
+               >
+                  Pagar {currencyFormatter({ currency: price.currency, value: price.unit_amount / 100 })} {price.currency.toUpperCase()}
+               </Button>
+            </div>
          </form>
+
+         <div className="flex justify-end items-center w-full">
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+               <AlertDialogTrigger asChild>
+               </AlertDialogTrigger>
+               <AlertDialogContent>
+                  <div className="flex flex-col items-center">
+                     <PaymentSuccessful width={325} height={325}/>
+                     <p className="font-comfortaa font-bold text-lg text-accent">Págo exitoso</p>
+                  </div>
+               </AlertDialogContent>
+            </AlertDialog>
+         </div>
       </div>
    );
 }

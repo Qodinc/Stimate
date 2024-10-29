@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import HttpServices, { getProyects } from "../lib/http-services"
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -8,24 +9,8 @@ import PlusCircle from "@/components/Icons/PlusCircle";
 import MenuButton from "@/components/ui/menu-button";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
-
-const proyects = [
-  {
-    "slug": "cuponera-digital-EUGAzT",
-    "name_project": "Cuponera Digital",
-    "status_project": "pending",
-  },
-  {
-    "slug": "ecommerce-zDxDUe",
-    "name_project": "Ecommerce",
-    "status_project": "completed",
-  },
-  {
-    "slug": "transporte-logistica-lS9teZ",
-    "name_project": "Transporte Logística",
-    "status_project": "canceled",
-  }
-];
+import Loading from '@/components/Loading';
+import Head from 'next/head';
 
 const project_status = [
   {
@@ -74,22 +59,63 @@ const getStatusTranslation = (status) => {
 
 export default function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
-  const [projectList, setProjectList] = useState(proyects);
+  const [proyectos, setProyectos] = useState([]);
+
+  useEffect(() => {
+    getProyects()
+  }, [])
+
+  const getProyects = async () => {
+    try {
+      setIsLoading(true);
+      const response = await HttpServices.getProyects();
+      if (!response.ok) {
+        throw new Error('Failed to get project');
+      }
+      const { data } = await response.json();
+      setProyectos(data.projects);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = (slug) => {
     router.push(`/editar/${slug}`);
   };
 
-  const handleDelete = (slug) => {
-    const updatedProjects = projectList.filter(proyecto => proyecto.slug !== slug);
-    setProjectList(updatedProjects);
-    setIsDialogOpen(false);
+  const handleDelete = async (slug) => {
+    try {
+      setIsLoading(true);
+      const responseDelete = await HttpServices.deleteProyect(slug);
+      if (!responseDelete.ok) {
+        throw new Error(
+          "Ocurrió un error al realizar la solicitud: " + response.status
+        );
+      }
+      getProyects();
+
+    } catch (error) {
+      console.error("Error:", error);
+    } finally{
+      setIsLoading(false);
+    }
   };
+
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
+      <Head>
+        <title>Inicio</title>
+      </Head>
       <Navbar />
       <div className="ml-9 mt-7 space-y-3">
         <h1 className="text-accent font-poppins font-semibold text-2xl">Mis Proyectos</h1>
@@ -101,7 +127,7 @@ export default function Home() {
         </Link>
       </div>
       <div className="p-4 space-y-4 md:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
-        {projectList.map((project) => {
+        {proyectos.map((project) => {
           const borderColor = getStatusColor(project.status_project);
           const statusTranslation = getStatusTranslation(project.status_project);
 
