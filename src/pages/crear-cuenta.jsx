@@ -66,7 +66,7 @@ export default function SignIn() {
         
         try {
            const userData = {
-            name: `${formData.nombre} ${formData.apellido}`.trim(),
+            name: `${formData.nombre.trim()} ${formData.apellido.trim()}`.trim(),
             email: formData.email,
             password: formData.password
           };
