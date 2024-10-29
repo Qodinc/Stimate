@@ -12,6 +12,8 @@ import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
 import httpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function TabsPages() {
   const router = useRouter();
@@ -175,9 +177,17 @@ export default function TabsPages() {
     }
   }
 
-  const saveProject = () => {
-    // TODO: Intentar actualizar a la base de datos 
-    console.log(project);
+  const saveProject = async () => {
+    const updateProject = await httpServices.updateProyect(project)
+    
+    if(!updateProject.ok){
+      throw new Error('Failed to fetch project');
+    }
+    toast.success("Información guardada");
+    const { data } = await updateProject.json();
+    if (data.project){
+      setProject(data.project);
+    }
   }
 
   if (isLoading) {
@@ -205,7 +215,7 @@ export default function TabsPages() {
       </Head>
       <Navbar />
       <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
-        <div className="flex items-center" onClick={() => saveProject()}>
+        <div className="flex items-center cursor-pointer" onClick={() => saveProject()}>
           <Save width={24} />
           <span className="hidden md:block text-base ml-2">Guardar</span>
         </div>
@@ -217,6 +227,10 @@ export default function TabsPages() {
         <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
         {renderContent()}
       </main>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={1000}
+      />
     </>
   );
 }
