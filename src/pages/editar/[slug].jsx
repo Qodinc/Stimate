@@ -60,6 +60,50 @@ export default function TabsPages() {
     }
   }, [slug]);
 
+  useEffect(() => {
+    const sumHoursByTeam = (features) => {
+      const teamHoursMap = {};
+
+      features.forEach((feature) => {
+        feature.team_features.forEach((teamFeature) => {
+          const { team, time } = teamFeature;
+          if (teamHoursMap[team]) {
+            teamHoursMap[team] += time;
+          } else {
+            teamHoursMap[team] = time;
+          }
+        });
+      });
+
+      const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
+        // Buscar costo por hora del area
+        const team_project = project.team_project.find(team_project => team_project.team == team)
+        const wage = !!team_project?.hourly_rate ? totalTime * team_project.hourly_rate : 0
+        const totalDailyWorkHours = !!team_project?.work_hours_per_day ? totalTime / team_project.work_hours_per_day : 0
+        const totalWeeklyWorkHours = !!team_project?.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 5) : 0
+        const totalMonthlyWorkHours = !!team_project?.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 20) : 0
+
+        return {
+          team,
+          totalTime,
+          wage,
+          totalDailyWorkHours,
+          totalWeeklyWorkHours,
+          totalMonthlyWorkHours,
+        }
+      });
+
+      const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
+      const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
+
+      setEstimatedWages(estimatedWage)
+      setEstimatedTime(estimatedMonthlyWork)
+      setHoursTeam(teamHoursArray)
+    };
+
+    sumHoursByTeam(project.features_project)
+  }, [project])
+
   const updateTeamProject = (updatedTeamProject) => {
     // Actualiza el equipo
     const updatedProject = {
@@ -97,8 +141,6 @@ export default function TabsPages() {
       };
     });
 
-    sumHoursByTeam(updatedFeaturesProject)
-
     // Actualiza el estado completo del proyecto
     setProject({
       ...updatedProject,
@@ -107,53 +149,11 @@ export default function TabsPages() {
   }
 
   const updateFeaturesProject = (featuresProject) => {
-    sumHoursByTeam(featuresProject)
-
     setProject((prevProject) => ({
       ...prevProject,
       features_project: featuresProject,
     }));
   }
-
-  const sumHoursByTeam = (features) => {
-    const teamHoursMap = {};
-
-    features.forEach((feature) => {
-      feature.team_features.forEach((teamFeature) => {
-        const { team, time } = teamFeature;
-        if (teamHoursMap[team]) {
-          teamHoursMap[team] += time;
-        } else {
-          teamHoursMap[team] = time;
-        }
-      });
-    });
-
-    const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
-      // Buscar costo por hora del area
-      const team_project = project.team_project.find(team_project => team_project.team == team)
-      const wage = totalTime * team_project.hourly_rate
-      const totalDailyWorkHours = !!team_project.work_hours_per_day ? totalTime / team_project.work_hours_per_day : 0
-      const totalWeeklyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 5) : 0
-      const totalMonthlyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 20) : 0
-
-      return {
-        team,
-        totalTime,
-        wage,
-        totalDailyWorkHours,
-        totalWeeklyWorkHours,
-        totalMonthlyWorkHours,
-      }
-    });
-
-    const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
-    const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
-    
-    setEstimatedWages(estimatedWage)
-    setEstimatedTime(estimatedMonthlyWork)
-    setHoursTeam(teamHoursArray)
-  };
 
   const renderContent = () => {
     switch (activeTab) {
