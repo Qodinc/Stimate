@@ -178,15 +178,8 @@ export default function TabsPages() {
   }
 
   const saveProject = async () => {
-    const projectSaved = {
-      slug: project.slug,
-      name_project: project.name_project,
-      team_project: project.team_project,
-      type_project: project.type_project,
-      status_project: project.status_project
-    }
-
-    const updateProject = await httpServices.updateProyect(project.slug, projectSaved)
+    const updateProject = await httpServices.updateProyect(project)
+    
     if(!updateProject.ok){
       throw new Error('Failed to fetch project');
     }

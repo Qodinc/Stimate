@@ -35,8 +35,8 @@ class HttpServices {
     });
   };
 
-  updateProyect = async (slug, project) => {
-    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
+  updateProyect = async (project) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${project.slug}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
