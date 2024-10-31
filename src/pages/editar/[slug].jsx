@@ -12,6 +12,8 @@ import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
 import httpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function TabsPages() {
   const router = useRouter();
@@ -58,6 +60,50 @@ export default function TabsPages() {
     }
   }, [slug]);
 
+  useEffect(() => {
+    const sumHoursByTeam = (features) => {
+      const teamHoursMap = {};
+
+      features.forEach((feature) => {
+        feature.team_features.forEach((teamFeature) => {
+          const { team, time } = teamFeature;
+          if (teamHoursMap[team]) {
+            teamHoursMap[team] += time;
+          } else {
+            teamHoursMap[team] = time;
+          }
+        });
+      });
+
+      const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
+        // Buscar costo por hora del area
+        const team_project = project.team_project.find(team_project => team_project.team == team)
+        const wage = !!team_project?.hourly_rate ? totalTime * team_project.hourly_rate : 0
+        const totalDailyWorkHours = !!team_project?.work_hours_per_day ? totalTime / team_project.work_hours_per_day : 0
+        const totalWeeklyWorkHours = !!team_project?.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 5) : 0
+        const totalMonthlyWorkHours = !!team_project?.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 20) : 0
+
+        return {
+          team,
+          totalTime,
+          wage,
+          totalDailyWorkHours,
+          totalWeeklyWorkHours,
+          totalMonthlyWorkHours,
+        }
+      });
+
+      const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
+      const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
+
+      setEstimatedWages(estimatedWage)
+      setEstimatedTime(estimatedMonthlyWork)
+      setHoursTeam(teamHoursArray)
+    };
+
+    sumHoursByTeam(project.features_project)
+  }, [project])
+
   const updateTeamProject = (updatedTeamProject) => {
     // Actualiza el equipo
     const updatedProject = {
@@ -95,8 +141,6 @@ export default function TabsPages() {
       };
     });
 
-    sumHoursByTeam(updatedFeaturesProject)
-
     // Actualiza el estado completo del proyecto
     setProject({
       ...updatedProject,
@@ -111,23 +155,17 @@ const updateCargos = (associatedCost) => {
 }
 
   const updateFeaturesProject = (featuresProject) => {
-    sumHoursByTeam(featuresProject)
-
     setProject((prevProject) => ({
       ...prevProject,
       features_project: featuresProject,
     }));
   }
-
   const handleOperatingExpensesUpdate = (updatedExpenses) => {
-  setProject((prevProject) => ({
-    ...prevProject,
-    operating_expenses: updatedExpenses
-  }));
-};
-
-  
-
+    setProject((prevProject) => ({
+      ...prevProject,
+      operating_expenses: updatedExpenses
+    }));
+  };
   const sumHoursByTeam = (features) => {
     const teamHoursMap = {};
 
@@ -193,9 +231,17 @@ const updateCargos = (associatedCost) => {
     }
   }
 
-  const saveProject = () => {
-    // TODO: Intentar actualizar a la base de datos 
-    console.log(project);
+  const saveProject = async () => {
+    const updateProject = await httpServices.updateProyect(project)
+    
+    if(!updateProject.ok){
+      throw new Error('Failed to fetch project');
+    }
+    toast.success("Información guardada");
+    const { data } = await updateProject.json();
+    if (data.project){
+      setProject(data.project);
+    }
   }
 
   if (isLoading) {
@@ -223,7 +269,7 @@ const updateCargos = (associatedCost) => {
       </Head>
       <Navbar />
       <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
-        <div className="flex items-center" onClick={() => saveProject()}>
+        <div className="flex items-center cursor-pointer" onClick={() => saveProject()}>
           <Save width={24} />
           <span className="hidden md:block text-base ml-2">Guardar</span>
         </div>
@@ -235,6 +281,10 @@ const updateCargos = (associatedCost) => {
         <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
         {renderContent()}
       </main>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={1000}
+      />
     </>
   );
 }
