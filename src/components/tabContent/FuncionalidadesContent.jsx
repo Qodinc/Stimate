@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 import Funcionalidad from "../Funcionalidad";
 
 const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate }) => {
 
-  const handleFeatureUpdate = (updatedFeature, featureIndex) => {
+  const handleUpdateFeature = (updatedFeature, featureIndex) => {
     const updatedFeatures = features_project.map((feature, index) =>
       index === featureIndex ? updatedFeature : feature
     );
@@ -37,10 +37,8 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate 
         {features_project.map((funcionalidad, index) => (
           <Funcionalidad
             key={index}
-            featureIndex={index}
             feature={funcionalidad}
-            teamFeatures={funcionalidad.team_features}
-            onUpdate={(updatedFeature) => handleFeatureUpdate(updatedFeature, index)}
+            onUpdate={(updatedFeature) => handleUpdateFeature(updatedFeature, index)}
             onRemove={() => handleRemoveFeature(index)}
           />
         ))}

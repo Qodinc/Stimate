@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Trash from "./Icons/Trash";
 
-export default function Funcionalidad({ featureIndex, feature, onUpdate, onRemove }) {
+export default function Funcionalidad({ feature, onUpdate, onRemove }) {
   const [errors, setErrors] = useState({});
 
   const validateAndUpdate = (newFeatureData) => {
@@ -67,73 +67,71 @@ export default function Funcionalidad({ featureIndex, feature, onUpdate, onRemov
   };
 
   return (
-    <>
-      <Card
-        size="lg"
-        className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
-      >
-        <div className="xs:max-w-full sm:max-w-[200px] w-full">
-          <span className="font-comfortaa text-base">Funcionalidad</span>
+    <Card
+      size="lg"
+      className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
+    >
+      <div className="xs:max-w-full sm:max-w-[200px] w-full">
+        <label className="font-comfortaa text-base">Funcionalidad</label>
+        <Input
+          name="feature"
+          placeholder="Agregar funcionalidad"
+          type="text"
+          value={feature.feature}
+          icon={<Timer width={24} />}
+          onChange={handleFeatureNameChange}
+          className={errors.feature ? "border-red-500" : ""}
+        />
+        {errors.feature && (
+          <span className="text-baseM text-[#C03744]">*{errors.feature}</span>
+        )}
+      </div>
+
+      {feature.team_features.map((team, index) => (
+        <div key={index} className="xs:max-w-full sm:max-w-[200px] w-full">
+          <span className="font-comfortaa text-base">{team.team}</span>
           <Input
-            name="feature"
-            placeholder="Agregar funcionalidad"
-            type="text"
-            value={feature.feature}
+            name={`team_feature_${index}`}
+            placeholder="Agregar horas"
+            iconPosition="left"
+            type="number"
+            value={team.time.toFixed(2)}
             icon={<Timer width={24} />}
-            onChange={handleFeatureNameChange}
-            className={errors.feature ? "border-red-500" : ""}
+            min={0}
+            step={0.01}
+            onChange={(event) => handleTeamTimeChange(event, index)}
+            className={errors[`team${index}`] ? "border-red-500" : ""}
           />
-          {errors.feature && (
-            <span className="text-baseM text-[#C03744]">*{errors.feature}</span>
+          {errors[`team${index}`] && (
+            <span className="text-baseM text-[#C03744]">*{errors[`team${index}`]}</span>
           )}
         </div>
+      ))}
+      <div className="xs:max-w-full sm:max-w-[200px] w-full">
+        <span className="font-comfortaa text-base">Horas totales</span>
+        <Input
+          placeholder="0"
+          iconPosition="left"
+          disabled={true}
+          value={calculateTotalHours()}
+          icon={<Timer width={24} />}
+        />
+      </div>
 
-        {feature.team_features.map((team, index) => (
-          <div key={index} className="xs:max-w-full sm:max-w-[200px] w-full">
-            <span className="font-comfortaa text-base">{team.team}</span>
-            <Input
-              name={`team_feature_${index}`}
-              placeholder="Agregar horas"
-              iconPosition="left"
-              type="number"
-              value={team.time.toFixed(2)}
-              icon={<Timer width={24} />}
-              min={0}
-              step={0.01}
-              onChange={(event) => handleTeamTimeChange(event, index)}
-              className={errors[`team${index}`] ? "border-red-500" : ""}
-            />
-            {errors[`team${index}`] && (
-              <span className="text-baseM text-[#C03744]">*{errors[`team${index}`]}</span>
-            )}
-          </div>
-        ))}
-        <div className="xs:max-w-full sm:max-w-[200px] w-full">
-          <span className="font-comfortaa text-base">Horas totales</span>
-          <Input
-            placeholder="0"
-            iconPosition="left"
-            disabled={true}
-            value={calculateTotalHours()}
-            icon={<Timer width={24} />}
+      <div className="mt-5 sm:col-start-3 ml-6 absolute bottom-2 right-2">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button>
+              <Trash width={24} stroke="white" />
+              Eliminar
+            </Button>
+          </AlertDialogTrigger>
+          <Delete
+            elemento={feature.feature}
+            onClick={onRemove}
           />
-        </div>
-
-        <div className="mt-5 sm:col-start-3 ml-6 absolute bottom-2 right-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button>
-                <Trash width={24} stroke="white" />
-                Eliminar
-              </Button>
-            </AlertDialogTrigger>
-            <Delete
-              elemento={feature.feature}
-              onClick={() => onRemove(featureIndex)}
-            />
-          </AlertDialog>
-        </div>
-      </Card>
-    </>
+        </AlertDialog>
+      </div>
+    </Card>
   );
 }

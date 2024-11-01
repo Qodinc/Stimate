@@ -61,10 +61,10 @@ export default function TabsPages() {
   }, [slug]);
 
   useEffect(() => {
-    const sumHoursByTeam = (features) => {
+    const summary = () => {
       const teamHoursMap = {};
 
-      features.forEach((feature) => {
+      project.features_project.forEach((feature) => {
         feature.team_features.forEach((teamFeature) => {
           const { team, time } = teamFeature;
           if (teamHoursMap[team]) {
@@ -101,7 +101,7 @@ export default function TabsPages() {
       setHoursTeam(teamHoursArray)
     };
 
-    sumHoursByTeam(project.features_project)
+    summary()
   }, [project])
 
   const updateTeamProject = (updatedTeamProject) => {
@@ -170,14 +170,14 @@ const onUpdateAssociatedCosts = (associatedCost) => {
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
-        return <EquipoContent 
-          team_project={project.team_project} 
+        return <EquipoContent
+          team_project={project.team_project}
           onUpdate={updateTeamProject} />
       case "funcionalidades":
-        return <Funcionalidades 
-          features_project={project.features_project} 
-          team_project={project.team_project} 
-          hours_team={hoursTeam} 
+        return <Funcionalidades
+          features_project={project.features_project}
+          team_project={project.team_project}
+          hours_team={hoursTeam}
           onUpdate={updateFeaturesProject} />
       case "gastos":
         return <GastosContent 
@@ -201,13 +201,13 @@ const onUpdateAssociatedCosts = (associatedCost) => {
 
   const saveProject = async () => {
     const updateProject = await httpServices.updateProyect(project)
-    
-    if(!updateProject.ok){
+
+    if (!updateProject.ok) {
       throw new Error('Failed to fetch project');
     }
     toast.success("Información guardada");
     const { data } = await updateProject.json();
-    if (data.project){
+    if (data.project) {
       setProject(data.project);
     }
   }
