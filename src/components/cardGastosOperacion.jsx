@@ -1,12 +1,12 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import Dinero from "./Icons/DollarSign";
-import { useState } from "react";
+import { useState, useEffect } from "react"; 
 import Trash from "./Icons/Trash";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 
-export default function CardGastosOperacion({ cardID, cost_name, total_per_month }) {
+export default function CardGastosOperacion({ cardID, cost_name, total_per_month, onUpdate, onRemove  }) {
     const [montoPorMes, setMontoPorMes] = useState(total_per_month || 0);
     const [total, setTotal] = useState(montoPorMes * 1.9);
     const [inputValue, setInputValue] = useState(cost_name || "");
@@ -32,6 +32,10 @@ export default function CardGastosOperacion({ cardID, cost_name, total_per_month
         }
         setInputValue(nombre);
     };
+
+    useEffect(() => {
+        onUpdate({ cost_name: inputValue, total_per_month: montoPorMes });
+    }, [inputValue, montoPorMes]);
 
     return (
         <div id={`cardGO-${cardID}`} className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
@@ -75,7 +79,7 @@ export default function CardGastosOperacion({ cardID, cost_name, total_per_month
                     <AlertDialogTrigger asChild>
                         <Button>{<Trash width={20} height={20} stroke="white" />} Eliminar</Button>
                     </AlertDialogTrigger>
-                    <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={() => deleteCard(cardID)} />
+                    <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={onRemove} />
                 </AlertDialog>
             </div>
         </div>
