@@ -3,9 +3,8 @@ import CardCargosAsociados from "../cardCargosAsociados";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 
-const CargosContent = ({ associated_cost, onUpdate }) => {
+const CargosContent = ({ associated_costs, onUpdate }) => {
   const addCard = () => {
-    console.log(associated_cost)
     const newCargo = {
       cost_name: "",
       price_unity: 0,
@@ -13,11 +12,11 @@ const CargosContent = ({ associated_cost, onUpdate }) => {
       type_recurring: "",
       description: ""
     };
-    onUpdate([...associated_cost, newCargo]);
+    onUpdate([...associated_costs, newCargo]);
   };
 
   const updateCard = (index, updatedCard) => {
-    const updatedCargos = associated_cost.map((card, i) =>
+    const updatedCargos = associated_costs.map((card, i) =>
       i === index ? { ...card, ...updatedCard } : card
     );
     onUpdate(updatedCargos); // Asegúrate de que esto actualice el estado padre
@@ -25,7 +24,7 @@ const CargosContent = ({ associated_cost, onUpdate }) => {
 
 const deleteCard = (cardID) => {
   // Elimina el cargo en el índice especificado
-  const updatedCargos = associated_cost.filter((_, index) => index !== cardID);
+  const updatedCargos = associated_costs.filter((_, index) => index !== cardID);
   onUpdate(updatedCargos);
 };
 
@@ -33,7 +32,7 @@ const deleteCard = (cardID) => {
   return (
     <section>
       <div className="flex flex-col gap-4 w-full justify-center items-center py-5">
-        {associated_cost.map((card, index) => (
+        {associated_costs.map((card, index) => (
           <CardCargosAsociados
             key={index}
             cardID={index}

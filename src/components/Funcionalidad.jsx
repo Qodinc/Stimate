@@ -7,12 +7,8 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Trash from "./Icons/Trash";
 
-export default function Funcionalidad({ featureIndex, feature, teamFeatures, onUpdate, onRemove }) {
+export default function Funcionalidad({ featureIndex, feature, onUpdate, onRemove }) {
   const [errors, setErrors] = useState({});
-  const [featureData, setFeatureData] = useState({
-    feature,
-    team_features: teamFeatures
-  });
 
   const validateAndUpdate = (newFeatureData) => {
     const newErrors = {};
@@ -39,10 +35,10 @@ export default function Funcionalidad({ featureIndex, feature, teamFeatures, onU
 
   const handleFeatureNameChange = (event) => {
     const newFeatureData = {
-      ...featureData,
+      ...feature,
       feature: event.target.value
     };
-    setFeatureData(newFeatureData);
+
     validateAndUpdate(newFeatureData);
   };
 
@@ -51,22 +47,21 @@ export default function Funcionalidad({ featureIndex, feature, teamFeatures, onU
 
     if (/^\d*\.?\d*$/.test(value)) {
       const time = parseFloat(value) || 0;
-      const newTeamFeatures = featureData.team_features.map((team, index) =>
+      const newTeamFeatures = feature.team_features.map((team, index) =>
         index === teamIndex ? { ...team, time } : team
       );
 
       const newFeatureData = {
-        ...featureData,
+        ...feature,
         team_features: newTeamFeatures
       };
 
-      setFeatureData(newFeatureData);
       validateAndUpdate(newFeatureData);
     }
   };
 
   const calculateTotalHours = () => {
-    return featureData.team_features
+    return feature.team_features
       .reduce((total, team) => total + (parseFloat(team.time) || 0), 0)
       .toFixed(2);
   };
@@ -80,9 +75,10 @@ export default function Funcionalidad({ featureIndex, feature, teamFeatures, onU
         <div className="xs:max-w-full sm:max-w-[200px] w-full">
           <span className="font-comfortaa text-base">Funcionalidad</span>
           <Input
+            name="feature"
             placeholder="Agregar funcionalidad"
             type="text"
-            value={featureData.feature}
+            value={feature.feature}
             icon={<Timer width={24} />}
             onChange={handleFeatureNameChange}
             className={errors.feature ? "border-red-500" : ""}
@@ -92,10 +88,11 @@ export default function Funcionalidad({ featureIndex, feature, teamFeatures, onU
           )}
         </div>
 
-        {featureData.team_features.map((team, index) => (
+        {feature.team_features.map((team, index) => (
           <div key={index} className="xs:max-w-full sm:max-w-[200px] w-full">
             <span className="font-comfortaa text-base">{team.team}</span>
             <Input
+              name={`team_feature_${index}`}
               placeholder="Agregar horas"
               iconPosition="left"
               type="number"
@@ -131,8 +128,8 @@ export default function Funcionalidad({ featureIndex, feature, teamFeatures, onU
               </Button>
             </AlertDialogTrigger>
             <Delete
-              elemento={featureData.feature}
-              onClick={onRemove}
+              elemento={feature.feature}
+              onClick={() => onRemove(featureIndex)}
             />
           </AlertDialog>
         </div>

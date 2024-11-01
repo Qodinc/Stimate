@@ -54,8 +54,6 @@ export default function SignIn() {
         e.preventDefault();
         if (validateForm()) {
             setIsDialogOpen(true);
-        } else {
-            console.log('Errores en el formulario');
         }
     };
 

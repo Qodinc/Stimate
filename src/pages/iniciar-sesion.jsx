@@ -14,7 +14,6 @@ export default function Login() {
     const [errors, setErrors] = useState({});
 
     const validateForm = () => {
-        console.log('Validando formulario...');
         let formErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {

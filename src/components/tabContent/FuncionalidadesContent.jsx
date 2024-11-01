@@ -3,13 +3,13 @@ import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 import Funcionalidad from "../Funcionalidad";
 
-const Funcionalidades = ({ features_project, team_project, hours_team, onUpdateFeaturesProject }) => {
+const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate }) => {
 
   const handleFeatureUpdate = (updatedFeature, featureIndex) => {
     const updatedFeatures = features_project.map((feature, index) =>
       index === featureIndex ? updatedFeature : feature
     );
-    onUpdateFeaturesProject(updatedFeatures);
+    onUpdate(updatedFeatures);
   }
 
   const handleAddFeature = () => {
@@ -23,12 +23,12 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdateF
       team_features
     };
 
-    onUpdateFeaturesProject([...features_project, newFeature]);
+    onUpdate([...features_project, newFeature]);
   };
 
   const handleRemoveFeature = (featureIndex) => {
     const updatedFeatures = features_project.filter((_, index) => index !== featureIndex);
-    onUpdateFeaturesProject(updatedFeatures);
+    onUpdate(updatedFeatures);
   };
 
   return (
@@ -38,7 +38,7 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdateF
           <Funcionalidad
             key={index}
             featureIndex={index}
-            feature={funcionalidad.feature}
+            feature={funcionalidad}
             teamFeatures={funcionalidad.team_features}
             onUpdate={(updatedFeature) => handleFeatureUpdate(updatedFeature, index)}
             onRemove={() => handleRemoveFeature(index)}

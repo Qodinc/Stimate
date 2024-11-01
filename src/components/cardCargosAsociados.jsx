@@ -20,7 +20,7 @@ export default function CardCargosAsociados({ cardID, cost_name, price_unity, qu
     const [Cargo, setCargo] = useState(price_unity || 0);
     const [Cantidad, setCantidad] = useState(quantity || 0);
     const [total, setTotal] = useState(Cargo * Cantidad);
-    const [tipo, settipo] = useState(type_recurring || "");
+    const [tipo, settipo] = useState(type_recurring || null);
     const [Descripcion, setDescripcion] = useState(description || "");
     const [inputValue, setInputValue] = useState(cost_name || "");
     const [errors, setErrors] = useState({ nombre: "", Cargo: "", Cantidad: "", Descripcion: "", tipo: "" });
@@ -42,7 +42,6 @@ export default function CardCargosAsociados({ cardID, cost_name, price_unity, qu
         } else {
             setErrors((prev) => ({ ...prev, Cargo: "" }));
             setCargo(monto);
-            console.log({ cost_name: inputValue, price_unity: Cargo, quantity: Cantidad, type_recurring: tipo, description: Descripcion })
             // No llamamos a onUpdate aquí porque usamos useEffect para eso
         }
     };
@@ -71,7 +70,6 @@ export default function CardCargosAsociados({ cardID, cost_name, price_unity, qu
 
     const handleTipoChange = (Tipo_r) => {
         settipo(Tipo_r);
-        console.log({ cost_name: inputValue, charge: Cargo, quantity: Cantidad, type_recurring: tipo, description: Descripcion })
         // No llamamos a onUpdate aquí porque usamos useEffect para eso
     };
 

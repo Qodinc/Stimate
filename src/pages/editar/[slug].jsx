@@ -147,7 +147,7 @@ export default function TabsPages() {
       features_project: updatedFeaturesProject
     });
   }
-const updateCargos = (associatedCost) => {
+const onUpdateAssociatedCosts = (associatedCost) => {
   setProject((prevProject) => ({
     ...prevProject,
     associated_costs: associatedCost
@@ -160,65 +160,33 @@ const updateCargos = (associatedCost) => {
       features_project: featuresProject,
     }));
   }
-  const handleOperatingExpensesUpdate = (updatedExpenses) => {
+  const onUpdateOperatingExpenses = (operatingExpenses) => {
     setProject((prevProject) => ({
       ...prevProject,
-      operating_expenses: updatedExpenses
+      operating_expenses: operatingExpenses
     }));
-  };
-  const sumHoursByTeam = (features) => {
-    const teamHoursMap = {};
-
-    features.forEach((feature) => {
-      feature.team_features.forEach((teamFeature) => {
-        const { team, time } = teamFeature;
-        if (teamHoursMap[team]) {
-          teamHoursMap[team] += time;
-        } else {
-          teamHoursMap[team] = time;
-        }
-      });
-    });
-
-    const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
-      // Buscar costo por hora del area
-      const team_project = project.team_project.find(team_project => team_project.team == team)
-      const wage = totalTime * team_project.hourly_rate
-      const totalDailyWorkHours = !!team_project.work_hours_per_day ? totalTime / team_project.work_hours_per_day : 0
-      const totalWeeklyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 5) : 0
-      const totalMonthlyWorkHours = !!team_project.work_hours_per_day ? totalTime / (team_project.work_hours_per_day * 20) : 0
-
-      return {
-        team,
-        totalTime,
-        wage,
-        totalDailyWorkHours,
-        totalWeeklyWorkHours,
-        totalMonthlyWorkHours,
-      }
-    });
-
-    const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
-    const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
-    
-    setEstimatedWages(estimatedWage)
-    setEstimatedTime(estimatedMonthlyWork)
-    setHoursTeam(teamHoursArray)
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
-        return <EquipoContent team_project={project.team_project} onUpdateTeamProject={updateTeamProject} />
+        return <EquipoContent 
+          team_project={project.team_project} 
+          onUpdate={updateTeamProject} />
       case "funcionalidades":
-        return <Funcionalidades features_project={project.features_project} team_project={project.team_project} hours_team={hoursTeam} onUpdateFeaturesProject={updateFeaturesProject} />
+        return <Funcionalidades 
+          features_project={project.features_project} 
+          team_project={project.team_project} 
+          hours_team={hoursTeam} 
+          onUpdate={updateFeaturesProject} />
       case "gastos":
         return <GastosContent 
-        operating_expenses={project.operating_expenses}
-        onUpdate={handleOperatingExpensesUpdate}
-      />
+          operating_expenses={project.operating_expenses}
+          onUpdate={onUpdateOperatingExpenses} />
       case "cargos":
-        return <CargosContent associated_cost={project.associated_costs} onUpdate={updateCargos}/>
+        return <CargosContent 
+          associated_costs={project.associated_costs} 
+          onUpdate={onUpdateAssociatedCosts} />
       case "preview":
         return <Preview 
           project={project} 
