@@ -6,13 +6,24 @@ import { Button } from "../ui/button";
 import TextArea from "../Textarea";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import httpServices from "@/lib/http-services";
 
 const Preview = ({
   project,
   hours_team,
   estimated_wages,
   estimated_operating_expenses,
-  estimated_associated_cost
+  estimated_associated_cost,
+  Status_Project,
+  onUpdateStatus,
 }) => {
   const [preview, setPreview] = useState({
     salesCommission: 0,
@@ -23,6 +34,28 @@ const Preview = ({
     taxTotal: 0,
     notes: ''
   })
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [Status, SetStatus] = useState(Status_Project || null);
+
+  useEffect(() => {
+    // Sincroniza el valor de Status cuando cambia Status_Project
+    SetStatus(Status_Project);
+  }, [Status_Project]);
+
+
+  useEffect(() => {
+    const fetchStatusOptions = async () => {
+      const data = await httpServices.getStatus();
+      setStatusOptions(Array.isArray(data) ? data : []);
+    };
+    fetchStatusOptions();
+  }, []);
+
+  const handleStatusChange = (Status_Change) => {
+    SetStatus(Status_Change);
+    onUpdateStatus(Status_Change);
+  };
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.currentTarget;
@@ -68,7 +101,22 @@ const Preview = ({
 
   return (
     <section className="my-5">
-      <div className="flex justify-end my-3">
+      <div className="flex justify-end my-3 gap-4">
+        <Select onValueChange={handleStatusChange} value={Status}>
+            <SelectTrigger className="w-full md:w-56 xl:w-50">
+                <SelectValue placeholder={Status || "Seleccionar estado"}/>
+            </SelectTrigger>
+            <SelectContent>
+            <SelectGroup>
+              {statusOptions.map((option) => (
+                <SelectItem key={option.code} value={option.code} color={option.color}>
+                  {option.translations.es}
+                </SelectItem>
+              ))
+            }
+            </SelectGroup>
+            </SelectContent>
+        </Select>
         <Button>Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
