@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import httpServices from "@/lib/http-services";
 
 
 export default function CardCargosAsociados({ cardID, cost_name, price_unity, quantity, type_recurring, description, onUpdate, onRemove }) {
@@ -24,6 +25,15 @@ export default function CardCargosAsociados({ cardID, cost_name, price_unity, qu
     const [Descripcion, setDescripcion] = useState(description || "");
     const [inputValue, setInputValue] = useState(cost_name || "");
     const [errors, setErrors] = useState({ nombre: "", Cargo: "", Cantidad: "", Descripcion: "", tipo: "" });
+    const [typesOptions, setTypesOptions] = useState([]);
+
+    useEffect(() => {
+        const fetchTypesOptions = async () => {
+          const data = await httpServices.getTypes_Recurrent();
+          setTypesOptions(Array.isArray(data) ? data : []);
+        };
+        fetchTypesOptions();
+      }, []);
 
     useEffect(() => {
         setTotal(Cargo * Cantidad);
@@ -144,11 +154,12 @@ export default function CardCargosAsociados({ cardID, cost_name, price_unity, qu
                                     <SelectValue placeholder={tipo || "Tipo de cargo"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="MRC">MRC</SelectItem>
-                                        <SelectItem value="ARC">ARC</SelectItem>
-                                        <SelectItem value="NRC">NRC</SelectItem>
-                                    </SelectGroup>
+                                {typesOptions.map((option, i) => (
+                                    <SelectItem key={option.code} value={option.code}>
+                                        {option.translations.es}
+                                    </SelectItem>
+                                ))
+                                }
                                 </SelectContent>
                             </Select>
                             {errors.tipo && <span className="text-baseM text-[#C03744]">*{errors.tipo}</span>}

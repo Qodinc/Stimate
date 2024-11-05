@@ -180,6 +180,15 @@ export default function TabsPages() {
     }));
   };
 
+  const onUpdateStatus = (StatusProject) => {
+    console.log(StatusProject)
+    setProject((prevProject) => ({
+      ...prevProject,
+      status_project: StatusProject
+    }));
+  };
+  
+
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
@@ -207,7 +216,10 @@ export default function TabsPages() {
           hours_team={hoursTeam}
           estimated_wages={estimatedWages}
           estimated_operating_expenses={estimatedOperatingExpenses}
-          estimated_associated_cost={estimatedAssociatedCost} />
+          estimated_associated_cost={estimatedAssociatedCost}
+          Status_Project={project.status_project}
+          onUpdateStatus={onUpdateStatus}
+          />
       default:
         return null
     }
