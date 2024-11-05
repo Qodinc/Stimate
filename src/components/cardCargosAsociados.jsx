@@ -1,7 +1,7 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import Dinero from "./Icons/DollarSign";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Trash from "./Icons/Trash";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
@@ -14,16 +14,37 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import httpServices from "@/lib/http-services";
 
 
-export default function CardCargosAsociados({ cardID, cost_name, charge, quantity, type, description }) {
-    const [Cargo, setCargo] = useState(charge || 0);
-    const [Cantidad, setCantidad] = useState(quantity || 0)
+export default function CardCargosAsociados({ cardID, cost_name, price_unity, quantity, type_recurring, description, onUpdate, onRemove }) {
+    const [Cargo, setCargo] = useState(price_unity || 0);
+    const [Cantidad, setCantidad] = useState(quantity || 0);
     const [total, setTotal] = useState(Cargo * Cantidad);
-    const [tipo, settipo] = useState(type ? type.toUpperCase() : "")
-    const [Descripcion, setDescripcion] = useState(description || "")
+    const [tipo, settipo] = useState(type_recurring || null);
+    const [Descripcion, setDescripcion] = useState(description || "");
     const [inputValue, setInputValue] = useState(cost_name || "");
     const [errors, setErrors] = useState({ nombre: "", Cargo: "", Cantidad: "", Descripcion: "", tipo: "" });
+    const [typesOptions, setTypesOptions] = useState([]);
+
+    useEffect(() => {
+        const fetchTypesOptions = async () => {
+          const data = await httpServices.getTypes_Recurrent();
+          setTypesOptions(Array.isArray(data) ? data : []);
+        };
+        fetchTypesOptions();
+      }, []);
+
+    useEffect(() => {
+        setTotal(Cargo * Cantidad);
+    }, [Cargo, Cantidad]);
+
+    useEffect(() => {
+        // Llama a onUpdate solo cuando los valores cambian
+        onUpdate({ cost_name: inputValue, price_unity: Cargo, quantity: Cantidad, type_recurring: tipo, description: Descripcion });
+    }, [Cargo, Cantidad, inputValue, tipo, Descripcion, onUpdate]);
+
+
     const handleMontoChange = (amount) => {
         const monto = parseFloat(amount.target.value);
         if (isNaN(monto) || monto <= 0) {
@@ -31,7 +52,7 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
         } else {
             setErrors((prev) => ({ ...prev, Cargo: "" }));
             setCargo(monto);
-            setTotal(monto * Cantidad);
+            // No llamamos a onUpdate aquí porque usamos useEffect para eso
         }
     };
 
@@ -43,6 +64,7 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
             setErrors((prev) => ({ ...prev, nombre: "" }));
         }
         setInputValue(nombre);
+        // No llamamos a onUpdate aquí porque usamos useEffect para eso
     };
 
     const handleCantidadChange = (amount) => {
@@ -52,12 +74,13 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
         } else {
             setErrors((prev) => ({ ...prev, Cantidad: "" }));
             setCantidad(monto);
-            setTotal(monto * charge);
+            // No llamamos a onUpdate aquí porque usamos useEffect para eso
         }
     };
 
     const handleTipoChange = (Tipo_r) => {
         settipo(Tipo_r);
+        // No llamamos a onUpdate aquí porque usamos useEffect para eso
     };
 
     const handleDescripcionChange = (D) => {
@@ -68,7 +91,9 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
             setErrors((prev) => ({ ...prev, Descripcion: "" }));
         }
         setDescripcion(Descripcion);
+        // No llamamos a onUpdate aquí porque usamos useEffect para eso
     };
+
 
     return (
         <>
@@ -94,12 +119,12 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
                                 type="number"
                                 min={0}
                                 step={0.01}
-                                value={charge}
+                                value={Cargo}
                                 placeholder="Costo Unitario"
                                 icon={<Dinero width={20} height={20} />}
                                 onChange={handleMontoChange}
                                 iconPosition="left"
-                                className={errors.charge ? "border-red-500" : ""}
+                                className={errors.Cargo  ? "border-red-500" : ""}
                             />
                             {errors.Cargo && <span className="text-baseM text-[#C03744]">*{errors.Cargo}</span>}
                         </div>
@@ -124,16 +149,17 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
                     <div className="flex flex-col gap-2 w-full px-1">
                         <span>Tipo de Recurrente</span>
                         <div className="flex flex-col gap-1 w-full">
-                            <Select onChange={handleTipoChange}>
+                        <Select onValueChange={handleTipoChange} >
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={tipo || "Tipo de cargo"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="MRC">MRC</SelectItem>
-                                        <SelectItem value="ARC">ARC</SelectItem>
-                                        <SelectItem value="NRC">NRC</SelectItem>
-                                    </SelectGroup>
+                                {typesOptions.map((option, i) => (
+                                    <SelectItem key={option.code} value={option.code}>
+                                        {option.translations.es}
+                                    </SelectItem>
+                                ))
+                                }
                                 </SelectContent>
                             </Select>
                             {errors.tipo && <span className="text-baseM text-[#C03744]">*{errors.tipo}</span>}
@@ -172,15 +198,10 @@ export default function CardCargosAsociados({ cardID, cost_name, charge, quantit
                         <AlertDialogTrigger asChild>
                             <Button>{<Trash width={20} height={20} stroke="white" />} Eliminar</Button>
                         </AlertDialogTrigger>
-                        <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={() => deleteCard(cardID)} />
+                        <Delete elemento={inputValue ? inputValue : "Tarjeta"} onClick={onRemove} />
                     </AlertDialog>
                 </div>
             </Card>
         </>
     );
-}
-
-function deleteCard(cardID) {
-    const card = document.getElementById(`cardGO-${cardID}`);
-    card.remove();
 }

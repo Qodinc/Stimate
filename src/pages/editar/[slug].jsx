@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import CargosContent from "@/components/tabContent/CargosContent";
 import EquipoContent from "@/components/tabContent/EquipoContent";
 import Funcionalidades from "@/components/tabContent/FuncionalidadesContent";
-import GastosContent from "@/components/tabContent/GastosContent";
+import GastosOperativos from "@/components/tabContent/GastosContent";
 import Preview from "@/components/tabContent/Preview";
 import TabsMenu from "@/components/TabsMenu";
 import { useEffect, useState } from "react";
@@ -61,10 +61,10 @@ export default function TabsPages() {
   }, [slug]);
 
   useEffect(() => {
-    const sumHoursByTeam = (features) => {
+    const summary = () => {
       const teamHoursMap = {};
 
-      features.forEach((feature) => {
+      project.features_project.forEach((feature) => {
         feature.team_features.forEach((teamFeature) => {
           const { team, time } = teamFeature;
           if (teamHoursMap[team]) {
@@ -75,6 +75,7 @@ export default function TabsPages() {
         });
       });
 
+      // Tiempos por equipo
       const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
         // Buscar costo por hora del area
         const team_project = project.team_project.find(team_project => team_project.team == team)
@@ -93,15 +94,26 @@ export default function TabsPages() {
         }
       });
 
+      // Salario estimado por horas
       const estimatedWage = teamHoursArray.reduce((total, team) => total += team.wage, 0)
-      const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
 
+      // Tiempo estimado en meses
+      const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
+      
+      // Gasto estimado
+      const estimateExpense = project.operating_expenses.reduce((total, expense) => total += expense.total_per_month * estimatedMonthlyWork, 0)
+
+      // Gasto estimado
+      const estimateAssociatedCost = project.associated_costs.reduce((total, cost) => total += cost.price_unity * cost.quantity , 0)
+      
+      setHoursTeam(teamHoursArray)
       setEstimatedWages(estimatedWage)
       setEstimatedTime(estimatedMonthlyWork)
-      setHoursTeam(teamHoursArray)
+      setEstimatedOperatingExpenses(estimateExpense)
+      setEstimatedAssociatedCost(estimateAssociatedCost)
     };
 
-    sumHoursByTeam(project.features_project)
+    summary()
   }, [project])
 
   const updateTeamProject = (updatedTeamProject) => {
@@ -148,30 +160,66 @@ export default function TabsPages() {
     });
   }
 
+  const onUpdateAssociatedCosts = (associatedCost) => {
+    setProject((prevProject) => ({
+      ...prevProject,
+      associated_costs: associatedCost
+    }))
+  }
+
   const updateFeaturesProject = (featuresProject) => {
     setProject((prevProject) => ({
       ...prevProject,
       features_project: featuresProject,
     }));
   }
+  const onUpdateOperatingExpenses = (operatingExpenses) => {
+    setProject((prevProject) => ({
+      ...prevProject,
+      operating_expenses: operatingExpenses
+    }));
+  };
+
+  const onUpdateStatus = (StatusProject) => {
+    console.log(StatusProject)
+    setProject((prevProject) => ({
+      ...prevProject,
+      status_project: StatusProject
+    }));
+  };
+  
 
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
-        return <EquipoContent team_project={project.team_project} onUpdateTeamProject={updateTeamProject} />
+        return <EquipoContent
+          team_project={project.team_project}
+          onUpdate={updateTeamProject} />
       case "funcionalidades":
-        return <Funcionalidades features_project={project.features_project} team_project={project.team_project} hours_team={hoursTeam} onUpdateFeaturesProject={updateFeaturesProject} />
+        return <Funcionalidades
+          features_project={project.features_project}
+          team_project={project.team_project}
+          hours_team={hoursTeam}
+          onUpdate={updateFeaturesProject} />
       case "gastos":
-        return <GastosContent operatingExpenses={project.operating_expenses} />
+        return <GastosOperativos
+          operating_expenses={project.operating_expenses}
+          estimated_time={estimatedTime}
+          onUpdate={onUpdateOperatingExpenses} />
       case "cargos":
-        return <CargosContent associatedCost={project.associated_costs} />
+        return <CargosContent
+          associated_costs={project.associated_costs}
+          onUpdate={onUpdateAssociatedCosts} />
       case "preview":
-        return <Preview 
-          project={project} 
-          hours_team={hoursTeam} 
-          estimated_wages={estimatedWages} 
+        return <Preview
+          project={project}
+          hours_team={hoursTeam}
+          estimated_wages={estimatedWages}
           estimated_operating_expenses={estimatedOperatingExpenses}
-          estimated_associated_cost={estimatedAssociatedCost} />
+          estimated_associated_cost={estimatedAssociatedCost}
+          Status_Project={project.status_project}
+          onUpdateStatus={onUpdateStatus}
+          />
       default:
         return null
     }
@@ -179,13 +227,13 @@ export default function TabsPages() {
 
   const saveProject = async () => {
     const updateProject = await httpServices.updateProyect(project)
-    
-    if(!updateProject.ok){
+
+    if (!updateProject.ok) {
       throw new Error('Failed to fetch project');
     }
     toast.success("Información guardada");
     const { data } = await updateProject.json();
-    if (data.project){
+    if (data.project) {
       setProject(data.project);
     }
   }

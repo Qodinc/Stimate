@@ -2,11 +2,45 @@ require("dotenv").config();
 
 class HttpServices {
   // ### Project_status
+  getStatus = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/status`, {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Error al obtener el estado");
+      }
+      const jsonData = await response.json();
+      
+      // Extrae solo el arreglo en la propiedad 'data'
+      return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
+    } catch (error) {
+      console.error("Error en getStatus:", error);
+      return []; // Retorna un array vacío en caso de error
+    }
+  };
+  
 
   // ### Areas
 
   // ### Types_recurrent
-
+  getTypes_Recurrent = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/type_recurring`, {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Error al obtener los tipos");
+      }
+      const jsonData = await response.json();
+      
+      // Extrae solo el arreglo en la propiedad 'data'
+      return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
+    } catch (error) {
+      console.error("Error en getTypes_Recurrent:", error);
+      return []; // Retorna un array vacío en caso de error
+    }
+  };
   // ### Users
 
   // ### Projects

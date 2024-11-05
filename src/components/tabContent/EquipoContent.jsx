@@ -9,8 +9,7 @@ import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-const EquipoContent = ({ team_project, onUpdateTeamProject }) => {
-  // const [teamProject, setTeamProject] = useState(team_project);
+const EquipoContent = ({ team_project, onUpdate }) => {
 
   const handleChangeTeamProject = (event, index) => {
     const { name, value } = event.target;
@@ -41,7 +40,7 @@ const EquipoContent = ({ team_project, onUpdateTeamProject }) => {
       return area;
     });
 
-    onUpdateTeamProject(updatedTeamProject);
+    onUpdate(updatedTeamProject);
   }
 
   const handleAddTeamProject = () => {
@@ -52,12 +51,12 @@ const EquipoContent = ({ team_project, onUpdateTeamProject }) => {
     };
   
     const updatedTeamProject = [...team_project, newTeamProject];
-    onUpdateTeamProject(updatedTeamProject);
+    onUpdate(updatedTeamProject);
   };
 
   const handleRemoveTeamProject = (index) => {
     const updatedTeamProject = team_project.filter((_, i) => i !== index);
-    onUpdateTeamProject(updatedTeamProject); 
+    onUpdate(updatedTeamProject); 
   };
 
   return (
