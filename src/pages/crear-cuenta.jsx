@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState} from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import ButtonGoogle from "@/components/ui/buttonGoogle";
@@ -6,55 +8,94 @@ import LogoStimate from '@/components/Icons/LogoStimate';
 import Link from 'next/link';
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Correo } from '@/components/alerts-variants';
+import { registerUser } from '@/utils/auth';
 
 export default function SignIn() {
-
-    const [nombre, setNombre] = useState('');
-    const [apellido, setApellido] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const router = useRouter()
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({
+        nombre: '',
+        apellido: '',
+        email: '',
+        password: '',
+      });
 
-    const validateForm = () => {
+      const validateForm = () => {
         let formErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!nombre) {
-            formErrors.nombre = "El nombre es obligatorio";
+    
+        if (!formData.nombre) {
+          formErrors.nombre = "El nombre es obligatorio";
         }
-
-        if (!apellido) {
-            formErrors.apellido = "El apellido es obligatorio";
+    
+        if (!formData.apellido) {
+          formErrors.apellido = "El apellido es obligatorio";
         }
-
-        if (!email) {
-            formErrors.email = "El correo electrónico es obligatorio";
-        } else if (!emailRegex.test(email)) {
-            formErrors.email = "El formato del correo no es válido";
+    
+        if (!formData.email) {
+          formErrors.email = "El correo electrónico es obligatorio";
+        } else if (!emailRegex.test(formData.email)) {
+          formErrors.email = "El formato del correo no es válido";
         }
-
-        if (!password) {
-            formErrors.password = "La contraseña es obligatoria";
-        } else if (password.length < 6) {
-            formErrors.password = "La contraseña debe tener al menos 6 caracteres";
+    
+        if (!formData.password) {
+          formErrors.password = "La contraseña es obligatoria";
+        } else if (formData.password.length < 6) {
+          formErrors.password = "La contraseña debe tener al menos 6 caracteres";
         }
-
+    
         if (!termsAccepted) {
-            formErrors.termsAccepted = "Debes aceptar los términos y condiciones";
+          formErrors.termsAccepted = "Debes aceptar los términos y condiciones";
         }
-
+    
         setErrors(formErrors);
         return Object.keys(formErrors).length === 0;
-    };
+      };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateForm()) {
-            setIsDialogOpen(true);
+        setIsLoading(true);
+
+        if (!validateForm()) {
+            setIsLoading(false);
+            return;
+          }
+        
+        try {
+           const userData = {
+            name: `${formData.nombre.trim()} ${formData.apellido.trim()}`.trim(),
+            email: formData.email,
+            password: formData.password
+          };
+            
+          const user = await registerUser(userData);
+
+          if (!user) {
+            throw new Error('Error al registrar usuario');
         }
+
+          const result = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+          });
+    
+          if (result.error) {
+            console.error('Error al iniciar sesión:', result.error);
+          } else {
+            router.push('/');
+          }
+        } catch (error) {
+          console.error('Error en el registro:', error.message);
+        }
+      };
+
+
+    const handleGoogleSignIn = () => {
+        signIn('google', { redirect: false });
     };
 
     return (
@@ -71,15 +112,14 @@ export default function SignIn() {
                     </div>
                     <h1 className="font-bold text-2xl text-accent font-poppins">Crear Cuenta</h1>
                 </div>
-                <form className="flex flex-col gap-1 w-full" action='#' onSubmit={handleSubmit}>
+                <form className="flex flex-col gap-1 w-full"  onSubmit={handleSubmit}>
                     <div className="flex flex-col md:flex-row gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <span>Nombre</span>
                             <Input
                                 placeholder="Nombre"
-                                name="nombre"
-                                value={nombre}
-                                onChange={(handle) => setNombre(handle.target.value)}
+                                value={formData.nombre}
+                                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
                                 className={`border ${errors.nombre ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre}</p>}
@@ -89,8 +129,8 @@ export default function SignIn() {
                             <Input
                                 placeholder="Apellido"
                                 name="apellido"
-                                value={apellido}
-                                onChange={(handle) => setApellido(handle.target.value)}
+                                value={formData.apellido}
+                                onChange={(e) => setFormData({...formData, apellido: e.target.value})}
                                 className={`border ${errors.apellido ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.apellido && <p className="text-red-500 text-xs">{errors.apellido}</p>}
@@ -101,8 +141,8 @@ export default function SignIn() {
                         <Input
                             placeholder="Correo Electrónico"
                             name="email"
-                            value={email}
-                            onChange={(handle) => setEmail(handle.target.value)}
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
                             className={`border ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                         />
                         {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
@@ -114,8 +154,8 @@ export default function SignIn() {
                                 placeholder="Contraseña"
                                 type="password"
                                 name="password"
-                                value={password}
-                                onChange={(handle) => setPassword(handle.target.value)}
+                                value={formData.password}
+                                onChange={(e) => setFormData({...formData, password: e.target.value})}
                                 className={`border ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
@@ -123,13 +163,13 @@ export default function SignIn() {
                     </div>
                     <div className="flex gap-2 items-center">
                         <Input
-                            id="accept"
+                            id="terms"
                             type="checkbox"
                             name="termsAccepted"
                             checked={termsAccepted}
-                            onChange={(handle) => setTermsAccepted(handle.target.checked)}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
                         />
-                        <label for="accept">Acepto los términos y condiciones</label>
+                        <label for="terms">Acepto los términos y condiciones</label>
                     </div>
                     {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}
                     <div className="flex flex-col justify-center items-center py-8">
@@ -138,7 +178,7 @@ export default function SignIn() {
                         </AlertDialogTrigger>
                         <Correo />
                     </AlertDialog>
-                        <Button type="submit" variant="default" size="default">Crear Cuenta</Button>
+                        <Button type="submit" disabled={isLoading} variant="default" size="default">{isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}</Button>
                         <div className="flex w-full p-4 justify-end items-center">
                             <Link href={"/iniciar-sesion"} className="text-accent">¿Ya tienes una cuenta?</Link>
                         </div>
@@ -148,10 +188,10 @@ export default function SignIn() {
                         <div><p>o</p></div>
                         <div className="border border-gray-400 md:border-baseColor lg:border-gray-400 min-w-[50%]"></div>
                     </div>
-                    <div className="flex w-full justify-center items-center p-4">
-                        <ButtonGoogle text="Google" href="#" />
-                    </div>
                 </form>
+                <div className="flex w-full justify-center items-center p-4">
+                    <ButtonGoogle text="Google" onClick={handleGoogleSignIn} />
+                </div>
             </div>
         </div>
     );
