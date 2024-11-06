@@ -45,13 +45,13 @@ class HttpServices {
 
   // ### Projects
 
-  createProyect = async ({ name_project, areas_selected }) => {
+  createProyect = async (project) => {
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name_project, areas_selected }),
+      body: JSON.stringify(project),
     });
   };
 

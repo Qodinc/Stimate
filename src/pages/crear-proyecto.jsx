@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
 import httpServices from '@/lib/http-services';
+import { useSession } from 'next-auth/react';
 
 export default function NewProject() {
    const [projectName, setProjectName] = useState('');
@@ -14,8 +15,10 @@ export default function NewProject() {
    const [errors, setErrors] = useState({
       project: false,
       areas: false,
+      validator: false
    });
    const [isFormValid, setIsFormValid] = useState(false);
+   const { data: session } = useSession();
 
    useEffect(() => {
       const newErrors = {
@@ -39,15 +42,19 @@ export default function NewProject() {
    const submitProject = async () => {
       if (isFormValid) {
          const dataProject = {
+            owner_id: session.user ? session.user.id : session.id,
             name_project: projectName,
             areas_selected: areasSelected
          };
 
          const response = await httpServices.createProyect(dataProject);
          if (!response.ok) {
-            throw new Error(
-               "Ocurrió un error al realizar la solicitud: " + response.status
-            );
+            const errorData = await response.json();
+            console.error(errorData.error);
+            
+            return setErrors({
+               validator: true
+            })
          }
 
          const {data} = await response.json(); 
@@ -73,6 +80,10 @@ export default function NewProject() {
                <div className="flex flex-col gap-3">
                   <AddArea areasSelected={handleAreasSelected} />
                   {errors.areas && <span className="text-red-700">*Este campo es obligatorio</span>}
+               </div>
+
+               <div className="flex flex-col gap-3">
+                  {errors.validator && <span className="text-red-700">Error al crear el proyecto. Llamar a soporte técnico.</span>}
                </div>
 
                <div className="flex justify-end">
