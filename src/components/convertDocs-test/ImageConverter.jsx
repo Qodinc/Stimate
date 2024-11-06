@@ -17,7 +17,7 @@ const ImageConverter = ({ children }) => {
         link.click();
       })
       .catch((err) => {
-        console.log('Ocurrió un error:', err);
+        console.error('Ocurrió un error:', err);
       });
   }, [ref]);
 

@@ -22,26 +22,9 @@ const Preview = ({
   estimated_wages,
   estimated_operating_expenses,
   estimated_associated_cost,
-  Status_Project,
-  onUpdateStatus,
+  onUpdate
 }) => {
-  const [preview, setPreview] = useState({
-    salesCommission: 0,
-    salesCommissionTotal: 0,
-    profitMargin: 0,
-    profitMarginTotal: 0,
-    tax: 0,
-    taxTotal: 0,
-    notes: ''
-  })
   const [statusOptions, setStatusOptions] = useState([]);
-  const [Status, SetStatus] = useState(Status_Project || null);
-
-  useEffect(() => {
-    // Sincroniza el valor de Status cuando cambia Status_Project
-    SetStatus(Status_Project);
-  }, [Status_Project]);
-
 
   useEffect(() => {
     const fetchStatusOptions = async () => {
@@ -51,60 +34,58 @@ const Preview = ({
     fetchStatusOptions();
   }, []);
 
-  const handleStatusChange = (Status_Change) => {
-    SetStatus(Status_Change);
-    onUpdateStatus(Status_Change);
+  const handleStatusChange = (status_Change) => {
+    onUpdate({
+      ...project, 
+      status_project: status_Change
+    });
   };
   
 
   const handleInputChange = (event) => {
     const { name, value } = event.currentTarget;
     const parsedValue = Number(value);
+    let updatedProject = { ...project }; 
 
     switch (name) {
       case "salesCommission":
-        setPreview((preview) => ({
-          ...preview,
-          salesCommission: parsedValue, 
-          salesCommissionTotal: (parsedValue / 100) * estimated_wages
-        }))
+        updatedProject = {
+          ...updatedProject,
+          sale_comission: parsedValue
+        };
         break;
       case "profitMargin":
-        setPreview((preview) => ({
-          ...preview,
-          profitMargin: parsedValue,
-          profitMarginTotal: (parsedValue / 100) * (estimated_wages + estimated_operating_expenses + estimated_associated_cost)
-        }))
+        updatedProject = {
+          ...updatedProject,
+          profit: parsedValue
+        };
         break;
       case "tax":
-        setPreview((preview) => ({
-          ...preview,
-          tax: parsedValue,
-          taxTotal: (estimated_wages + estimated_operating_expenses + estimated_associated_cost + preview.salesCommissionTotal + preview.profitMarginTotal) * (parsedValue / 100)
-        }))
+        updatedProject = {
+          ...updatedProject,
+          tax: parsedValue
+        };
         break;
       case "notes":
-        setPreview((preview) => ({
-          ...preview,
+        updatedProject = {
+          ...updatedProject,
           notes: value
-        }))
+        };
         break;
     
       default:
         break;
     }
+
+    onUpdate(updatedProject)
   };
-  
-  useEffect(() => {
-    // TODO: onUpdated
-  }, [preview])
 
   return (
     <section className="my-5">
       <div className="flex justify-end my-3 gap-4">
-        <Select onValueChange={handleStatusChange} value={Status}>
+        <Select onValueChange={handleStatusChange} value={project.status_project}>
             <SelectTrigger className="w-full md:w-56 xl:w-50">
-                <SelectValue placeholder={Status || "Seleccionar estado"}/>
+            <SelectValue placeholder={"Seleccionar estado"}/>
             </SelectTrigger>
             <SelectContent>
             <SelectGroup>
@@ -137,7 +118,7 @@ const Preview = ({
                   type="text"
                   name="salesCommission"
                   placeholder="Ingrese un numero"
-                  value={preview.salesCommission}
+                  value={!isNaN(project.sale_comission) ? project.sale_comission : 0}
                   min={0}
                   step={0.01}
                   onChange={handleInputChange}
@@ -149,7 +130,7 @@ const Preview = ({
                 <Input
                   icon={<DollarSign width={20} height={20} className="text-secondaryIcon" />}
                   iconPosition="left"
-                  value={preview.salesCommissionTotal.toFixed(2)}
+                  value={!isNaN(project.sale_comission_total) ? project.sale_comission_total.toFixed(2) : 0}
                   placeholder="Ingrese la comisón por venta"
                   disabled={true}
                 />
@@ -159,7 +140,7 @@ const Preview = ({
                 <Input
                   placeholder="Ingrese un numero"
                   name="profitMargin"
-                  value={preview.profitMargin}
+                  value={!isNaN(project.profit) ? project.profit : 0}
                   min={0}
                   step={0.01}
                   onChange={handleInputChange}
@@ -172,7 +153,7 @@ const Preview = ({
                   icon={<DollarSign width={20} height={20}
                   className="text-secondaryIcon" />}
                   iconPosition="left"
-                  value={preview.profitMarginTotal.toFixed(2)}
+                  value={!isNaN(project.profit_total) ? project.profit_total.toFixed(2) : 0}
                   placeholder="Ingrese el magen de ganancia"
                   disabled={true}
                 />
@@ -182,7 +163,7 @@ const Preview = ({
                 <Input
                   placeholder="Ingrese un numero"
                   name="tax"
-                  value={preview.tax}
+                  value={!isNaN(project.tax) ? project.tax : 0}
                   min={0}
                   step={0.01}
                   onChange={handleInputChange}
@@ -194,7 +175,7 @@ const Preview = ({
                 <Input
                   icon={<DollarSign width={20} height={20} className="text-secondaryIcon" />}
                   iconPosition="left"
-                  value={preview.taxTotal.toFixed(2)}
+                  value={!isNaN(project.tax_total) ? project.tax_total.toFixed(2) : 0}
                   placeholder="Ingrese el impuesto"
                   disabled={true}
                 />
@@ -206,7 +187,7 @@ const Preview = ({
               <TextArea
                 name="notes"
                 placeholder={"Añade alguna nota"}
-                value={preview.notes}
+                defaultValue={project.notes}
                 onChange={(event) => handleInputChange({ 
                   currentTarget: {
                     value:event,
@@ -221,7 +202,7 @@ const Preview = ({
         <div className="xl:w-1/2 mt-6 xl:mt-0 order-last xl:order-none">
           <div className="w-full h-full relative aspect-video border-slate-800">
             <Image
-              src="/preview.jpg"
+              src={"/preview.jpg"}
               alt="Descripción de la imagen"
               layout="fill"
               objectFit="contain"

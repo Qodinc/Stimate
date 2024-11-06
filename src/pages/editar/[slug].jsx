@@ -24,7 +24,7 @@ export default function TabsPages() {
   const [estimatedTime, setEstimatedTime] = useState(0);
   const [estimatedWages, setEstimatedWages] = useState(0);
   const [estimatedOperatingExpenses, setEstimatedOperatingExpenses] = useState(0);
-  const [estimatedAssociatedCost, setEstimatedAssociatedCost] = useState(0);
+  const [estimatedAssociatedCosts, setEstimatedAssociatedCost] = useState(0);
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [hoursTeam, setHoursTeam] = useState(null)
 
@@ -99,18 +99,30 @@ export default function TabsPages() {
 
       // Tiempo estimado en meses
       const estimatedMonthlyWork = teamHoursArray.reduce((total, team) => total += team.totalMonthlyWorkHours, 0)
-      
+
       // Gasto estimado
       const estimateExpense = project.operating_expenses.reduce((total, expense) => total += expense.total_per_month * estimatedMonthlyWork, 0)
 
       // Gasto estimado
-      const estimateAssociatedCost = project.associated_costs.reduce((total, cost) => total += cost.price_unity * cost.quantity , 0)
-      
+      const estimateAssociatedCost = project.associated_costs.reduce((total, cost) => total += cost.price_unity * cost.quantity, 0)
+
+      project.sale_comission_total = (project.sale_comission / 100) * estimatedWage
+      project.profit_total = (project.profit / 100) * (estimatedWage + estimateExpense + estimateAssociatedCost)
+      project.tax_total = (estimatedWage + estimateExpense + estimateAssociatedCost + project.sale_comission_total + project.profit_total) * (project.tax / 100)
+
       setHoursTeam(teamHoursArray)
       setEstimatedWages(estimatedWage)
       setEstimatedTime(estimatedMonthlyWork)
       setEstimatedOperatingExpenses(estimateExpense)
       setEstimatedAssociatedCost(estimateAssociatedCost)
+      setEstimatedCost(
+        estimatedWage +
+        estimateExpense +
+        estimateAssociatedCost +
+        (!isNaN(project.sale_comission_total) ? project.sale_comission_total : 0) +
+        (!isNaN(project.profit_total) ? project.profit_total : 0) +
+        (!isNaN(project.tax_total) ? project.tax_total : 0)
+      )
     };
 
     summary()
@@ -180,14 +192,16 @@ export default function TabsPages() {
     }));
   };
 
-  const onUpdateStatus = (StatusProject) => {
-    console.log(StatusProject)
+  const updatePreview = (preview) => {
     setProject((prevProject) => ({
       ...prevProject,
-      status_project: StatusProject
+      status_project: preview.status_project,
+      sale_comission: preview.sale_comission,
+      profit: preview.profit,
+      tax: preview.tax,
+      notes: preview.notes
     }));
-  };
-  
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -216,10 +230,9 @@ export default function TabsPages() {
           hours_team={hoursTeam}
           estimated_wages={estimatedWages}
           estimated_operating_expenses={estimatedOperatingExpenses}
-          estimated_associated_cost={estimatedAssociatedCost}
-          Status_Project={project.status_project}
-          onUpdateStatus={onUpdateStatus}
-          />
+          estimated_associated_cost={estimatedAssociatedCosts}
+          onUpdate={updatePreview}
+        />
       default:
         return null
     }
@@ -269,7 +282,7 @@ export default function TabsPages() {
         </div>
         <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
         <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
-        <h2>Costo estimado:</h2> <strong>$ {(estimatedWages + estimatedOperatingExpenses + estimatedAssociatedCost).toFixed(2)}</strong>
+        <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
       </header>
       <main className="px-4 md:px-14 lg:px-20">
         <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
