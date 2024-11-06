@@ -27,10 +27,6 @@ export default function Custom404() {
             >
               Volver al inicio
             </Link>
-            
-            <div className="text-sm text-gray-500 mt-4">
-              Si crees que esto es un error, por favor contacta a Charly Dev vive en veracruz.
-            </div>
           </div>
         </div>
       </div>

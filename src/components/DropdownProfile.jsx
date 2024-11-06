@@ -11,7 +11,7 @@ const DropdownProfile = () => {
   useEffect(() => {
     // Confirmamos si existen datos de usuario en la sesión en todos los inicios de sesión
     if (session) {
-      console.log("Datos de sesión del usuario:", session.user);
+      
     }
   }, [session]);
 

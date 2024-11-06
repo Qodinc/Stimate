@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUser } from "@/utils/auth";
+import { loginUser, registerUser } from "@/utils/auth";
 
 export const authOptions = {
   providers: [
@@ -12,6 +12,7 @@ export const authOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
+        id: { label: "ID", type: "text" },
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
@@ -20,7 +21,7 @@ export const authOptions = {
           const user = await loginUser(credentials);
           
           return {
-            id: user._id,
+            id: user.id,
             name: user.name,
             email: user.email,
           };
@@ -37,11 +38,14 @@ export const authOptions = {
           token.accessToken = account.access_token;
           token.idToken = account.id_token;
         }
-        token.user = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        };
+        if (user) {
+          token.id = user.id || user.sub
+          token.user = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          };
+        }
       }
       return token;
     },
@@ -61,6 +65,20 @@ export const authOptions = {
       
       return session;
     },
+    async signIn({ user, account, profile }) {
+      const { email, name } = user;
+
+      // Conecta a la base de datos mediante fetch al backend. Mandar mis datos para registar un usuario
+      user.provider = account.provider
+      const userRegister = await registerUser(user);
+
+      if (!userRegister) 
+        return false
+
+      user.id = userRegister._id
+      // Permitir el inicio de sesión
+      return true;
+    }
   },
   pages: {
     signIn: '/iniciar-sesion',

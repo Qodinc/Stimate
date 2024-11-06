@@ -30,11 +30,7 @@ export async function loginUser(credentials) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: userData.name,
-          email: userData.email,
-          password: userData.password,
-        }),
+        body: JSON.stringify(userData),
       });
   
       const data = await res.json();
