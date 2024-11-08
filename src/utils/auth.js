@@ -1,6 +1,6 @@
 export async function loginUser(credentials) {
     try {
-      const res = await fetch('http://localhost:8080/users/login', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export async function loginUser(credentials) {
 
   export async function registerUser(userData) {
     try {
-      const res = await fetch('http://localhost:8080/users/register', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
