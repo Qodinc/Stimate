@@ -4,14 +4,18 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
+import { useEffect, useState } from "react"
+import httpServices from "@/lib/http-services";
+import { useSession } from "next-auth/react";
+import Star from "@/components/Icons/Star";
 
-export default function pricing() {
-  const cards = [
+export default function Pricing() {
+  const [misPlanes, setMisPlanes] = useState(null)
+  const [planes, setPlanes] = useState([
     {
-      title: "Basico",
-      price: "Gratis",
-      background: "white",
-      titleColor: "accent",
+      title: "Básico",
+      price: 0,
+      price_text: "Gratis",
       benefits: [
         "Almacenaje para 5 proyectos",
         "Exportación solo en JPEG",
@@ -19,13 +23,14 @@ export default function pricing() {
         "Solo 2 exportaciones por proyecto",
       ],
       button: "Continuar",
-      href: "/crear-proyecto"
+      href: "/crear-proyecto",
+      isActive: true
     },
     {
+      id: "price_1Q5x9nLiRxVT0FOqn3MHk88r",
       title: "Premium",
-      price: "$10 usd /Mensual",
-      background: "accent",
-      titleColor: "white",
+      price: 10,
+      price_text: "$10 usd /Mensual",
       benefits: [
         "Almacenaje para proyectos ilimitado",
         "Exportaciones en PDF y JPG",
@@ -33,9 +38,63 @@ export default function pricing() {
         "Agregar más áreas de trabajo por proyecto",
       ],
       button: "Contrata Ahora",
-      href: "/suscripcion"
+      href: "/suscripcion",
+      isActive: false
     },
-  ];
+  ])
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    getPlanes()
+  }, [])
+
+  const getPlanes = async () => {
+    if (session) {
+      const customer = session.user?.customer_ids ? session.user?.customer_ids.stripe : null
+      const response = await httpServices.getPlanesCustomer({ customer })
+
+      if (response.ok) {
+        const { data } = await response.json()
+
+        setMisPlanes(data.subscriptions)
+
+        // mapear data.subscriptions y mapear planes, planes hay que convertirlo en hook State
+        const plans = planes.map(plan => {
+          const subscription = data.subscriptions.find(subscription => subscription.plan.id == plan.id)
+
+          if (!!subscription)
+            plan.isActive = true
+          else
+            plan.isActive = false
+
+          return plan
+        })
+
+        setPlanes(plans)
+      }
+
+    }
+  }
+
+  const showButton = (plan) => {
+    if (plan.isActive) 
+      return (
+        <Link href={'/plan-actual'}>
+          <Button variant="" size="lg" >Continuar</Button>
+        </Link>
+      )
+    else
+      if (plan.price)
+        return (
+          <Link href={'/suscripcion'}>
+            <Button variant="" size="lg" >Contratar</Button>
+          </Link>
+        )
+
+    return 
+
+    
+  }
 
   return (
     <div>
@@ -62,18 +121,21 @@ export default function pricing() {
             src="Icons/Vector7.svg"
             alt=""
           />
-          <div className="w-full flex flex-col md:flex-row justify-center items-center xl:items-end gap-16">
-            {cards.map((card, index) => (
-              <Card key={index}>
-                <div
-                  className={`bg-${card.background} w-full max-w-[25.25rem] px-4 py-1 rounded-t-3xl text-${card.titleColor}`}
-                >
-                  <h2 className="text-3xl font-poppins font-semibold "> {card.title} </h2>
-                  <p className="text-lg">{card.price} </p>
+          <div className="w-full flex flex-col md:flex-row justify-center gap-16">
+            {planes.map((plan, index) => (
+              <Card key={index} className="flex flex-col justify-between rounded-3xl">
+                <div className={(plan.isActive ? `bg-accent text-white ` : `bg-white text-accent `) + ` flex flex-col justify-end w-full px-4 py-1 rounded-t-3xl`}>
+                  <h2 className="flex w-full text-3xl font-poppins font-semibold justify-between items-end px-2">
+                    <span>{plan.title}</span>
+                  </h2>
+                  <div className="flex justify-between items-end">
+                    <p className="text-lg">{plan.price_text} </p>
+                    {plan.isActive && <small className="text-slate-300 text-sm pb-1">plan actual</small>}
+                  </div>
                 </div>
                 <div className="py-5">
                   <ul className="px-4 flex flex-col justify-center align-center gap-5">
-                    {card.benefits.map((benefit, benefitIndex) => (
+                    {plan.benefits.map((benefit, benefitIndex) => (
                       <li
                         key={benefitIndex}
                         className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-5 before:h-5 before:bg-center before:bg-contain before:bg-no-repeat before:bg-[url('/Icons/check.svg')]"
@@ -84,9 +146,7 @@ export default function pricing() {
                   </ul>
                 </div>
                 <div className="flex justify-center align-center py-10 ">
-                  <Link href={card.href}>
-                    <Button variant="" size="lg" >{card.button} </Button>
-                  </Link>
+                  {showButton(plan)}
                 </div>
               </Card>
             ))}

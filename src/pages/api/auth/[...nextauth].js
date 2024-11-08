@@ -44,17 +44,14 @@ export const authOptions = {
             id: user.id,
             name: user.name,
             email: user.email,
+            customer_ids: user.customer_ids
           };
         }
       }
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        id: token.user.id,
-        name: token.user.name,
-        email: token.user.email,
-      };
+      session.user = token.user;
       
       if (token.accessToken) {
         session.accessToken = token.accessToken;
@@ -66,16 +63,20 @@ export const authOptions = {
       return session;
     },
     async signIn({ user, account, profile }) {
-      const { email, name } = user;
-
       // Conecta a la base de datos mediante fetch al backend. Mandar mis datos para registar un usuario
       user.provider = account.provider
-      const userRegister = await registerUser(user);
+      if (user.id) {
+        const userRegister = await registerUser(user);
 
-      if (!userRegister) 
-        return false
+        if (!userRegister) 
+          return false
+      }
+      else {
+        return true
+      }
 
       user.id = userRegister._id
+      user.customer_ids = userRegister.customer_ids
       // Permitir el inicio de sesión
       return true;
     }

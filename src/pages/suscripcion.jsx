@@ -18,6 +18,7 @@ import Head from "next/head";
 import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { AlertDialogContent } from "@/components/ui/alert-dialog";
 import PaymentSuccessful from "@/components/Icons/PaymentSuccessful";
+import { useSession } from "next-auth/react";
 
 export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
@@ -93,10 +94,11 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
    const router = useRouter();
    const [isDialogOpen, setIsDialogOpen] = useState(false);
    const [messages, setMessages] = useState([]);
+   const { data: session } = useSession();
 
    // Datos del cliente
-   const [name, setName] = useState('');
-   const [email, setEmail] = useState('');
+   const [name, setName] = useState(session?.user ? session.user.name : '');
+   const [email, setEmail] = useState(session?.user ? session.user.email : '');
    const [cardComplete, setCardComplete] = useState({
       cardNumber: false,
       cardExpiry: false,
