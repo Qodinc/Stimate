@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import HttpServices, { getProyects } from "../lib/http-services"
+import HttpServices from "../lib/http-services"
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
 import Loading from '@/components/Loading';
 import Head from 'next/head';
+import { useSession } from 'next-auth/react';
 
 const project_status = [
   {
@@ -58,6 +59,9 @@ const getStatusTranslation = (status) => {
 };
 
 export default function Home() {
+  const { data: session } = useSession()
+  const httpServices = new HttpServices(session)
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,24 +69,26 @@ export default function Home() {
   const [proyectos, setProyectos] = useState([]);
 
   useEffect(() => {
-    getProyects()
-  }, [])
-
-  const getProyects = async () => {
-    try {
-      setIsLoading(true);
-      const response = await HttpServices.getProyects();
-      if (!response.ok) {
-        throw new Error('Failed to get project');
+    const getProyects = async () => {
+      try {
+        setIsLoading(true);
+        if (session) {
+          const response = await httpServices.getProyects();
+          if (!response.ok) {
+            throw new Error('Failed to get project');
+          }
+          const { data } = await response.json();
+          setProyectos(data.projects);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false);
       }
-      const { data } = await response.json();
-      setProyectos(data.projects);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    getProyects()
+  }, [session])
 
   const handleEdit = (slug) => {
     router.push(`/editar/${slug}`);
@@ -91,7 +97,7 @@ export default function Home() {
   const handleDelete = async (slug) => {
     try {
       setIsLoading(true);
-      const responseDelete = await HttpServices.deleteProyect(slug);
+      const responseDelete = await httpServices.deleteProyect(slug);
       if (!responseDelete.ok) {
         throw new Error(
           "Ocurrió un error al realizar la solicitud: " + response.status

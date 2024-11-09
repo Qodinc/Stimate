@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import httpServices from "@/lib/http-services";
+import HttpServices from "@/lib/http-services";
+import { useSession } from "next-auth/react";
 
 const Preview = ({
   project,
@@ -24,6 +25,8 @@ const Preview = ({
   estimated_associated_cost,
   onUpdate
 }) => {
+  const { data: session } = useSession()
+  const httpServices = new HttpServices(session)
   const [statusOptions, setStatusOptions] = useState([]);
 
   useEffect(() => {

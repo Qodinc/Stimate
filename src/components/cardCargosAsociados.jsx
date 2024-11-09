@@ -14,10 +14,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import httpServices from "@/lib/http-services";
+import HttpServices from "@/lib/http-services";
 
 
 export default function CardCargosAsociados({ cardID, cost_name, price_unity, quantity, type_recurring, description, onUpdate, onRemove }) {
+    const httpServices = new HttpServices()
+
     const [Cargo, setCargo] = useState(price_unity || 0);
     const [Cantidad, setCantidad] = useState(quantity || 0);
     const [total, setTotal] = useState(Cargo * Cantidad);

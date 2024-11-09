@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 import { useEffect, useState } from "react"
-import httpServices from "@/lib/http-services";
+import HttpServices from "@/lib/http-services";
 import { useSession } from "next-auth/react";
 import Star from "@/components/Icons/Star";
 
@@ -43,6 +43,8 @@ export default function Pricing() {
     },
   ])
   const { data: session } = useSession();
+  const httpServices = new HttpServices(session)
+
 
   useEffect(() => {
     getPlanes()

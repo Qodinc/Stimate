@@ -23,13 +23,15 @@ import {
 import { useEffect, useState } from "react"
 import CheckCancel from "@/components/Icons/CheckCancel"
 import Info from "@/components/Icons/info"
-import httpServices from "@/lib/http-services"
+import HttpServices from "@/lib/http-services"
 import { useRouter } from "next/router"
 import Head from "next/head"
 import { useSession } from "next-auth/react"
 
 export default function PlanActual() {
   const { data: session } = useSession();
+  const httpServices = new HttpServices(session)
+
 
   const router = useRouter();
   const [misPlanes, setMisPlanes] = useState(null)

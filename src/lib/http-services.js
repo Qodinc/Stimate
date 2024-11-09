@@ -1,6 +1,12 @@
 require("dotenv").config();
 
 class HttpServices {
+  session = {}
+
+  constructor(session) {
+    this.session = session;
+  }
+  
   // ### Project_status
   getStatus = async () => {
     try {
@@ -56,7 +62,24 @@ class HttpServices {
   };
 
   getProyects = async () => {
-    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`);
+    try {
+      const accessToken = this.session?.accessToken;
+      if (!accessToken) {
+        throw new Error('No hay token de acceso disponible');
+      }
+      
+      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+    } catch (error) {
+      throw new Error("Error al obtener proyectos", error);
+      
+    }
   };
 
   getProyect = async (slug) => {
@@ -141,4 +164,4 @@ class HttpServices {
   };
 }
 
-module.exports = new HttpServices();
+module.exports = HttpServices;

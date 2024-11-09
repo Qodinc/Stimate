@@ -6,10 +6,13 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
-import httpServices from '@/lib/http-services';
+import HttpServices from '@/lib/http-services';
 import { useSession } from 'next-auth/react';
 
 export default function NewProject() {
+   const { data: session } = useSession();
+   const httpServices = new HttpServices(session)
+
    const [projectName, setProjectName] = useState('');
    const [areasSelected, setAreasSelected] = useState([]);
    const [errors, setErrors] = useState({
@@ -18,7 +21,6 @@ export default function NewProject() {
       validator: false
    });
    const [isFormValid, setIsFormValid] = useState(false);
-   const { data: session } = useSession();
 
    useEffect(() => {
       const newErrors = {

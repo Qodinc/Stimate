@@ -17,7 +17,7 @@ export async function loginUser(credentials) {
         throw new Error(data.message || 'Error en la autenticación');
       }
   
-      return data.user; // Asumiendo que tu API devuelve los datos del usuario
+      return data; // Asumiendo que tu API devuelve los datos del usuario
     } catch (error) {
       throw new Error(error.message);
     }
@@ -39,7 +39,7 @@ export async function loginUser(credentials) {
         throw new Error(data.message || 'Error en el registro');
       }
   
-      return data.user;
+      return data;
     } catch (error) {
       throw new Error(error.message);
     }

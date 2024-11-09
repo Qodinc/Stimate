@@ -10,12 +10,16 @@ import { useRouter } from "next/router";
 import Loading from "@/components/Loading";
 import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
-import httpServices from "@/lib/http-services";
+import HttpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSession } from "next-auth/react";
 
 export default function TabsPages() {
+  const { data: session } = useSession();
+  const httpServices = new HttpServices(session)
+
   const router = useRouter();
   const { slug } = router.query;
   const [activeTab, setActiveTab] = useState("equipo");

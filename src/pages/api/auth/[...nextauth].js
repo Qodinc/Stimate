@@ -18,13 +18,17 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          const user = await loginUser(credentials);
-          
-          return {
-            id: user.id,
+          const {user, token} = await loginUser(credentials);
+
+          const auth = {
+            id: user._id,
             name: user.name,
             email: user.email,
+            customer_ids: user.customer_ids,
+            accessToken: token
           };
+          
+          return auth
         } catch (error) {
           throw new Error(error.message);
         }
@@ -32,26 +36,42 @@ export const authOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, account, profile, user }) {
-      if (account) {
-        if (account.provider === "google") {
-          token.accessToken = account.access_token;
-          token.idToken = account.id_token;
+    async signIn({ user, account, profile }) {
+      if (user.id && account.provider != "credentials") {
+        const {user: userRegister, token} = await registerUser(user);
+
+        if (!userRegister)
+          return false
+
+        else {
+          user.id = userRegister._id
+          user.customer_ids = userRegister.customer_ids
+          
+          // generar token
+          user.accessToken = token
         }
+      }
+
+      // Permitir el inicio de sesión
+      return true;
+    },
+    async jwt({ token, account, user }) {
+      if (account) {
         if (user) {
-          token.id = user.id || user.sub
-          token.user = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            customer_ids: user.customer_ids
-          };
+          token.id = user.id || token.sub
+          token.customer_ids = user.customer_ids
+          token.accessToken = user.accessToken
         }
       }
       return token;
     },
     async session({ session, token }) {
-      session.user = token.user;
+      session.user = {
+        id: token.id,
+        name: token.name,
+        email: token.email,
+        customer_ids: token.customer_ids
+      };
       
       if (token.accessToken) {
         session.accessToken = token.accessToken;
@@ -61,24 +81,6 @@ export const authOptions = {
       }
       
       return session;
-    },
-    async signIn({ user, account, profile }) {
-      // Conecta a la base de datos mediante fetch al backend. Mandar mis datos para registar un usuario
-      user.provider = account.provider
-      if (user.id) {
-        const userRegister = await registerUser(user);
-
-        if (!userRegister) 
-          return false
-      }
-      else {
-        return true
-      }
-
-      user.id = userRegister._id
-      user.customer_ids = userRegister.customer_ids
-      // Permitir el inicio de sesión
-      return true;
     }
   },
   pages: {
