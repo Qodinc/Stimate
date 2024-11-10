@@ -78,18 +78,8 @@ export default function SignIn() {
         throw new Error('Error al registrar usuario');
       }
 
-      const result = await signIn('credentials', {
-        id: user.id,
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        console.error('Error al iniciar sesión:', result.error);
-      } else {
-        router.push('/');
-      }
+      router.push('/iniciar-sesion');
+      
     } catch (error) {
       setIsLoading(false);
       setErrors({
