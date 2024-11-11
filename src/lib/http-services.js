@@ -63,19 +63,20 @@ class HttpServices {
 
   getProyects = async () => {
     try {
-      const accessToken = this.session?.accessToken;
-      if (!accessToken) {
+      const { token } = this.session;
+      if (!token) {
         throw new Error('No hay token de acceso disponible');
       }
       
-      return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
+      return response
     } catch (error) {
       throw new Error("Error al obtener proyectos", error);
       
