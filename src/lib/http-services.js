@@ -87,6 +87,16 @@ class HttpServices {
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
   };
 
+  getToken = async (token) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/verificacion/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+  };
+
   deleteProyect = async (slug) => {
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       method: "DELETE",

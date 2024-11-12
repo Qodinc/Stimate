@@ -80,7 +80,7 @@ export default function Login() {
                 </div>
                 <div className="flex bg-white font-comfortaa md:absolute lg:static md:py-8 md:max-w-96 lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-center justify-center w-full px-4 py-4 lg:px-12 gap-8">
                     <div className="flex flex-col items-center justify-center gap-8">
-                        <a href="https://stimate-landing-page.vercel.app/">
+                        <a href="https://stimate.co/">
                             <LogoStimate width={44} height={44} />
                         </a>
                         <h1 className="font-bold text-2xl text-accent font-poppins">Bienvenido!</h1>

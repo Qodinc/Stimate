@@ -78,18 +78,10 @@ export default function SignIn() {
         throw new Error('Error al registrar usuario');
       }
 
-      const result = await signIn('credentials', {
-        id: user.id,
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        console.error('Error al iniciar sesión:', result.error);
-      } else {
-        router.push('/');
-      }
+      setIsDialogOpen(true);
+      setTimeout(() => {
+        router.push('/iniciar-sesion');
+      }, 6000);
     } catch (error) {
       setIsLoading(false);
       setErrors({
@@ -112,7 +104,7 @@ export default function SignIn() {
       <div className="flex font-comfortaa lg:min-h-screen md:absolute lg:static lg:py-0 md:py-20 md:max-w-[35rem] lg:min-w-[50%] lg:rounded-none md:rounded-xl flex-col items-start justify-center w-full px-4 lg:px-12 gap-8">
         <div className='flex flex-col gap-4 items-start justify-center w-full pt-4 md:pt-0 md:gap-8 lg:gap-4 lg:pt-4'>
           <div className='flex flex-col items-center justify-center w-full'>
-            <a href="https://stimate-landing-page.vercel.app/">
+            <a href="https://www.stimate.co/">
               <LogoStimate width={44} height={44} />
             </a>
           </div>
@@ -175,7 +167,7 @@ export default function SignIn() {
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
             />
-            <label for="terms">Acepto los términos y condiciones</label>
+            <label htmlFor="terms">Acepto los términos y condiciones</label>
           </div>
           {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}
           {errors.validator && <p className="text-red-500 text-xs">{errors.validator}</p>}
