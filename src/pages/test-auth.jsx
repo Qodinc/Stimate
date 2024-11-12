@@ -1,5 +1,5 @@
 import { useSession, signOut } from "next-auth/react"
-import ButtonGoogle from "@/components/ui/ButtonGoogle"
+// import ButtonGoogle from "@/components/ui/ButtonGoogle"
 
 export default function TestPage() {
   const { data: session } = useSession()
@@ -26,7 +26,7 @@ export default function TestPage() {
         ) : (
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Iniciar sesión</h1>
-            <ButtonGoogle />
+            {/* <ButtonGoogle /> */}
           </div>
         )}
       </div>

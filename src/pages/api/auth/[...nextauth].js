@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginUser, registerUser } from "@/utils/auth";
+import jwt from "jsonwebtoken";
 
-export const authOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -18,17 +19,9 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          const {user, token} = await loginUser(credentials);
+          const user = await loginUser(credentials);
 
-          const auth = {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            customer_ids: user.customer_ids,
-            accessToken: token
-          };
-          
-          return auth
+          return user
         } catch (error) {
           throw new Error(error.message);
         }
@@ -36,31 +29,26 @@ export const authOptions = {
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       if (user.id && account.provider != "credentials") {
-        const {user: userRegister, token} = await registerUser(user);
+        const { user: userRegister, token } = await registerUser(user);
 
         if (!userRegister)
           return false
 
-        else {
-          user.id = userRegister._id
-          user.customer_ids = userRegister.customer_ids
-          
-          // generar token
-          user.accessToken = token
-        }
+        user.id = userRegister._id
+        user.customer_ids = userRegister.customer_ids
       }
 
       // Permitir el inicio de sesión
       return true;
     },
-    async jwt({ token, account, user }) {
-      if (account) {
+    async jwt({ token, trigger, user }) {
+      if (trigger === "signIn" || trigger === "signUp") {
+
         if (user) {
           token.id = user.id || token.sub
           token.customer_ids = user.customer_ids
-          token.accessToken = user.accessToken
         }
       }
       return token;
@@ -72,14 +60,22 @@ export const authOptions = {
         email: token.email,
         customer_ids: token.customer_ids
       };
-      
-      if (token.accessToken) {
-        session.accessToken = token.accessToken;
-      }
+
       if (token.picture) {
         session.user.picture = token.picture;
       }
-      
+
+      session.token = jwt.sign(
+        {
+          id: token.id,
+          email: token.email
+        },
+        process.env.NEXTAUTH_SECRET,
+        {
+          expiresIn: '1h'
+        }
+      );
+
       return session;
     }
   },
@@ -89,6 +85,10 @@ export const authOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 // 1hr = 60 sec. * 60min.
+  },
+  jwt: {
+    maxAge: 60 * 60, // 1hr = 60 sec. * 60min.
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
