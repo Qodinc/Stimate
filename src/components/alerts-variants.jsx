@@ -37,7 +37,8 @@ import Check from "./Icons/Check";
               </div>                
                 <h2 className="text-lg text-accent font-extrabold">Verifica tu correo</h2>
                 <p className="text-base font-comfortaa font-normal">Hemos envíado un enlace de verificación a tu correo electrónico</p>
-                <p className="text-base font-comfortaa font-normal">Por favor, revisa tu bandeja de entrada en ejemplo@correo.com y haz clic en el enlace para verificar tu cuenta..</p>
+                <p className="text-base font-comfortaa font-normal">Por favor, revisa tu bandeja de entrada en tu correo y haz clic en el enlace para verificar tu cuenta.</p>
+                <p className="text-base font-comfortaa font-normal"><strong>Recomendamos revisar el correo no deseado.</strong></p>
             </AlertDialogHeader>
             <AlertDialogFooter className="py-6">
               <AlertDialogAction size="full" className="text-center" variant="outline" >Volver al registro</AlertDialogAction>
