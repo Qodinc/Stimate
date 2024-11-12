@@ -50,7 +50,7 @@ export default function Verification() {
 
     return (
         <div className="flex flex-col justify-center items-center h-screen text-2xl">
-             <a href="https://stimate-landing-page.vercel.app/">
+             <a href="https://stimate.co/">
                 <LogoStimate width={44} height={44} />
             </a>
             <span>{statusMessage}</span>
