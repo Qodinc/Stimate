@@ -15,8 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from "next-auth/react";
 
 const Preview = ({
@@ -25,7 +23,8 @@ const Preview = ({
   estimated_wages,
   estimated_operating_expenses,
   estimated_associated_cost,
-  onUpdate
+  onUpdate,
+  onExport
 }) => {
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
@@ -85,46 +84,6 @@ const Preview = ({
     onUpdate(updatedProject)
   };
 
-  const handleOnclick = async () => {
-
-    // Verificamos si faltan campos requeridos
-    const missingTProject = 
-      project.team_project.length === 0 || project.team_project.some(team => 
-        team.hourly_rate <= 0 || team.work_hours_per_day <= 0 || team.team == ""
-      );
-    const missingFeatures = project.features_project.length === 0 || project.features_project.some(feature =>feature.feature == "");
-    const missingOperatingExpenses = project.operating_expenses.some(expense => expense.cost_name == "" || !!!expense.total_per_month || expense.total_per_month <= 0);
-    const missingAssociatedCosts = project.associated_costs.some(cost => 
-      cost.cost_name == "" || cost.description == "" || cost.price_unity <= 0 || cost.quantity <= 0 || cost.type_recurring == null);
-    const missingNotes = project.notes == "";
-  
-    if (missingTProject || missingFeatures || missingOperatingExpenses || missingAssociatedCosts || missingNotes) {
-      const sections = [
-        { condition: missingTProject, name: "Equipo de trabajo" },
-        { condition: missingFeatures, name: "Funcionalidades" },
-        { condition: missingOperatingExpenses, name: "Gastos de operación" },
-        { condition: missingAssociatedCosts, name: "Cargos asociados" },
-        { condition: missingNotes, name: "Previsualización" }
-      ];
-      const missingSection = sections.filter(section => section.condition);
-      toast.error("Faltan campos requeridos en la sección: " + missingSection.map(section => section.name).join(", "), {
-        theme: "dark"
-      });
-      return;
-    }
-
-    // Guardamos el proyecto
-    
-    const updateProject = await httpServices.updateProyect(project)
-
-    if (!updateProject.ok) {
-      throw new Error('Failed to fetch project');
-    }
-    toast.success("Información guardada con éxito");
-
-    //TODO: Realizar exportación de proyecto
-  }
-
   return (
     <section className="my-5">
       <div className="flex justify-end my-3 gap-4">
@@ -143,7 +102,7 @@ const Preview = ({
             </SelectGroup>
             </SelectContent>
         </Select>
-        <Button onClick={handleOnclick} >Exportar <ExportDownload width={25} height={25} /></Button>
+        <Button onClick={onExport} >Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
         <div className="font-comfortaa xl:w-1/2">
@@ -255,10 +214,6 @@ const Preview = ({
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={2000}
-      />
     </section>
   );
 };
