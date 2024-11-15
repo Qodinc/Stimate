@@ -52,4 +52,6 @@ const InvoiceCanvas = forwardRef(({ invoiceData, width = 800, height = 600 }, re
   return <canvas ref={ref} width={width} height={height} />;
 });
 
+InvoiceCanvas.displayName = 'InvoiceCanvas';
+
 export default InvoiceCanvas;

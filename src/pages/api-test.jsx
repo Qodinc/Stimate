@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
-import authenticatedRequest from "@/api/authenticatedRequest"
+// import authenticatedRequest from "@/api/authenticatedRequest"
 
 export default function ProtectedPage() {
   const { data: session, status } = useSession()
@@ -14,9 +14,9 @@ export default function ProtectedPage() {
 
   useEffect(() => {
     if (session) {
-      authenticatedRequest("http://localhost:8080/")
-        .then(setData)
-        .catch(console.error)
+      // authenticatedRequest("http://localhost:8080/")
+      //   .then(setData)
+      //   .catch(console.error)
     }
   }, [session])
 
