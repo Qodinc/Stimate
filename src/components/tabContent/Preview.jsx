@@ -23,7 +23,8 @@ const Preview = ({
   estimated_wages,
   estimated_operating_expenses,
   estimated_associated_cost,
-  onUpdate
+  onUpdate,
+  onExport
 }) => {
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
@@ -101,7 +102,7 @@ const Preview = ({
             </SelectGroup>
             </SelectContent>
         </Select>
-        <Button>Exportar <ExportDownload width={25} height={25} /></Button>
+        <Button onClick={onExport} >Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
         <div className="font-comfortaa xl:w-1/2">
