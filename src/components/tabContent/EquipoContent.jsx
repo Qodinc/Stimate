@@ -65,7 +65,7 @@ const EquipoContent = ({ team_project, onUpdate }) => {
         {team_project.map((area, index) => (
           <Card
             size="lg"
-            className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
+            className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-start justify-items-center gap-2 relative pb-16 border"
             key={index}
           >
             <div className="w-full">
