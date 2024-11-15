@@ -333,9 +333,9 @@ export default function TabsPages() {
             <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
           </div>
         </div>
-        <div className="w-full flex justify-between gap-5 pt-5">
+        <div className="w-full flex justify-between items-end gap-5 pt-5">
           <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
-          <div className="flex items-end md:cursor-pointer" onClick={() => saveProject()}>
+          <div className="flex items-end md:cursor-pointer pb-1" onClick={() => saveProject()}>
             <Button>
               <Save width={24} stroke="white" />
             <span className="hidden md:block text-base ml-2">Guardar</span>
