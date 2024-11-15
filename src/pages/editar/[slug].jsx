@@ -12,6 +12,7 @@ import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
 import HttpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
+import Input from "@/components/input";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from "next-auth/react";
@@ -324,7 +325,7 @@ export default function TabsPages() {
       <header className="sticky top-[84px] left-0 right-0 font-comfortaa md:text-lg px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 shadow-lg">
         <div className="flex flex-wrap justify-between w-full">
           <div className="flex gap-2">
-            <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
+            <h2>Nombre del proyecto:</h2> <Input value={project.name_project} className="border-0 h-9" ></Input>
           </div>
           <div className="flex gap-2">
             <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
