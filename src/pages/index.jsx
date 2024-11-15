@@ -69,26 +69,26 @@ export default function Home() {
   const [proyectos, setProyectos] = useState([]);
 
   useEffect(() => {
-    const getProyects = async () => {
-      try {
-        setIsLoading(true);
-        if (session) {
-          const response = await httpServices.getProyects();
-          if (!response.ok) {
-            throw new Error('Failed to get project');
-          }
-          const { data } = await response.json();
-          setProyectos(data.projects);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     getProyects()
   }, [session])
+
+  const getProyects = async () => {
+    try {
+      setIsLoading(true);
+      if (session) {
+        const response = await httpServices.getProyects();
+        if (!response.ok) {
+          throw new Error('Failed to get project');
+        }
+        const { data } = await response.json();
+        setProyectos(data.projects);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = (slug) => {
     router.push(`/editar/${slug}`);
