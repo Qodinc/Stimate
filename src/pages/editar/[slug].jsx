@@ -15,6 +15,7 @@ import Save from "@/components/Icons/Save";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from "next-auth/react";
+import {Button} from "@/components/ui/button";
 
 export default function TabsPages() {
   const { data: session } = useSession();
@@ -320,17 +321,36 @@ export default function TabsPages() {
         <title>{project.name_project}</title>
       </Head>
       <Navbar />
-      <header className="sticky top-[85px] left-0 right-0 flex flex-wrap justify-between font-comfortaa md:text-lg grid-cols-3 px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 border-b">
-        <div className="flex items-center cursor-pointer" onClick={() => saveProject()}>
-          <Save width={24} />
-          <span className="hidden md:block text-base ml-2">Guardar</span>
+      <header className="sticky top-[84px] left-0 right-0 font-comfortaa md:text-lg px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 shadow-lg">
+        <div className="flex flex-wrap justify-between w-full">
+          <div className="flex gap-2">
+            <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
+          </div>
+          <div className="flex gap-2">
+            <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
+          </div>
+          <div className="flex gap-2">
+            <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
+          </div>
         </div>
-        <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
-        <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
-        <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
+        <div className="w-full flex justify-between items-end gap-5 pt-5">
+          <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
+          <div className="flex items-end md:cursor-pointer pb-1" onClick={() => saveProject()}>
+            <Button>
+              <Save width={24} stroke="white" />
+            <span className="hidden md:block text-base ml-2">Guardar</span>
+            </Button>
+          </div>
+        </div>
+        <div className="fixed bottom-6 right-10" onClick={() => saveProject()}>
+            <Button>
+              <Save width={24} stroke="white" />
+            <span className="hidden md:block text-base ml-2">Guardar</span>
+            </Button>
+          </div>
       </header>
+
       <main className="px-4 md:px-14 lg:px-20">
-        <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
         {renderContent()}
       </main>
       <ToastContainer
