@@ -208,6 +208,46 @@ export default function TabsPages() {
     }));
   }
 
+  const exportProject = async () => {
+
+    // Verificamos si faltan campos requeridos
+    const missingTProject =
+      project.team_project.length === 0 || project.team_project.some(team =>
+        team.hourly_rate <= 0 || team.work_hours_per_day <= 0 || team.team == ""
+      );
+    const missingFeatures = project.features_project.length === 0 || project.features_project.some(feature => feature.feature == "");
+    const missingOperatingExpenses = project.operating_expenses.some(expense => expense.cost_name == "" || !!!expense.total_per_month || expense.total_per_month <= 0);
+    const missingAssociatedCosts = project.associated_costs.some(cost =>
+      cost.cost_name == "" || cost.description == "" || cost.price_unity <= 0 || cost.quantity <= 0 || cost.type_recurring == null);
+    const missingNotes = project.notes == "";
+
+    if (missingTProject || missingFeatures || missingOperatingExpenses || missingAssociatedCosts || missingNotes) {
+      const sections = [
+        { condition: missingTProject, name: "Equipo de trabajo" },
+        { condition: missingFeatures, name: "Funcionalidades" },
+        { condition: missingOperatingExpenses, name: "Gastos de operación" },
+        { condition: missingAssociatedCosts, name: "Cargos asociados" },
+        { condition: missingNotes, name: "Previsualización" }
+      ];
+      const missingSection = sections.filter(section => section.condition);
+      toast.error("Faltan campos requeridos en la sección: " + missingSection.map(section => section.name).join(", "), {
+        theme: "dark"
+      });
+      return;
+    }
+
+    // Guardamos el proyecto
+
+    const updateProject = await httpServices.updateProyect(project)
+
+    if (!updateProject.ok) {
+      throw new Error('Failed to fetch project');
+    }
+    toast.success("Información guardada con éxito");
+
+    //TODO: Realizar exportación de proyecto
+  }
+
   const renderContent = () => {
     switch (activeTab) {
       case "equipo":
@@ -237,6 +277,7 @@ export default function TabsPages() {
           estimated_operating_expenses={estimatedOperatingExpenses}
           estimated_associated_cost={estimatedAssociatedCosts}
           onUpdate={updatePreview}
+          onExport={exportProject}
         />
       default:
         return null
@@ -313,8 +354,8 @@ export default function TabsPages() {
         {renderContent()}
       </main>
       <ToastContainer
-        position="bottom-left"
-        autoClose={1000}
+        position="bottom-right"
+        autoClose={2000}
       />
     </>
   );
