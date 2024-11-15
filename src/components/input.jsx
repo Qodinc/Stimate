@@ -7,6 +7,7 @@ export default function Input({
   icon,
   placeholder = "Enter text",
   onChange,
+  onBlur,
   disabled,
   allowOnlyNumbers = false, // Solo ingresar numeros
   error,
@@ -17,19 +18,29 @@ export default function Input({
     setInputValue(props.value || '')
   }, [props.value])
 
-  const handleInputChange = (e) => { //Tomar los numeros recibidos
-    const newValue = e.target.value
+  const handleInputChange = (event) => { //Tomar los numeros recibidos
+    const { value, step } = event.target;
 
-    if (allowOnlyNumbers) {
-      const numericValue = newValue.replace(/[^0-9]/g, '') // Esta expresion sirve para remplazar o eliminar letras recibidas
-      setInputValue(numericValue)
-      error = (numericValue !== newValue ? 'Por favor, ingrese solo números' : '')
-      onChange && onChange({ ...e, target: { ...e.target, value: numericValue } })
-    } else {
-      setInputValue(newValue)
-      error = ('')
-      onChange && onChange(e)
+    if (step) {
+      // Si tiene step
+      const stepLength = step.split('.')[1]?.length || 0
+
+      // Permitir solo números y un punto decimal
+      let inputValue = value.replace(/[^0-9.]/g, '')
+
+      // Asegurar que solo haya un punto decimal
+      const parts = inputValue.split('.')
+      if (parts.length > 2) {
+        return
+      }
+
+      // Validar la longitud de los decimales
+      if (parts[1] && parts[1].length > stepLength) {
+        return;
+      }
     }
+    setInputValue(value)
+    onChange(event)
   }
 
 
@@ -51,6 +62,7 @@ export default function Input({
           maxLength={props.maxLength}
           step={props.step}
           onChange={handleInputChange}
+          onBlur={onBlur}
           disabled={disabled}
           id={props.id}
           required={props.required}
