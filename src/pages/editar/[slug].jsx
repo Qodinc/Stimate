@@ -18,8 +18,8 @@ import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
 
 export default function TabsPages() {
-  const { data: session } = useSession();
-  const httpServices = new HttpServices(session)
+  const { data: session, status } = useSession();
+  const [httpServices, setHttpServices] = useState(null);
 
   const router = useRouter();
   const { slug } = router.query;
@@ -42,6 +42,12 @@ export default function TabsPages() {
   ];
 
   useEffect(() => {
+    if (session) {
+      setHttpServices(new HttpServices(session));
+    }
+  }, [session]);
+
+  useEffect(() => {
     const fetchProject = async () => {
       try {
         setIsLoading(true);
@@ -54,16 +60,18 @@ export default function TabsPages() {
           setProject(data.project);
       } catch (error) {
         console.error("Error fetching project:", error);
+        if (error.message.includes('token')) {
+          router.push('/iniciar-sesion');
+        }
         // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (slug) {
-      fetchProject();
-    }
-  }, [slug]);
+    fetchProject();
+  }, [slug, httpServices, status]);
+  
 
   useEffect(() => {
     const summary = () => {
@@ -79,7 +87,7 @@ export default function TabsPages() {
           }
         });
       });
-
+    
       // Tiempos por equipo
       const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
         // Buscar costo por hora del area
@@ -302,18 +310,18 @@ export default function TabsPages() {
   }
 
   if (!project.slug) {
-    return (
-      <>
-        <Head>
-          <title>No se encontró el proyecto</title>
-        </Head>
-        <Navbar />
-        <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
-          No se encontró el proyecto
-        </div>;
-      </>
-    )
-  }
+  return (
+    <>
+      <Head>
+        <title>No se encontró el proyecto</title>
+      </Head>
+      <Navbar />
+      <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
+        No se encontró el proyecto
+      </div>;
+    </>
+  )
+}
 
   return (
     <>
