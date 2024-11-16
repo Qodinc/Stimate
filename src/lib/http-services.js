@@ -52,14 +52,21 @@ class HttpServices {
   // ### Projects
 
   createProyect = async (project) => {
+    const { token } = this.session;
+    if (!token) {
+      throw new Error('No hay token de acceso disponible');
+    }
+  
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(project),
     });
   };
+  
 
   getProyects = async () => {
     try {
@@ -84,8 +91,19 @@ class HttpServices {
   };
 
   getProyect = async (slug) => {
-    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`);
+    const { token } = this.session;
+    if (!token) {
+      throw new Error('No hay token de acceso disponible');
+    }
+  
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
   };
+  
 
   getToken = async (token) => {
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/verificacion/`, {
@@ -98,20 +116,37 @@ class HttpServices {
   };
 
   deleteProyect = async (slug) => {
+    const { token } = this.session;
+    if (!token) {
+      throw new Error('No hay token de acceso disponible');
+    }
+  
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
   };
+  
 
   updateProyect = async (project) => {
+    const { token } = this.session;
+    if (!token) {
+      throw new Error('No hay token de acceso disponible');
+    }
+  
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${project.slug}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(project),
     });
   };
+  
 
   // ### Payments ###
   /**
