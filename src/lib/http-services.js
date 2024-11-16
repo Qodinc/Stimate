@@ -2,9 +2,15 @@ require("dotenv").config();
 
 class HttpServices {
   session = {}
+  tokenSession = null
 
   constructor(session) {
     this.session = session;
+
+    if (session) {
+      const { token } = session;
+      this.tokenSession = token
+    }
   }
   
   // ### Project_status
@@ -54,14 +60,14 @@ class HttpServices {
   createProyect = async (project) => {
     const { token } = this.session;
     if (!token) {
-      throw new Error('No hay token de acceso disponible');
+      throw new Error("No hay token de acceso disponible");
     }
   
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        "Authorization": `Bearer ${this.tokenSession}`
       },
       body: JSON.stringify(project),
     });
@@ -72,14 +78,14 @@ class HttpServices {
     try {
       const { token } = this.session;
       if (!token) {
-        throw new Error('No hay token de acceso disponible');
+        throw new Error("No hay token de acceso disponible");
       }
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Authorization": `Bearer ${this.tokenSession}`,
+          "Content-Type": "application/json"
         }
       });
 
@@ -93,13 +99,13 @@ class HttpServices {
   getProyect = async (slug) => {
     const { token } = this.session;
     if (!token) {
-      throw new Error('No hay token de acceso disponible');
+      throw new Error("No hay token de acceso disponible");
     }
   
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        "Authorization": `Bearer ${this.tokenSession}`,
+        "Content-Type": "application/json"
       }
     });
   };
@@ -118,14 +124,14 @@ class HttpServices {
   deleteProyect = async (slug) => {
     const { token } = this.session;
     if (!token) {
-      throw new Error('No hay token de acceso disponible');
+      throw new Error("No hay token de acceso disponible");
     }
   
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        "Authorization": `Bearer ${this.tokenSession}`,
+        "Content-Type": "application/json"
       }
     });
   };
@@ -134,14 +140,14 @@ class HttpServices {
   updateProyect = async (project) => {
     const { token } = this.session;
     if (!token) {
-      throw new Error('No hay token de acceso disponible');
+      throw new Error("No hay token de acceso disponible");
     }
   
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${project.slug}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
+        "Authorization": `Bearer ${this.tokenSession}`
       },
       body: JSON.stringify(project),
     });
@@ -154,7 +160,12 @@ class HttpServices {
    * @returns
    */
   configPayment = async () => {
-    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/config`);
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/payment/config`, {
+      headers: {
+        "Authorization": `Bearer ${this.tokenSession}`,
+        "Content-Type": "application/json"
+      }
+    });
   };
 
   createCustomer = async ({ email }) => {
@@ -164,6 +175,7 @@ class HttpServices {
         method: "post",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.tokenSession}`
         },
         body: JSON.stringify({ email }),
       }
@@ -177,6 +189,7 @@ class HttpServices {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.tokenSession}`
         },
         body: JSON.stringify({ price: price.id, customer: customerId }),
       }
@@ -190,6 +203,7 @@ class HttpServices {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.tokenSession}`
         },
         body: JSON.stringify({ subscriptionId }),
       }
@@ -198,11 +212,12 @@ class HttpServices {
 
   getPlanesCustomer = async ({ customer }) => {
     return await fetch(
-      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscriptions/customer`,
+      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/customer`,
       {
         method: "post",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.tokenSession}`
         },
         body: JSON.stringify({ customer }),
       }
