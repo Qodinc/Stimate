@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TextArea = ({ label, id, placeholder, onChange, required, value }) => {
+const TextArea = ({ label, id, placeholder, onChange, required, defaultValue, name }) => {
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -30,6 +30,7 @@ const TextArea = ({ label, id, placeholder, onChange, required, value }) => {
       </div>
       <textarea
         id={id}
+        name={name}
         className={`w-full h-24 px-3 py-2 text-[#0A0A0B] bg-baseTextarea text-base border-2 rounded-[28px] ${
           error ? 'border-red-500' : 'border-[#E0DFF9]'
         } focus:outline-none focus:border-[#2F27CE] resize-none placeholder-[#5A5555]`}
@@ -37,7 +38,8 @@ const TextArea = ({ label, id, placeholder, onChange, required, value }) => {
         onChange={handleChange}
         onBlur={handleBlur}
         required={required}
-      />
+        value={defaultValue}
+      ></textarea>
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );

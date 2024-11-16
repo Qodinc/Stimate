@@ -2,7 +2,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="overflow-x-auto font-comfortaa mt-6">
+    <div className="overflow-hidden rounded-t-xl">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="overflow-x-auto font-comfortaa">
       <TabsList className="flex">
         {tabs.map((tab) => (
           <TabsTrigger
@@ -15,6 +16,7 @@ const TabsMenu = ({ activeTab, onTabChange, tabs }) => {
         ))}
       </TabsList>
     </Tabs>
+    </div>
   );
 };
 

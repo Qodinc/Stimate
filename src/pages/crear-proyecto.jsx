@@ -6,13 +6,19 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
+import HttpServices from '@/lib/http-services';
+import { useSession } from 'next-auth/react';
 
 export default function NewProject() {
+   const { data: session } = useSession();
+   const httpServices = new HttpServices(session)
+
    const [projectName, setProjectName] = useState('');
    const [areasSelected, setAreasSelected] = useState([]);
    const [errors, setErrors] = useState({
       project: false,
       areas: false,
+      validator: false
    });
    const [isFormValid, setIsFormValid] = useState(false);
 
@@ -37,32 +43,24 @@ export default function NewProject() {
 
    const submitProject = async () => {
       if (isFormValid) {
-         const data = {
+         const dataProject = {
+            owner_id: session.user ? session.user.id : session.id,
             name_project: projectName,
             areas_selected: areasSelected
          };
-         const requestOptions = {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-         };
 
-         const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, requestOptions);
+         const response = await httpServices.createProyect(dataProject);
          if (!response.ok) {
-            throw new Error(
-               "Ocurrió un error al realizar la solicitud: " + response.status
-            );
+            const errorData = await response.json();
+            console.error(errorData.error);
+            
+            return setErrors({
+               validator: true
+            })
          }
 
-         // Estos datos se deben contextualizar
-         const data_context = await response.json();
-         console.log(data_context);
-         
-         
-         // Debe esperar a que el backend retorne el slug
-         Router.push('/editar/' + data_context.slug)
+         const {data} = await response.json(); 
+         Router.push('/editar/' + data.project.slug);
       }
    }
 
@@ -84,6 +82,10 @@ export default function NewProject() {
                <div className="flex flex-col gap-3">
                   <AddArea areasSelected={handleAreasSelected} />
                   {errors.areas && <span className="text-red-700">*Este campo es obligatorio</span>}
+               </div>
+
+               <div className="flex flex-col gap-3">
+                  {errors.validator && <span className="text-red-700">Error al crear el proyecto. Llamar a soporte técnico.</span>}
                </div>
 
                <div className="flex justify-end">

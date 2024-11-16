@@ -1,71 +1,50 @@
 import React, { useState } from "react";
-import CardCargosAsociados from "../cardCargosAsociados";
+import CargoAsociado from "../cardCargosAsociados";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 
-const CargosContent = () => {
-  const associated_costs = [
-    {
-      "cost_name": "Logotipo",
-      "price_unity": 700,
-      "quantity": 1,
-      "type_recurring": "nrc",
-      "description": ""
-    },
-    {
-      "cost_name": "Dominio",
-      "price_unity": 800,
-      "quantity": 1,
-      "type_recurring": "arc",
-      "description": "cuponera.store"
-    },
-    {
-      "cost_name": "Hosting",
-      "price_unity": 100,
-      "quantity": 12,
-      "type_recurring": "mrc",
-      "description": "Almacenamiento de la página web y Seguridad SSL. 100 GB de Almacenamiento"
-    },
-    {
-      "cost_name": "Licencia Software/Librería",
-      "price_unity": 0,
-      "quantity": 0,
-      "type_recurring": "nrc",
-      "description": "En nugget algunas licencias son de paga. Como por ejemplo ConvertAPI"
-    },
-    {
-      "cost_name": "Equipo de cómputo/celular/tablet",
-      "price_unity": 0,
-      "quantity": 0,
-      "type_recurring": "nrc",
-      "description": "En algunos lugares en necesario compra de equipo de computo para el funcionamiento del sistema. pearPod E-321, 512GB SSD, 16GB de RAM, Procesador Potnt"
-    }
-  ];
-
-  const [cards, setCards] = useState(associated_costs.map((cost, index) => ({ id: index + 1, ...cost })));
-
-  const addCard = () => {
-    setCards([...cards, { id: cards.length + 1, cost_name: "" }]);
+const CargosContent = ({ associated_costs, onUpdate }) => {
+  const handleAddCost = () => {
+    const newCargo = {
+      cost_name: "",
+      price_unity: 0,
+      quantity: 0,
+      type_recurring: "",
+      description: ""
+    };
+    onUpdate([...associated_costs, newCargo]);
   };
+
+  const handleUpdateCost = (index, updatedCost) => {
+    const updatedCargos = associated_costs.map((card, i) =>
+      i === index ? { ...card, ...updatedCost } : card
+    );
+    onUpdate(updatedCargos);
+};
+
+  const handleDeleteCost = (costIndex) => {
+    const updatedCargos = associated_costs.filter((_, index) => i !== costIndex);
+    onUpdate(updatedCargos);
+  };
+
 
   return (
     <section>
-      <div className="flex flex-col gap-4 w-full justify-center items-center">
-        {cards.map((card) => (
-          <CardCargosAsociados
-            key={card.id}
-            cardID={card.id}
-            cost_name={card.cost_name}
-            charge={card.price_unity}
-            quantity={card.quantity}
-            type={card.type_recurring}
-            description={card.description}
+      <div className="flex flex-col gap-4 w-full justify-center items-center py-5">
+        {associated_costs.map((cargo, index) => (
+          <CargoAsociado
+            key={index}
+            cost={cargo}
+            onUpdate={(updatedCost) => handleUpdateCost(index, updatedCost)} // Asegúrate de pasar onUpdate aquí
+            onRemove={() => handleDeleteCost(index)} // Pasa el índice correcto aquí
           />
+
         ))}
       </div>
-      <div className="flex justify-start items-center w-full">
-        <Button variant="default" size="default" onClick={addCard}>
-          {<Plus width={20} height={20} stroke="white" />} Agregar gasto
+
+      <div>
+        <Button onClick={handleAddCost}>
+          {<Plus width={20} height={20} stroke="white" />} Agregar cargo
         </Button>
       </div>
     </section>
