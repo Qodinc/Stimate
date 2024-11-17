@@ -35,6 +35,24 @@ class HttpServices {
 
   // ### Areas
 
+  getAreas = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/area`, {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Error al obtener areas");
+      }
+      const jsonData = await response.json();
+      
+      // Extrae solo el arreglo en la propiedad 'data'
+      return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
+    } catch (error) {
+      console.error("Error en getAreas:", error);
+      return []; // Retorna un array vacío en caso de error
+    }
+  };
+
   // ### Types_recurrent
   getTypes_Recurrent = async () => {
     try {
