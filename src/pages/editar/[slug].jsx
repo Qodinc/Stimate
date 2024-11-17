@@ -33,6 +33,8 @@ export default function TabsPages() {
   const [estimatedAssociatedCosts, setEstimatedAssociatedCost] = useState(0);
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [hoursTeam, setHoursTeam] = useState(null)
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalName, setOriginalName] = useState("");
 
   const tabs = [
     { value: "equipo", label: "Equipo de trabajo" },
@@ -134,6 +136,12 @@ export default function TabsPages() {
     summary()
   }, [project])
 
+  useEffect(() => {
+    if (project.name_project) {
+      document.title = project.name_project;
+    }
+  }, [project.name_project]);
+
   const updateTeamProject = (updatedTeamProject) => {
     // Actualiza el equipo
     const updatedProject = {
@@ -198,13 +206,6 @@ export default function TabsPages() {
     }));
   };
 
-  const onUpdateNameProject = (nameProject) => {
-    setProject((prevProject) => ({
-      ...prevProject,
-      name_project: nameProject
-    }));
-  }
-
   const updatePreview = (preview) => {
     setProject((prevProject) => ({
       ...prevProject,
@@ -256,6 +257,44 @@ export default function TabsPages() {
 
     //TODO: Realizar exportación de proyecto
   }
+  // Validar que el nombre del proyecto no sea vacío
+  const handleBlur = async () => {
+    if (project.name_project === originalName) {
+      setIsEditing(false);
+      return;
+    }
+
+    if (!project.name_project || project.name_project.trim() === "") {
+    toast.error("El nombre del proyecto no puede estar vacío",{
+      theme: "dark"
+    });
+    setProject((prev) => ({
+      ...prev,
+      name_project: originalName, // Restablece el nombre original
+    }));
+    setIsEditing(false);
+    return;
+  }
+  try {
+    setIsEditing(false);
+    const response = await httpServices.updateProyect(project);
+    if (!response.ok) {
+      throw new Error("Failed to update project name");
+    }
+    toast.success("Proyecto actualizado correctamente");
+  } catch (error) {
+    toast.error("Error al actualizar el nombre",{
+      theme: "dark"
+    });
+    console.error("Error:", error);
+    // Restablece el nombre original en caso de error
+    setProject((prev) => ({
+      ...prev,
+      name_project: originalName,
+    }));
+  }
+
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -305,6 +344,17 @@ export default function TabsPages() {
       setProject(data.project);
     }
   }
+  //Cambiar el nombre del proyecto
+  const handleChangeName = (e) => {
+    // Validar que el nombre del proyecto no exceda los 25 caracteres
+    if (e.target.value.length <= 25){
+      setProject(prev => ({...prev,name_project: e.target.value}))
+    }else{
+      toast.error("El nombre del proyecto no puede exceder los 25 caracteres",{
+        theme: "dark"
+      });
+    }
+    }
 
   if (isLoading) {
     return <Loading />;
@@ -332,9 +382,28 @@ export default function TabsPages() {
       <Navbar />
       <header className="sticky top-[84px] left-0 right-0 font-comfortaa md:text-lg px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 shadow-lg">
         <div className="flex flex-wrap justify-between w-full">
-          <div className="flex gap-2">
-            <h2>Nombre del proyecto:</h2> <Input value={project.name_project} className="border-0 h-9" onUpdate={onUpdateNameProject} ></Input>
-          </div>
+        <div className="flex gap-2">
+          <h2>Nombre del proyecto:</h2>
+          {isEditing ? (
+              <Input
+                value={project.name_project}
+                onChange={handleChangeName}
+                onBlur={handleBlur}
+                className="max-w-xs"
+                autoFocus
+              />
+            ) : (
+              <strong
+              onClick={() => {
+                setIsEditing(true);
+                setOriginalName(project.name_project); // Guardar el nombre original
+              }}
+              className="cursor-pointer hover:text-blue-600"
+            >
+              {project.name_project}
+            </strong>
+          )}
+        </div>
           <div className="flex gap-2">
             <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
           </div>
