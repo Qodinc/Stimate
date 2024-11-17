@@ -69,7 +69,7 @@ export default function Funcionalidad({ feature, onUpdate, onRemove }) {
   return (
     <Card
       size="lg"
-      className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-2 items-center justify-items-center gap-2 relative pb-16 border"
+      className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] p-3 items-start justify-items-center gap-2 relative pb-16 border"
     >
       <div className="xs:max-w-full sm:max-w-[200px] w-full">
         <label className="font-comfortaa text-base">Funcionalidad</label>

@@ -52,7 +52,7 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate 
       </div>
 
       {
-        hours_team && (
+        hours_team && !(
           <div className="my-2 p-2 bg-gray-300 rounded-lg">
             <h3 className="text-lg font-bold">Total de horas</h3>
             <div className="flex gap-5">
