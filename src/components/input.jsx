@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from 'react-toastify';
 
 export default function Input({
   iconPosition = "none",
@@ -14,12 +15,31 @@ export default function Input({
   ...props
 }) {
   const [inputValue, setInputValue] = useState(props.value || '') // Para tomar los valores del  input
+  const [hasShownMaxLengthToast, setHasShownMaxLengthToast] = useState(false);
+
   useEffect(() => {
     setInputValue(props.value || '')
   }, [props.value])
 
   const handleInputChange = (event) => { //Tomar los numeros recibidos
-    const { value, step } = event.target;
+    const { value, step, maxLength } = event.target;
+
+    let newValue = value;
+
+    // Validación de maxLength
+    if (maxLength && value.length >= maxLength && maxLength > 0) {
+      // Si el usuario intenta escribir más caracteres de los permitidos
+      if (value.length > inputValue.length && !hasShownMaxLengthToast) {
+        toast.error(`El texto no puede exceder los ${maxLength} caracteres`, {
+          theme: "dark",
+          onClose: () => {
+            setTimeout(() => setHasShownMaxLengthToast(false), 100);
+          }
+        });
+        setHasShownMaxLengthToast(true);
+      }
+      newValue = value.slice(0, maxLength);
+    }
 
     if (step) {
       // Si tiene step

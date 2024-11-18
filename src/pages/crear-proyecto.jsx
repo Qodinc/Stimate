@@ -8,7 +8,6 @@ import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
 import HttpServices from '@/lib/http-services';
 import { useSession } from 'next-auth/react';
-import { ToastContainer, toast } from 'react-toastify';
 
 export default function NewProject() {
    const { data: session } = useSession();
@@ -35,13 +34,6 @@ export default function NewProject() {
    }, [projectName, areasSelected]);
 
    const handleProjectNameChange = async (event) => {
-      if (event.target.value.length <= 25){
-         setProjectName(event.target.value);
-      }else{
-         toast.error("El nombre del proyecto no puede exceder los 25 caracteres", {
-            theme: "dark"
-          });
-      }
    }
 
    const handleAreasSelected = (selectedAreas) => {
@@ -80,6 +72,7 @@ export default function NewProject() {
                   <label className="font-poppins font-semibold text-accent text-center text-xl md:text-3xl">Nombre del Proyecto</label>
                   <Input
                      placeholder="Nombre del proyecto"
+                     maxLength={25}
                      onChange={handleProjectNameChange}
                      value={projectName}
                   />
@@ -106,10 +99,6 @@ export default function NewProject() {
                   </Button>
                </div>
             </main>
-            <ToastContainer
-               position="bottom-right"
-               autoClose={2000}
-            />
          </div>
       </>
    );

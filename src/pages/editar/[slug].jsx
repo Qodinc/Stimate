@@ -13,10 +13,10 @@ import Head from "next/head";
 import HttpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
 import Input from "@/components/input";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
+import Edit from "@/components/Icons/Edit";
 
 export default function TabsPages() {
   const { data: session } = useSession();
@@ -345,16 +345,7 @@ export default function TabsPages() {
     }
   }
   //Cambiar el nombre del proyecto
-  const handleChangeName = (e) => {
-    // Validar que el nombre del proyecto no exceda los 25 caracteres
-    if (e.target.value.length <= 25){
-      setProject(prev => ({...prev,name_project: e.target.value}))
-    }else{
-      toast.error("El nombre del proyecto no puede exceder los 25 caracteres",{
-        theme: "dark"
-      });
-    }
-    }
+  const handleChangeName = (e) => {setProject(prev => ({...prev,name_project: e.target.value}))}
 
   if (isLoading) {
     return <Loading />;
@@ -387,6 +378,7 @@ export default function TabsPages() {
           {isEditing ? (
               <Input
                 value={project.name_project}
+                maxLength={25}
                 onChange={handleChangeName}
                 onBlur={handleBlur}
                 className="max-w-xs"
@@ -401,6 +393,9 @@ export default function TabsPages() {
               className="cursor-pointer hover:text-blue-600"
             >
               {project.name_project}
+              <span className="inline-flex items-start before:content-[''] before:w-6 before:h-6 before:bg-contain before:bg-no-repeat before:bg-center before:bg-[url('/path-to-edit-icon.svg')]">
+                <Edit className="w-10 h-10 text-gray-500" />
+              </span>
             </strong>
           )}
         </div>
@@ -431,10 +426,6 @@ export default function TabsPages() {
       <main className="px-4 md:px-14 lg:px-20">
         {renderContent()}
       </main>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={2000}
-      />
     </>
   );
 }
