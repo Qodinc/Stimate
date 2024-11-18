@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
+import TextArea from "./Textarea";
 
 export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
     const [errors, setErrors] = useState({
@@ -60,10 +61,12 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
             [name]: error
         }));
 
-        onUpdate(prev => ({
-            ...prev,
+        const costUpdate = {
+            ...cost,
             [name]: value
-        }));
+        }
+
+        onUpdate(costUpdate);
     };
 
     return (
@@ -125,7 +128,12 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
                     <div className="flex flex-col gap-1 w-full">
                         <Select
                             value={cost.type_recurring}
-                            onValueChange={handleInputChange}
+                            onValueChange={(event) => handleInputChange({
+                                target: {
+                                    value: event,
+                                    name: "type_recurring"
+                                }
+                            })}
                         >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Tipo de cargo" />
@@ -146,11 +154,18 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
             <div className="flex flex-col lg:grid lg:grid-cols-2">
                 <div className="flex flex-col gap-2 w-full px-1">
                     <span>Descripción</span>
-                    <input
-                        className="w-full h-24 px-3 py-2 text-[#0A0A0B] bg-baseTextarea text-base border-2 rounded-3xl focus:outline-none focus:border-[#2F27CE] resize-none placeholder-[#5A5555]"
+                    <TextArea
+                        className="w-full px-3 py-2 text-[#0A0A0B] bg-baseTextarea text-base border-2 rounded-3xl focus:outline-none focus:border-[#2F27CE] resize-none placeholder-[#5A5555]"
+                        name="description"
                         placeholder="Describe tu cargo"
-                        value={cost.description}
-                        onChange={handleInputChange}
+                        defaultValue={cost.description}
+                        onChange={(event) => handleInputChange({
+                            target: {
+                                value: event,
+                                name: "description"
+                            }
+                        })}
+                        required={true}
                     />
                     {errors.description && <span className="text-baseM text-[#C03744]">*{errors.description}</span>}
                 </div>
