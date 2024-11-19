@@ -228,7 +228,7 @@ class HttpServices {
     );
   };
 
-  getPlanesCustomer = async ({ customer }) => {
+  getPlanesCustomer = async ({ email }) => {
     return await fetch(
       `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/customer`,
       {
@@ -237,7 +237,7 @@ class HttpServices {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${this.tokenSession}`
         },
-        body: JSON.stringify({ customer }),
+        body: JSON.stringify({ email }),
       }
     );
   };

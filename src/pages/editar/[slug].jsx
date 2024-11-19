@@ -419,16 +419,16 @@ export default function TabsPages() {
           <div className="flex items-end md:cursor-pointer pb-1" onClick={() => saveProject()}>
             <Button>
               <Save width={24} stroke="white" />
-            <span className="hidden md:block text-base ml-2">Guardar</span>
+              <span className="hidden md:block text-base ml-2">Guardar</span>
             </Button>
           </div>
         </div>
         <div className="fixed bottom-6 right-10" onClick={() => saveProject()}>
-            <Button>
-              <Save width={24} stroke="white" />
+          <Button>
+            <Save width={24} stroke="white" />
             <span className="hidden md:block text-base ml-2">Guardar</span>
-            </Button>
-          </div>
+          </Button>
+        </div>
       </header>
 
       <main className="px-4 md:px-14 lg:px-20">

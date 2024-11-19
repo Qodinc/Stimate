@@ -28,27 +28,31 @@ export default function Payment() {
    const [stripePromise, setStripePromise] = useState(null);
    const [price, setPrice] = useState([]);
    const [error, setError] = useState(null);
+   const [customerId, setCustomerId] = useState();
 
    useEffect(() => {
-      const getConfigPayment = async () => {
-         try {
-            // validar si el usuario ya cuenta con un pago
-            const response = await httpServices.configPayment();
+      getConfigPayment();
+   }, [session])
 
-            if (!response.ok) {
-               setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
-            }
+   const getConfigPayment = async () => {
+      try {
+         // validar si el usuario ya cuenta con un pago
+         const response = await httpServices.configPayment();
 
-            const { data } = await response.json();
-
-            setStripePromise(loadStripe(data.publishableKey));
-            setPrice(data.prices[0]);
-         } catch (error) {
+         if (!response.ok) {
             setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
          }
-      };
-      getConfigPayment();
-   }, [])
+         setError(null)
+         
+         const { data } = await response.json();
+
+         setStripePromise(loadStripe(data.publishableKey));
+         setPrice(data.prices[0]);
+         setCustomerId(session.user?.customer_ids?.stripe)
+      } catch (error) {
+         setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
+      }
+   };
 
    if (!stripePromise || !price) {
       return <>
@@ -86,6 +90,7 @@ export default function Payment() {
                <Elements stripe={stripePromise}>
                   <CheckoutForm
                      price={price}
+                     customer_id={customerId}
                   />
                </Elements>
             </main>
@@ -94,11 +99,11 @@ export default function Payment() {
    );
 }
 
-function CheckoutForm({ price, setIsLoading = true, ...props }) {
+function CheckoutForm({ price, setIsLoading = true, customer_id, ...props }) {
    const router = useRouter();
    const [isDialogOpen, setIsDialogOpen] = useState(false);
    const [messages, setMessages] = useState([]);
-   const { data: session } = useSession();
+   const { data: session, update } = useSession();
    const httpServices = new HttpServices(session);
 
    // Datos del cliente
@@ -111,8 +116,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
    });
    const [validated, setValidated] = useState(false)
 
-   // Datos para crear transacción
-   const [customer_id, setCustomerId] = useState(null);
 
    // Datos de la transacción
    const [client_secret, setClientSecret] = useState(null);
@@ -131,7 +134,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
 
    // Obtener Cliente
    const getCustomer = async () => {
-      const session = await getServerSession(req, res, authOptions);
 
       if (customer_id) return customer_id;
 
@@ -143,12 +145,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
 
       const { data } = await response.json();
 
-      session.user.customer_ids = {
-         ...session.user.customer_ids,
-         stripe: data.customer.id
-      }
-
-      setCustomerId(data.customer.id);
       return data.customer.id;
    }
 
@@ -208,6 +204,12 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
          if (error) { // 
             setMessages([`Payment failed: ${error.message}`]);
          } else {
+            console.log(paymentIntent);
+            console.log(session);
+
+            // Actualiza el customer id del usuario
+            update({ user: { ...session.user, customer_ids: { ...session.user.customer_ids, stripe: data.customer.id } } })
+            
             setIsDialogOpen(true)
             setMessages(['Payment successful!']);
 
@@ -218,7 +220,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
             elements.getElement(CardExpiryElement).clear();
             elements.getElement(CardCvcElement).clear();
 
-            setCustomerId(null)
             setClientSecret(null)
 
             setTimeout(() => {
