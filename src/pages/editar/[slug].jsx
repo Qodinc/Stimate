@@ -12,10 +12,11 @@ import ProjectInterfaz from "@/interfaces/project.interface";
 import Head from "next/head";
 import HttpServices from "@/lib/http-services";
 import Save from "@/components/Icons/Save";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Input from "@/components/input";
+import { toast } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
+import Edit from "@/components/Icons/Edit";
 
 export default function TabsPages() {
   const { data: session, status } = useSession();
@@ -32,6 +33,8 @@ export default function TabsPages() {
   const [estimatedAssociatedCosts, setEstimatedAssociatedCost] = useState(0);
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [hoursTeam, setHoursTeam] = useState(null)
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalName, setOriginalName] = useState("");
 
   const tabs = [
     { value: "equipo", label: "Equipo de trabajo" },
@@ -141,6 +144,12 @@ export default function TabsPages() {
     summary()
   }, [project])
 
+  useEffect(() => {
+    if (project.name_project) {
+      document.title = project.name_project;
+    }
+  }, [project.name_project]);
+
   const updateTeamProject = (updatedTeamProject) => {
     // Actualiza el equipo
     const updatedProject = {
@@ -208,6 +217,7 @@ export default function TabsPages() {
   const updatePreview = (preview) => {
     setProject((prevProject) => ({
       ...prevProject,
+      name_project: preview.name_project,
       status_project: preview.status_project,
       sale_comission: preview.sale_comission,
       profit: preview.profit,
@@ -255,6 +265,44 @@ export default function TabsPages() {
 
     //TODO: Realizar exportación de proyecto
   }
+  // Validar que el nombre del proyecto no sea vacío
+  const handleBlur = async () => {
+    if (project.name_project === originalName) {
+      setIsEditing(false);
+      return;
+    }
+
+    if (!project.name_project || project.name_project.trim() === "") {
+    toast.error("El nombre del proyecto no puede estar vacío",{
+      theme: "dark"
+    });
+    setProject((prev) => ({
+      ...prev,
+      name_project: originalName, // Restablece el nombre original
+    }));
+    setIsEditing(false);
+    return;
+  }
+  try {
+    setIsEditing(false);
+    const response = await httpServices.updateProyect(project);
+    if (!response.ok) {
+      throw new Error("Failed to update project name");
+    }
+    toast.success("Proyecto actualizado correctamente");
+  } catch (error) {
+    toast.error("Error al actualizar el nombre",{
+      theme: "dark"
+    });
+    console.error("Error:", error);
+    // Restablece el nombre original en caso de error
+    setProject((prev) => ({
+      ...prev,
+      name_project: originalName,
+    }));
+  }
+
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -304,6 +352,8 @@ export default function TabsPages() {
       setProject(data.project);
     }
   }
+  //Cambiar el nombre del proyecto
+  const handleChangeName = (e) => {setProject(prev => ({...prev,name_project: e.target.value}))}
 
   if (isLoading) {
     return <Loading />;
@@ -331,9 +381,32 @@ export default function TabsPages() {
       <Navbar />
       <header className="sticky top-[84px] left-0 right-0 font-comfortaa md:text-lg px-4 md:px-14 lg:px-20 pt-5 bg-white z-40 shadow-lg">
         <div className="flex flex-wrap justify-between w-full">
-          <div className="flex gap-2">
-            <h2>Nombre del proyecto:</h2> <strong>{project.name_project}</strong>
-          </div>
+        <div className="flex gap-2">
+          <h2>Nombre del proyecto:</h2>
+          {isEditing ? (
+              <Input
+                value={project.name_project}
+                maxLength={25}
+                onChange={handleChangeName}
+                onBlur={handleBlur}
+                className="max-w-xs"
+                autoFocus
+              />
+            ) : (
+              <strong
+              onClick={() => {
+                setIsEditing(true);
+                setOriginalName(project.name_project); // Guardar el nombre original
+              }}
+              className="cursor-pointer hover:text-blue-600"
+            >
+              {project.name_project}
+              <span className="inline-flex items-start before:content-[''] before:w-6 before:h-6 before:bg-contain before:bg-no-repeat before:bg-center before:bg-[url('/path-to-edit-icon.svg')]">
+                <Edit className="w-10 h-10 text-gray-500" />
+              </span>
+            </strong>
+          )}
+        </div>
           <div className="flex gap-2">
             <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
           </div>
@@ -361,10 +434,6 @@ export default function TabsPages() {
       <main className="px-4 md:px-14 lg:px-20">
         {renderContent()}
       </main>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={2000}
-      />
     </>
   );
 }
