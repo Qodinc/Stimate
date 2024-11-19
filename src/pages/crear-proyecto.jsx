@@ -34,6 +34,7 @@ export default function NewProject() {
    }, [projectName, areasSelected]);
 
    const handleProjectNameChange = async (event) => {
+      setProjectName(event.target.value);
    }
 
    const handleAreasSelected = (selectedAreas) => {
@@ -43,7 +44,6 @@ export default function NewProject() {
    const submitProject = async () => {
       if (isFormValid) {
          const dataProject = {
-            owner_id: session.user ? session.user.id : session.id,
             name_project: projectName,
             areas_selected: areasSelected
          };

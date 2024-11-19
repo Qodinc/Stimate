@@ -19,8 +19,8 @@ import {Button} from "@/components/ui/button";
 import Edit from "@/components/Icons/Edit";
 
 export default function TabsPages() {
-  const { data: session } = useSession();
-  const httpServices = new HttpServices(session)
+  const { data: session, status } = useSession();
+  const [httpServices, setHttpServices] = useState(null);
 
   const router = useRouter();
   const { slug } = router.query;
@@ -45,6 +45,12 @@ export default function TabsPages() {
   ];
 
   useEffect(() => {
+    if (session) {
+      setHttpServices(new HttpServices(session));
+    }
+  }, [session]);
+
+  useEffect(() => {
     const fetchProject = async () => {
       try {
         setIsLoading(true);
@@ -57,16 +63,18 @@ export default function TabsPages() {
           setProject(data.project);
       } catch (error) {
         console.error("Error fetching project:", error);
+        if (error.message.includes('token')) {
+          router.push('/iniciar-sesion');
+        }
         // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (slug) {
-      fetchProject();
-    }
-  }, [slug]);
+    fetchProject();
+  }, [slug, httpServices, status]);
+  
 
   useEffect(() => {
     const summary = () => {
@@ -82,7 +90,7 @@ export default function TabsPages() {
           }
         });
       });
-
+    
       // Tiempos por equipo
       const teamHoursArray = Object.entries(teamHoursMap).map(([team, totalTime]) => {
         // Buscar costo por hora del area
@@ -352,18 +360,18 @@ export default function TabsPages() {
   }
 
   if (!project.slug) {
-    return (
-      <>
-        <Head>
-          <title>No se encontró el proyecto</title>
-        </Head>
-        <Navbar />
-        <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
-          No se encontró el proyecto
-        </div>;
-      </>
-    )
-  }
+  return (
+    <>
+      <Head>
+        <title>No se encontró el proyecto</title>
+      </Head>
+      <Navbar />
+      <div className="h-[75vh] flex justify-center items-center font-comfortaa bg-white md:text-lg">
+        No se encontró el proyecto
+      </div>;
+    </>
+  )
+}
 
   return (
     <>
@@ -411,16 +419,16 @@ export default function TabsPages() {
           <div className="flex items-end md:cursor-pointer pb-1" onClick={() => saveProject()}>
             <Button>
               <Save width={24} stroke="white" />
-            <span className="hidden md:block text-base ml-2">Guardar</span>
+              <span className="hidden md:block text-base ml-2">Guardar</span>
             </Button>
           </div>
         </div>
         <div className="fixed bottom-6 right-10" onClick={() => saveProject()}>
-            <Button>
-              <Save width={24} stroke="white" />
+          <Button>
+            <Save width={24} stroke="white" />
             <span className="hidden md:block text-base ml-2">Guardar</span>
-            </Button>
-          </div>
+          </Button>
+        </div>
       </header>
 
       <main className="px-4 md:px-14 lg:px-20">
