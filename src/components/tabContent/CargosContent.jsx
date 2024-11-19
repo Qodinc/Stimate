@@ -23,7 +23,7 @@ const CargosContent = ({ associated_costs, onUpdate }) => {
 };
 
   const handleDeleteCost = (costIndex) => {
-    const updatedCargos = associated_costs.filter((_, index) => i !== costIndex);
+    const updatedCargos = associated_costs.filter((_, index) => index !== costIndex);
     onUpdate(updatedCargos);
   };
 
