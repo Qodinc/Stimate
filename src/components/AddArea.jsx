@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const { default: MultipleSelect } = require("./MultipleSelect");
 
 function AddArea({ areasSelected }) {
+   const { data: session } = useSession();
    const [selectedOptions, setSelectedOptions] = useState([]);
 
    const areas = [
@@ -86,6 +88,8 @@ function AddArea({ areasSelected }) {
       }
    ]
 
+   const maxAreas = session?.user.state_subscription ? 10 : 3;
+
    const data = areas.map((area) => ({
       value: area._id,
       text: area.area
@@ -96,10 +100,18 @@ function AddArea({ areasSelected }) {
    }, [selectedOptions, areasSelected]);
 
    const handleSelectedArea = (selectedArea) => {
+      if (selectedOptions.length < maxAreas) {
+         setSelectedOptions(prev => [...prev, selectedArea]);
+      } else {
+         alert(`Has alcanzado el límite de ${maxAreas} áreas.`);
+      }
+   };
+
+  /*  const handleSelectedArea = (selectedArea) => {
       if (selectedOptions.length < 4) {
          setSelectedOptions(prev => [...prev, selectedArea]);
       }
-   }
+   } */
 
    const handleRemoveArea = (optionToRemove) => {
       setSelectedOptions(prev =>
