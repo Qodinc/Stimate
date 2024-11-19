@@ -34,6 +34,7 @@ export default function NewProject() {
    }, [projectName, areasSelected]);
 
    const handleProjectNameChange = async (event) => {
+      setProjectName(event.target.value);
    }
 
    const handleAreasSelected = (selectedAreas) => {
