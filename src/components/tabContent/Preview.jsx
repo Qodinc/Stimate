@@ -4,7 +4,7 @@ import Percent from "../Icons/Percent";
 import Input from "../input";
 import { Button } from "../ui/button";
 import TextArea from "../Textarea";
-import Image from "next/image";
+import PreviewPDF from "../PreviewPDF";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -205,12 +205,7 @@ const Preview = ({
         </div>
         <div className="xl:w-1/2 mt-6 xl:mt-0 order-last xl:order-none">
           <div className="w-full h-full relative aspect-video border-slate-800">
-            <Image
-              src={"/preview.jpg"}
-              alt="Descripción de la imagen"
-              layout="fill"
-              objectFit="contain"
-            />
+            <PreviewPDF project={project} estimatedWages={estimated_wages} estimatedOperatingExpenses={estimated_operating_expenses} />
           </div>
         </div>
       </div>
