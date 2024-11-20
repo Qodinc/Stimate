@@ -5,7 +5,7 @@ import Funcionalidades from "@/components/tabContent/FuncionalidadesContent";
 import GastosOperativos from "@/components/tabContent/GastosContent";
 import Preview from "@/components/tabContent/Preview";
 import TabsMenu from "@/components/TabsMenu";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "@/components/Loading";
 import ProjectInterfaz from "@/interfaces/project.interface";
@@ -18,18 +18,7 @@ import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
 import Edit from "@/components/Icons/Edit";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import CheckCancel from "@/components/Icons/CheckCancel";
-import CotizacionFile from "@/components/CotizacionFile";
-import { toPng } from 'html-to-image';
+import { toJpeg, toPng } from 'html-to-image';
 import generatePDF from 'react-to-pdf'; 
 
 export default function TabsPages() {
@@ -49,8 +38,6 @@ export default function TabsPages() {
   const [hoursTeam, setHoursTeam] = useState(null)
   const [isEditing, setIsEditing] = useState(false);
   const [originalName, setOriginalName] = useState("");
-  const elementRef = useRef(null);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
   const tabs = [
     { value: "equipo", label: "Equipo de trabajo" },
@@ -242,7 +229,7 @@ export default function TabsPages() {
     }));
   }
 
-  const exportProject = async () => {
+  const exportProject = async (elementToExport) => {
 
     // Verificamos si faltan campos requeridos
     const missingTProject =
@@ -277,22 +264,27 @@ export default function TabsPages() {
     if (!updateProject.ok) {
       throw new Error('Failed to fetch project');
     }
-    toast.success("Información guardada con éxito");
-
+    
     //TODO: Realizar exportación de proyecto
-    setShowSuccessDialog(true)
+    // si el usuario es premium, exporta PDF
+    exportToPDF(elementToExport)
+    // sino, exporta en PNG
+    // exportToImage(elementToExport)
+
+    toast.success("Información guardada con éxito");
+    
   }
     
-  const exportToPDF = () => {
+  const exportToPDF = (element) => {
     const nameFile = `Cotizacion-${project.name_project}`
     const nameFilePdf = nameFile + '.pdf'
-    generatePDF(elementRef, { filename: nameFilePdf, resolution: 3 })
+    generatePDF(element, { filename: nameFilePdf, resolution: 3, page: { margin: 0 } })
   }
 
-  const exportToPNG = () => {
+  const exportToImage = (element) => {
     const nameFile = `Cotizacion-${project.name_project}`
-    const nameFilePng = nameFile + '.png'
-    toPng(elementRef.current, { cacheBust: false })
+    const nameFilePng = nameFile + '.jpg'
+    toJpeg(element.current, { cacheBust: false, quality: 50, pixelRatio: 0.7, backgroundColor: 'white' })
       .then((dataUrl) => {
         const link = document.createElement("a");
         link.download = nameFilePng;
@@ -474,23 +466,6 @@ export default function TabsPages() {
       <main className="px-4 md:px-14 lg:px-20">
         {renderContent()}
       </main>
-
-      <div className="flex justify-end items-center w-full">
-        <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-          <AlertDialogContent>
-            <div
-              ref={elementRef}
-              style={{ width: '800px' }}
-            >
-              <CotizacionFile />
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogAction onClick={exportToPDF} className=" text-sm rounded-lg">Exportar PDF :king:</AlertDialogAction>
-              <AlertDialogAction onClick={exportToPNG} className=" text-sm rounded-lg">Exportar PNG</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
     </>
   );
 }

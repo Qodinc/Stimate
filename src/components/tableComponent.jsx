@@ -1,11 +1,13 @@
-const TableComponent = ({associatedCosts, developmentCost}) => {
+const TableComponent = ({ associatedCosts, developmentCost }) => {
 
-    const titles = ["Producto", "Cantidad", "Unidad", "Precio Unitario", "Precio"];
+    const titles = ["Producto", "Descripción", "Cantidad", "Unidad", "Precio Unitario", "Precio"];
     const unity = [
-        {   type_recurring: "nrc",
+        {
+            type_recurring: "nrc",
             unit: "Unidad"
         },
-        {   type_recurring: "ARC",
+        {
+            type_recurring: "ARC",
             unit: "Año"
         },
         {
@@ -14,36 +16,39 @@ const TableComponent = ({associatedCosts, developmentCost}) => {
         }
     ]
     return (
-        <div className="w-full overflow-x-auto md:overflow-hidden">
+        <div className="w-full mb-5 border-b-4">
+            <h2 className="py-1 font-bold border-b-4">Detalles</h2>
             <table className="w-full text-left">
-            <thead>
-                <tr className="text-baseColor bg-slate-600/20">
-                    {titles.map((title) => (
-                        <th key={title} className="p-2 font-bold">{title}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                <tr className="text-baseColor">
-                    <td className="p-2">Costo de desarrollo</td>
-                    <td className="p-2">1</td>
-                    <td className="p-2">Unidad</td>
-                    <td className="p-2">n/a</td>
-                    <td className="p-2">{developmentCost && developmentCost.toFixed(2)}</td>
-                </tr>
-                {associatedCosts.map((cost) => {
-                    const foundUnity = unity.find((e) => e.type_recurring === cost.type_recurring);
-                    return (
-                    <tr key={cost._id} className="text-baseColor">
-                        <td className="p-2">{cost.cost_name}</td>
-                        <td className="p-2">{cost.quantity}</td>
-                        <td className="p-2">{foundUnity ? foundUnity.unit : "No se especificó el tipo de recurrencia en los cargos asociados"}</td>
-                        <td className="p-2">{cost.price_unity}</td>
-                        <td className="p-2">{cost.price_unity * cost.quantity}</td>
+                <thead>
+                    <tr className="text-baseColor border-b-4">
+                        {titles.map((title) => (
+                            <th key={title} className="py-1 font-bold">{title}</th>
+                        ))}
                     </tr>
-                    );
-                })}
-            </tbody>
+                </thead>
+                <tbody>
+                    <tr className="text-baseColor">
+                        <td className="">Costo de desarrollo</td>
+                        <td className=""> </td>
+                        <td className="">1</td>
+                        <td className="">Unidad</td>
+                        <td className="">n/a</td>
+                        <td className="">{developmentCost && developmentCost.toFixed(2)}</td>
+                    </tr>
+                    {associatedCosts.map((cost) => {
+                        const foundUnity = unity.find((e) => e.type_recurring === cost.type_recurring);
+                        return (
+                            <tr key={cost._id} className="text-baseColor">
+                                <td className="">{cost.cost_name}</td>
+                                <td className="">{cost.description}</td>
+                                <td className="">{cost.quantity}</td>
+                                <td className="">{foundUnity ? foundUnity.unit : "N/D"}</td>
+                                <td className="">{cost.price_unity}</td>
+                                <td className="">{cost.price_unity * cost.quantity}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
             </table>
         </div>
     );

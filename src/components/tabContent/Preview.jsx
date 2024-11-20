@@ -5,7 +5,7 @@ import Input from "../input";
 import { Button } from "../ui/button";
 import TextArea from "../Textarea";
 import PreviewPDF from "../PreviewPDF";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -29,6 +29,7 @@ const Preview = ({
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
   const [statusOptions, setStatusOptions] = useState([]);
+  const elementRef = useRef(null);
 
   useEffect(() => {
     const fetchStatusOptions = async () => {
@@ -102,7 +103,7 @@ const Preview = ({
             </SelectGroup>
             </SelectContent>
         </Select>
-        <Button onClick={onExport} >Exportar <ExportDownload width={25} height={25} /></Button>
+        <Button onClick={() => onExport(elementRef)} >Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
         <div className="font-comfortaa xl:w-1/2">
@@ -203,8 +204,8 @@ const Preview = ({
             </div>
           </div>
         </div>
-        <div className="xl:w-1/2 mt-6 xl:mt-0 order-last xl:order-none">
-          <div className="w-full h-full relative aspect-video border-slate-800">
+        <div className="xl:w-1/2 mt-6 xl:mt-0 order-last xl:order-none border-slate-800 border border-baseColor/10 shadow-sm rounded-xl overflow-x-auto">
+          <div className="w-[800px] relative aspect-video border-slate-800 items-center" ref={elementRef}>
             <PreviewPDF project={project} estimatedWages={estimated_wages} estimatedOperatingExpenses={estimated_operating_expenses} />
           </div>
         </div>
