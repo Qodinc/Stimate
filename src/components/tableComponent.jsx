@@ -14,10 +14,10 @@ const TableComponent = ({associatedCosts, developmentCost}) => {
         }
     ]
     return (
-        <div className="w-full">
+        <div className="w-full overflow-x-auto md:overflow-hidden">
             <table className="w-full text-left">
             <thead>
-                <tr className="text-baseColor">
+                <tr className="text-baseColor bg-slate-600/20">
                     {titles.map((title) => (
                         <th key={title} className="p-2 font-bold">{title}</th>
                     ))}
@@ -45,7 +45,6 @@ const TableComponent = ({associatedCosts, developmentCost}) => {
                 })}
             </tbody>
             </table>
-
         </div>
     );
 };

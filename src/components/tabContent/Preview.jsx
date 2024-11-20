@@ -85,7 +85,7 @@ const Preview = ({
   };
 
   return (
-    <section className="my-5">
+    <section className="my-5 pb-10">
       <div className="flex justify-end my-3 gap-4">
         <Select onValueChange={handleStatusChange} value={project.status_project}>
             <SelectTrigger className="w-full md:w-56 xl:w-50">

@@ -13,7 +13,7 @@ const previewPDF = ({ project, estimatedWages, estimatedOperatingExpenses }) => 
   const developmentCost = estimatedWages + estimatedOperatingExpenses + project.sale_comission_total + project.profit_total
 
   return (
-    <>
+    <div className="border border-baseColor/10 shadow-sm rounded-xl p-5 w-full pb-10">
       <div className="w-full text-center">
         <h1 className="text-2xl font-bold text-baseColor">Cotización</h1>
         <p className="text-baseColor text-sm">Fecha: {formattedDate}</p>
@@ -28,7 +28,7 @@ const previewPDF = ({ project, estimatedWages, estimatedOperatingExpenses }) => 
       <div className="w-full flex justify-end">
         <CostBreakdown associatedCosts = {project.associated_costs} developmentCost = {developmentCost} IVA = {project.tax_total} />
       </div>
-    </>
+    </div>
   );
 };
 
