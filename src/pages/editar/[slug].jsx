@@ -371,6 +371,7 @@ export default function TabsPages() {
           estimated_wages={estimatedWages}
           estimated_operating_expenses={estimatedOperatingExpenses}
           estimated_associated_cost={estimatedAssociatedCosts}
+          estimated_cost = {estimatedCost}
           onUpdate={updatePreview}
           onExport={exportProject}
         />
