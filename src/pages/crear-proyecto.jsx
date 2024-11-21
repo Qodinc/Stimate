@@ -8,11 +8,13 @@ import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
 import HttpServices from '@/lib/http-services';
 import { useSession } from 'next-auth/react';
+import Head from 'next/head';
 
 export default function NewProject() {
-   const { data: session } = useSession();
+   const { data: session, status } = useSession();
    const httpServices = new HttpServices(session)
 
+   const [isActiveSubscription, setIsActiveSubscription] = useState(false);
    const [projectName, setProjectName] = useState('');
    const [areasSelected, setAreasSelected] = useState([]);
    const [errors, setErrors] = useState({
@@ -21,6 +23,12 @@ export default function NewProject() {
       validator: false
    });
    const [isFormValid, setIsFormValid] = useState(false);
+
+   useEffect(() => {
+      if (status === 'authenticated') {
+         setIsActiveSubscription(session.user.isActiveSubscription)
+      }
+   }, [status]);
 
    useEffect(() => {
       const newErrors = {
@@ -52,15 +60,29 @@ export default function NewProject() {
          if (!response.ok) {
             const errorData = await response.json();
             console.error(errorData.error);
-            
+
             return setErrors({
                validator: true
             })
          }
 
-         const {data} = await response.json(); 
+         const { data } = await response.json();
          Router.push('/editar/' + data.project.slug);
       }
+   }
+
+   if (!isActiveSubscription) {
+      return (
+         <>
+            <Head>
+               <title>Plan Actual</title>
+            </Head>
+            <Navbar />
+            <div className="flex flex-col items-center">
+               <p className="text-xl text-center my-5">ERROR!! Está mal!! PAGA!</p>
+            </div>
+         </>
+      )
    }
 
    return (

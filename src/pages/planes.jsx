@@ -8,9 +8,10 @@ import { useEffect, useState } from "react"
 import HttpServices from "@/lib/http-services";
 import { useSession } from "next-auth/react";
 import Star from "@/components/Icons/Star";
+import Loading from "@/components/Loading";
 
 export default function Pricing() {
-  const [misPlanes, setMisPlanes] = useState(null)
+  const [isLoading, setIsLoading] = useState(true);
   const [planes, setPlanes] = useState([
     {
       title: "Básico",
@@ -18,7 +19,7 @@ export default function Pricing() {
       price_text: "Gratis",
       benefits: [
         "Almacenaje para 5 proyectos",
-        "Exportación solo en JPEG",
+        "Exportación solo en imagen",
         "Define hasta 4 áreas por proyecto",
         "Solo 2 exportaciones por proyecto",
       ],
@@ -33,7 +34,7 @@ export default function Pricing() {
       price_text: "$10 usd /Mensual",
       benefits: [
         "Almacenaje para proyectos ilimitado",
-        "Exportaciones en PDF y JPG",
+        "Exportaciones en PDF",
         "Exportaciones por proyecto ilimitadas",
         "Agregar más áreas de trabajo por proyecto",
       ],
@@ -42,46 +43,65 @@ export default function Pricing() {
       isActive: false
     },
   ])
-  const { data: session } = useSession();
-  const httpServices = new HttpServices(session)
-
+  const { data: session, status } = useSession();
+  const [httpServices, setHttpServices] = useState(null);
 
   useEffect(() => {
-    getPlanes()
-  }, [session])
+    if (status === 'authenticated') {
+      getPlanes();
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      const services = new HttpServices(session);
+      setHttpServices(services);
+    }
+  }, [session, status])
 
   const getPlanes = async () => {
-    if (session) {
-      const user = session.user ? session.user : null
+    try {
+      setIsLoading(true)
+      if (status === 'authenticated' && session?.user?.email) {
+        const httpServices = new HttpServices(session);
+        const user = session.user ? session.user : null
 
-      if (user) {
-        const response = await httpServices.getPlanesCustomer({ email: user.email })
+        if (user) {
+          const response = await httpServices.getPlanesCustomer({
+            email: session.user.email
+          });
+
+          if (response.ok) {
+            const { data } = await response.json()
+
+            // mapear data.subscriptions y mapear planes, planes hay que convertirlo en hook State
+            if (data.subscriptions && !!data.subscriptions.length) {
+              const plans = planes.map(plan => {
+                const subscription = data.subscriptions.find(subscription => subscription.plan.id == plan.id)
   
-        if (response.ok) {
-          const { data } = await response.json()
+                if (!!subscription)
+                  plan.isActive = true
+                else
+                  plan.isActive = false
   
-          setMisPlanes(data.subscriptions)
+                return plan
+              })
   
-          // mapear data.subscriptions y mapear planes, planes hay que convertirlo en hook State
-          const plans = planes.map(plan => {
-            const subscription = data.subscriptions.find(subscription => subscription.plan.id == plan.id)
-  
-            if (!!subscription)
-              plan.isActive = true
-            else
-              plan.isActive = false
-  
-            return plan
-          })
-  
-          setPlanes(plans)
+              setPlanes(plans)
+            }
+          }
         }
       }
+    } catch (error) {
+      console.error('Failed to fetch plans:', error);
+
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const showButton = (plan) => {
-    if (plan.isActive) 
+    if (plan.isActive)
       return (
         <Link href={'/plan-actual'}>
           <Button variant="" size="lg" >Continuar</Button>
@@ -95,9 +115,13 @@ export default function Pricing() {
           </Link>
         )
 
-    return 
+    return
 
-    
+
+  }
+
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -125,7 +149,7 @@ export default function Pricing() {
             src="Icons/Vector7.svg"
             alt=""
           />
-          <div className="w-full flex flex-col md:flex-row justify-center gap-16">
+          <div className="w-full flex flex-col justify-center items-center md:flex-row gap-16">
             {planes.map((plan, index) => (
               <Card key={index} className="flex flex-col justify-between rounded-3xl">
                 <div className={(plan.isActive ? `bg-accent text-white ` : `bg-white text-accent `) + ` flex flex-col justify-end w-full px-4 py-1 rounded-t-3xl`}>

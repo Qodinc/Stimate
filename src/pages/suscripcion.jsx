@@ -134,65 +134,88 @@ function CheckoutForm({ price, setIsLoading = true, customer_id, ...props }) {
 
    // Obtener Cliente
    const getCustomer = async () => {
+      try {
+         if (!session?.user?.email) return null;
 
-      if (customer_id) return customer_id;
+         const response = await httpServices.createCustomer({
+            email: session.user.email
+         });
 
-      const response = await httpServices.createCustomer({ email });
+         if (!response.ok) {
+            setMessages(['No se pudo obtener el cliente']);
+            return
+         }
 
-      if (!response.ok) {
-         return setMessages(['Falló al obtener el cliente']);
+         const { data } = await response.json();
+         
+         return data.customer || null;
+      } catch (error) {
+         console.error('Error al obtener cliente:', error.message);
+         setMessages([error.message]);
+         return null;
       }
-
-      const { data } = await response.json();
-
-      return data.customer.id;
    }
 
    // Obtener Suscripción
    const getSubscription = async (customerId) => {
-      if (client_secret) return client_secret;
+      try {
+         if (!price || !customerId) return null;
+         
+         const response = await httpServices.createSubscription({ 
+            price: price.id,
+            customer: customerId
+         });
 
-      const response = await httpServices.createSubscription({ price, customerId });
-
-      if (!response.ok) {
-         return setMessages(['Failed to create subscription']);
+         if (!response.ok) {
+            setMessages(['Failed to create subscription']);
+            return
+         }
+         const { data } = await response.json();
+         
+         return data.clientSecret || null;
+      } catch (error) {
+         console.error('Error al obtener cliente:', error.message);
+         setMessages([error.message]);
+         return null;
       }
-
-      const { data } = await response.json();
-      setClientSecret(data.clientSecret);
-      return data.clientSecret;
    }
 
    const handleSubmit = async (e) => {
       e.preventDefault();
 
       if (!stripe || !elements) {
-         // Stripe.js has not loaded yet. Make sure to disable
-         // form submission until Stripe.js has loaded.
-         return setMessages(['Stripe has not loaded yet. Please try again.']);
+         return setMessages(['Error: Falló método de pago.', 'Intente más tarde.']);
       }
 
       if (!price) {
-         return setMessages(['No hay un plan seleccionado. Por favor, seleccione un plan.']);
+         return setMessages(['Error: No hay un plan seleccionado.', 'Por favor, seleccione un plan.']);
       }
 
-      setMessages([''])
-
+      setMessages(['Esperando...']);
       try {
          // Cliente
-         const customerId = await getCustomer();
+         const customer = await getCustomer();
 
-         // Transacción
-         const clientSecret = await getSubscription(customerId);
-
-         if (!clientSecret) {
-            return setMessages(['Error: Payment intent not found']);
+         if (!customer) {
+            setMessages(['Error: Cliente no encontrado.', 'Favor de ponerse en contacto con soporte técnico.']);
+            return 
          }
 
-         setMessages(['Esperando...']);
+         // Transacción
+         const clientSecret = await getSubscription(customer.id);
+
+         if (!clientSecret) {
+            setMessages(['Error: Falló intento de pago.', 'Favor de ponerse en contacto con soporte técnico.']);
+            return 
+         }
 
          // Elementos de tarjeta
          const cardElement = elements.getElement(CardNumberElement);
+         if (!cardElement) {
+            setMessages(['Error: Falló tarjeta.', 'Favor de ponerse en contacto con soporte técnico.']);
+            return
+         }
+
          // Realizar Suscripción
          const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
@@ -201,17 +224,60 @@ function CheckoutForm({ price, setIsLoading = true, customer_id, ...props }) {
             }
          });
 
-         if (error) { // 
-            setMessages([`Payment failed: ${error.message}`]);
+         if (error) {
+            setMessages([`Error: ${error.message}`]);
+            return
          } else {
-            console.log(paymentIntent);
-            console.log(session);
+            /**
+            {
+               "id": "pi_3QNTaBLiRxVT0FOq3QXtWpgi",
+               "object": "payment_intent",
+               "amount": 100,
+               "amount_details": {
+                  "tip": {}
+               },
+               "automatic_payment_methods": null,
+               "canceled_at": null,
+               "cancellation_reason": null,
+               "capture_method": "automatic",
+               "client_secret": "pi_3QNTaBLiRxVT0FOq3QXtWpgi_secret_9vJY6HufBlwX3cxsNLQuLTyzB",
+               "confirmation_method": "automatic",
+               "created": 1732169379,
+               "currency": "usd",
+               "description": "Subscription creation",
+               "last_payment_error": null,
+               "livemode": false,
+               "next_action": null,
+               "payment_method": "pm_1QNTahLiRxVT0FOqzoGMv6gK",
+               "payment_method_configuration_details": null,
+               "payment_method_types": [
+                  "card"
+               ],
+               "processing": null,
+               "receipt_email": null,
+               "setup_future_usage": "off_session",
+               "shipping": null,
+               "source": null,
+               "status": "succeeded"
+            }
+             */
 
             // Actualiza el customer id del usuario
-            update({ user: { ...session.user, customer_ids: { ...session.user.customer_ids, stripe: data.customer.id } } })
+            // paymentIntent.created // +1 mes
+            const startSubscriptionDate = new Date(paymentIntent.created * 1000);
+            const endSubscriptionDate = new Date(startSubscriptionDate);
+            endSubscriptionDate.setMonth(endSubscriptionDate.getMonth() + 1);
+
+            const user = {
+               ...session.user,
+               start_subscription: startSubscriptionDate,
+               end_subscription: endSubscriptionDate
+            }
+            await httpServices.updateUser(user)
+
+            update({ user: { ...session.user, customer_ids: { ...session.user.customer_ids, stripe: customer.id } } })
             
             setIsDialogOpen(true)
-            setMessages(['Payment successful!']);
 
             setName('')
             setEmail('')
@@ -220,13 +286,12 @@ function CheckoutForm({ price, setIsLoading = true, customer_id, ...props }) {
             elements.getElement(CardExpiryElement).clear();
             elements.getElement(CardCvcElement).clear();
 
-            setClientSecret(null)
-
+            setMessages(['Payment successful!']);
             setTimeout(() => {
                // TODO: si el usuario tiene proyectos, entonces ir al dashboard
                // si no, ir a crear-proyecto
                router.push(`/crear-proyecto`);
-            }, 3000);
+            }, 2000);
          }
 
       } catch (error) {
