@@ -1,6 +1,5 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
-import Dinero from "./Icons/DollarSign";
 import { useState, useEffect } from "react";
 import Trash from "./Icons/Trash";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
 import TextArea from "./Textarea";
+import formatPrice from "@/components/formatPrice";
 
 export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
     const [errors, setErrors] = useState({
@@ -27,6 +27,7 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
     });
     const httpServices = new HttpServices();
     const [typesOptions, setTypesOptions] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         const fetchTypesOptions = async () => {
@@ -69,6 +70,10 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
         onUpdate(costUpdate);
     };
 
+    const handleBlur = async () => {
+        setIsEditing(false);
+    }
+
     return (
         <Card size="lg" className="flex flex-col gap-5 shadow-lg">
             <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4">
@@ -90,18 +95,31 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
                 <div className="flex flex-col gap-2 w-full px-1">
                     <span>Costo Unitario</span>
                     <div className="flex flex-col gap-1 w-full">
-                        <Input
-                            name="price_unity"
-                            placeholder="Costo Unitario"
-                            type="number"
-                            min={0}
-                            step={0.01}
-                            value={cost.price_unity}
-                            icon={<Dinero width={20} height={20} />}
-                            iconPosition="left"
-                            onChange={handleInputChange}
-                            className={errors.price_unity ? "border-red-500" : ""}
-                        />
+                        {
+                            isEditing ? (
+                                <Input
+                                    name="price_unity"
+                                    placeholder="Costo Unitario"
+                                    type="number"
+                                    min={0}
+                                    step={0.01}
+                                    value={cost.price_unity}
+                                    onChange={handleInputChange}
+                                    onBlur={handleBlur}
+                                    className={errors.price_unity ? "border-red-500" : ""}
+                                />
+                            ) : (
+                                <Input
+                                    name="price_unity"
+                                    placeholder="Costo Unitario"
+                                    type="text"
+                                    value={formatPrice(cost.price_unity)}
+                                    onClick={() => setIsEditing(true)}
+                                    className={errors.price_unity ? "border-red-500" : ""}
+                                />
+                            )
+                        }
+                        
                         {errors.price_unity && <span className="text-baseM text-[#C03744]">*{errors.price_unity}</span>}
                     </div>
                 </div>
@@ -177,9 +195,7 @@ export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
                             name="total"
                             placeholder="Total"
                             type="text"
-                            value={Number(cost.quantity * cost.price_unity).toFixed(2)}
-                            icon={<Dinero width={20} height={20} />}
-                            iconPosition="left"
+                            value={formatPrice(Number(cost.quantity * cost.price_unity))}
                             className="text-[#777779] bg-baseTextarea text-base border-2 rounded-3xl focus:outline-none placeholder-[#5A5555] justify-start align-top"
                             disabled
                         />

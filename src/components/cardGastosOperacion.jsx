@@ -1,13 +1,14 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
-import Dinero from "./Icons/DollarSign";
 import { useState } from "react";
 import Trash from "./Icons/Trash";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
+import formatPrice from "@/components/formatPrice";
 
 export default function GastoOperacion({ expense, estimated_time, onUpdate, onRemove }) {
     const [errors, setErrors] = useState({ cost_name: "", total_per_month: "" });
+    const [isEditing, setIsEditing] = useState(false);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -44,6 +45,10 @@ export default function GastoOperacion({ expense, estimated_time, onUpdate, onRe
         }
     }
 
+    const handleBlur = async () => {
+        setIsEditing(false);
+    }
+
     return (
         <div className="flex flex-col gap-4 p-4 text-base font-comfortaa items-center justify-start border rounded-md w-full md:min-w-[10rem] shadow-[5px_5px_7px_rgba(0,0,0,0.1)]">
             <div className="flex flex-col gap-2 w-full">
@@ -63,29 +68,40 @@ export default function GastoOperacion({ expense, estimated_time, onUpdate, onRe
             <div className="flex flex-col gap-2 w-full">
                 <span>Monto por Mes</span>
                 <div className="flex flex-col gap-1 w-full">
-                    <Input
-                        name="total_per_month"
-                        placeholder="Monto por Mes"
-                        type="number"
-                        value={expense.total_per_month}
-                        min={0}
-                        step={0.01}
-                        icon={<Dinero width={20} height={20} />}
-                        iconPosition="left"
-                        onChange={handleInputChange}
-                        className={errors.total_per_month ? "border-red-500" : ""}
-                    />
+                    {
+                        isEditing ? 
+                        (
+                            <Input
+                                name="total_per_month"
+                                placeholder="Monto por Mes"
+                                type="number"
+                                value={expense.total_per_month}
+                                min={0}
+                                step={0.01}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                className={errors.total_per_month ? "border-red-500" : ""}
+                            />
+                        ) :
+                        (
+                            <Input
+                                name="total_per_month"
+                                placeholder="Monto por Mes"
+                                type="text"
+                                value={formatPrice(expense.total_per_month)}
+                                onClick={()=>setIsEditing(true)}
+                                className={errors.total_per_month ? "border-red-500" : ""}
+                            />
+                        )
+                    }
                     {errors.total_per_month && <span className="text-baseM text-[#C03744]">*{errors.total_per_month}</span>}
                 </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
                 <span>Total</span>
                 <Input disabled 
-                    placeholder="Total" 
-                    type="number" 
-                    value={!isNaN(expense.total) ? expense.total.toFixed(2) : (!isNaN(expense.total_per_month) ? (expense.total_per_month * estimated_time).toFixed(2) : 0)} 
-                    icon={<Dinero width={20} height={20} />} 
-                    iconPosition="left" 
+                    placeholder="Total"
+                    value={formatPrice(!isNaN(expense.total) ? expense.total : (!isNaN(expense.total_per_month) ? (expense.total_per_month * estimated_time) : 0))} 
                 />
             </div>
             <div className="flex justify-end items-center w-full">

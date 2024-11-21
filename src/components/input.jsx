@@ -9,6 +9,7 @@ export default function Input({
   placeholder = "Enter text",
   onChange,
   onBlur,
+  onClick,
   disabled,
   allowOnlyNumbers = false, // Solo ingresar numeros
   error,
@@ -22,45 +23,49 @@ export default function Input({
   }, [props.value])
 
   const handleInputChange = (event) => { //Tomar los numeros recibidos
-    const { value, step, maxLength } = event.target;
+    try {
+      const { value, step, maxLength } = event.target;
 
-    let newValue = value;
+      let newValue = value;
 
-    // Validación de maxLength
-    if (maxLength && value.length >= maxLength && maxLength > 0) {
-      // Si el usuario intenta escribir más caracteres de los permitidos
-      if (value.length > inputValue.length && !hasShownMaxLengthToast) {
-        toast.error(`El texto no puede exceder los ${maxLength} caracteres`, {
-          theme: "dark",
-          onClose: () => {
-            setTimeout(() => setHasShownMaxLengthToast(false), 100);
-          }
-        });
-        setHasShownMaxLengthToast(true);
+      // Validación de maxLength
+      if (maxLength && value.length >= maxLength && maxLength > 0) {
+        // Si el usuario intenta escribir más caracteres de los permitidos
+        if (value.length > inputValue.length && !hasShownMaxLengthToast) {
+          toast.error(`El texto no puede exceder los ${maxLength} caracteres`, {
+            theme: "dark",
+            onClose: () => {
+              setTimeout(() => setHasShownMaxLengthToast(false), 100);
+            }
+          });
+          setHasShownMaxLengthToast(true);
+        }
+        newValue = value.slice(0, maxLength);
       }
-      newValue = value.slice(0, maxLength);
+
+      if (step) {
+        // Si tiene step
+        const stepLength = step.split('.')[1]?.length || 0
+
+        // Permitir solo números y un punto decimal
+        let inputValue = value.replace(/[^0-9.]/g, '')
+
+        // Asegurar que solo haya un punto decimal
+        const parts = inputValue.split('.')
+        if (parts.length > 2) {
+          return
+        }
+
+        // Validar la longitud de los decimales
+        if (parts[1] && parts[1].length > stepLength) {
+          return;
+        }
+      }
+      setInputValue(value)
+      onChange(event)
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    if (step) {
-      // Si tiene step
-      const stepLength = step.split('.')[1]?.length || 0
-
-      // Permitir solo números y un punto decimal
-      let inputValue = value.replace(/[^0-9.]/g, '')
-
-      // Asegurar que solo haya un punto decimal
-      const parts = inputValue.split('.')
-      if (parts.length > 2) {
-        return
-      }
-
-      // Validar la longitud de los decimales
-      if (parts[1] && parts[1].length > stepLength) {
-        return;
-      }
-    }
-    setInputValue(value)
-    onChange(event)
   }
 
 
@@ -83,6 +88,7 @@ export default function Input({
           step={props.step}
           onChange={handleInputChange}
           onBlur={onBlur}
+          onClick={onClick}
           disabled={disabled}
           id={props.id}
           required={props.required}

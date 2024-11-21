@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
 import Edit from "@/components/Icons/Edit";
+import formatPrice from "@/components/formatPrice";
 
 export default function TabsPages() {
   const { data: session, status } = useSession();
@@ -412,7 +413,7 @@ export default function TabsPages() {
             <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
           </div>
           <div className="flex gap-2">
-            <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
+            <h2>Costo estimado:</h2> <strong>{formatPrice(estimatedCost)}</strong>
           </div>
         </div>
         <div className="w-full flex justify-between items-end gap-5 pt-5">
