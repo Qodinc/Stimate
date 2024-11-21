@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from 'react-toastify';
 
 export default function Input({
   iconPosition = "none",
@@ -7,29 +8,59 @@ export default function Input({
   icon,
   placeholder = "Enter text",
   onChange,
+  onBlur,
   disabled,
   allowOnlyNumbers = false, // Solo ingresar numeros
   error,
   ...props
 }) {
   const [inputValue, setInputValue] = useState(props.value || '') // Para tomar los valores del  input
+  const [hasShownMaxLengthToast, setHasShownMaxLengthToast] = useState(false);
+
   useEffect(() => {
     setInputValue(props.value || '')
   }, [props.value])
 
-  const handleInputChange = (e) => { //Tomar los numeros recibidos
-    const newValue = e.target.value
+  const handleInputChange = (event) => { //Tomar los numeros recibidos
+    const { value, step, maxLength } = event.target;
 
-    if (allowOnlyNumbers) {
-      const numericValue = newValue.replace(/[^0-9]/g, '') // Esta expresion sirve para remplazar o eliminar letras recibidas
-      setInputValue(numericValue)
-      error = (numericValue !== newValue ? 'Por favor, ingrese solo números' : '')
-      onChange && onChange({ ...e, target: { ...e.target, value: numericValue } })
-    } else {
-      setInputValue(newValue)
-      error = ('')
-      onChange && onChange(e)
+    let newValue = value;
+
+    // Validación de maxLength
+    if (maxLength && value.length >= maxLength && maxLength > 0) {
+      // Si el usuario intenta escribir más caracteres de los permitidos
+      if (value.length > inputValue.length && !hasShownMaxLengthToast) {
+        toast.error(`El texto no puede exceder los ${maxLength} caracteres`, {
+          theme: "dark",
+          onClose: () => {
+            setTimeout(() => setHasShownMaxLengthToast(false), 100);
+          }
+        });
+        setHasShownMaxLengthToast(true);
+      }
+      newValue = value.slice(0, maxLength);
     }
+
+    if (step) {
+      // Si tiene step
+      const stepLength = step.split('.')[1]?.length || 0
+
+      // Permitir solo números y un punto decimal
+      let inputValue = value.replace(/[^0-9.]/g, '')
+
+      // Asegurar que solo haya un punto decimal
+      const parts = inputValue.split('.')
+      if (parts.length > 2) {
+        return
+      }
+
+      // Validar la longitud de los decimales
+      if (parts[1] && parts[1].length > stepLength) {
+        return;
+      }
+    }
+    setInputValue(value)
+    onChange(event)
   }
 
 
@@ -51,6 +82,7 @@ export default function Input({
           maxLength={props.maxLength}
           step={props.step}
           onChange={handleInputChange}
+          onBlur={onBlur}
           disabled={disabled}
           id={props.id}
           required={props.required}

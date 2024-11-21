@@ -45,12 +45,13 @@ export default function PlanActual() {
 
   useEffect(() => {
     getPlanes()
-  }, [])
+  }, [session])
 
   const getPlanes = async () => {
-    const customer = session?.user?.customer_ids?.stripe ?? null
-    if (customer) {
-      const response = await httpServices.getPlanesCustomer({ customer })
+    const user = session.user ? session.user : null
+
+    if (user) {
+      const response = await httpServices.getPlanesCustomer({ email: user.email })
 
       if (!response.ok)
         return
@@ -124,7 +125,7 @@ export default function PlanActual() {
         <title>Plan Actual</title>
       </Head>
       <Navbar />
-      <div className="font-comfortaa flex min-h-full flex-col bg-white px-4 md:px-14 lg:px-20 pt-8">
+      <div className="font-comfortaa flex gap-5 bg-white px-4 md:px-14 lg:px-20 pt-8">
         {misPlanes && subscribed()}
 
         {!misPlanes && notSubscribed()}

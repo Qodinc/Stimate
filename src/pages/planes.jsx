@@ -48,33 +48,35 @@ export default function Pricing() {
 
   useEffect(() => {
     getPlanes()
-  }, [])
+  }, [session])
 
   const getPlanes = async () => {
     if (session) {
-      const customer = session.user?.customer_ids ? session.user?.customer_ids.stripe : null
-      const response = await httpServices.getPlanesCustomer({ customer })
+      const user = session.user ? session.user : null
 
-      if (response.ok) {
-        const { data } = await response.json()
-
-        setMisPlanes(data.subscriptions)
-
-        // mapear data.subscriptions y mapear planes, planes hay que convertirlo en hook State
-        const plans = planes.map(plan => {
-          const subscription = data.subscriptions.find(subscription => subscription.plan.id == plan.id)
-
-          if (!!subscription)
-            plan.isActive = true
-          else
-            plan.isActive = false
-
-          return plan
-        })
-
-        setPlanes(plans)
+      if (user) {
+        const response = await httpServices.getPlanesCustomer({ email: user.email })
+  
+        if (response.ok) {
+          const { data } = await response.json()
+  
+          setMisPlanes(data.subscriptions)
+  
+          // mapear data.subscriptions y mapear planes, planes hay que convertirlo en hook State
+          const plans = planes.map(plan => {
+            const subscription = data.subscriptions.find(subscription => subscription.plan.id == plan.id)
+  
+            if (!!subscription)
+              plan.isActive = true
+            else
+              plan.isActive = false
+  
+            return plan
+          })
+  
+          setPlanes(plans)
+        }
       }
-
     }
   }
 

@@ -4,7 +4,7 @@ import Percent from "../Icons/Percent";
 import Input from "../input";
 import { Button } from "../ui/button";
 import TextArea from "../Textarea";
-import Image from "next/image";
+import PreviewPDF from "../PreviewPDF";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -23,7 +23,8 @@ const Preview = ({
   estimated_wages,
   estimated_operating_expenses,
   estimated_associated_cost,
-  onUpdate
+  onUpdate,
+  onExport
 }) => {
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
@@ -84,7 +85,7 @@ const Preview = ({
   };
 
   return (
-    <section className="my-5">
+    <section className="my-5 pb-10">
       <div className="flex justify-end my-3 gap-4">
         <Select onValueChange={handleStatusChange} value={project.status_project}>
             <SelectTrigger className="w-full md:w-56 xl:w-50">
@@ -101,7 +102,7 @@ const Preview = ({
             </SelectGroup>
             </SelectContent>
         </Select>
-        <Button>Exportar <ExportDownload width={25} height={25} /></Button>
+        <Button onClick={onExport} >Exportar <ExportDownload width={25} height={25} /></Button>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
         <div className="font-comfortaa xl:w-1/2">
@@ -204,12 +205,7 @@ const Preview = ({
         </div>
         <div className="xl:w-1/2 mt-6 xl:mt-0 order-last xl:order-none">
           <div className="w-full h-full relative aspect-video border-slate-800">
-            <Image
-              src={"/preview.jpg"}
-              alt="Descripción de la imagen"
-              layout="fill"
-              objectFit="contain"
-            />
+            <PreviewPDF project={project} estimatedWages={estimated_wages} estimatedOperatingExpenses={estimated_operating_expenses} />
           </div>
         </div>
       </div>

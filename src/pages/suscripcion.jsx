@@ -19,32 +19,40 @@ import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { AlertDialogContent } from "@/components/ui/alert-dialog";
 import PaymentSuccessful from "@/components/Icons/PaymentSuccessful";
 import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 export default function Payment() {
+   const { data: session } = useSession()
+   const httpServices = new HttpServices(session)
+
    const [stripePromise, setStripePromise] = useState(null);
    const [price, setPrice] = useState([]);
    const [error, setError] = useState(null);
+   const [customerId, setCustomerId] = useState();
 
    useEffect(() => {
-      const getConfigPayment = async () => {
-         try {
-            // validar si el usuario ya cuenta con un pago
-            const response = await HttpServices.configPayment();
+      getConfigPayment();
+   }, [session])
 
-            if (!response.ok) {
-               setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
-            }
+   const getConfigPayment = async () => {
+      try {
+         // validar si el usuario ya cuenta con un pago
+         const response = await httpServices.configPayment();
 
-            const { data } = await response.json();
-
-            setStripePromise(loadStripe(data.publishableKey));
-            setPrice(data.prices[0]);
-         } catch (error) {
+         if (!response.ok) {
             setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
          }
-      };
-      getConfigPayment();
-   }, [])
+         setError(null)
+         
+         const { data } = await response.json();
+
+         setStripePromise(loadStripe(data.publishableKey));
+         setPrice(data.prices[0]);
+         setCustomerId(session.user?.customer_ids?.stripe)
+      } catch (error) {
+         setError('Error: Falló el servidor. Favor de comunicarse a soporte técnico');
+      }
+   };
 
    if (!stripePromise || !price) {
       return <>
@@ -82,6 +90,7 @@ export default function Payment() {
                <Elements stripe={stripePromise}>
                   <CheckoutForm
                      price={price}
+                     customer_id={customerId}
                   />
                </Elements>
             </main>
@@ -90,11 +99,12 @@ export default function Payment() {
    );
 }
 
-function CheckoutForm({ price, setIsLoading = true, ...props }) {
+function CheckoutForm({ price, setIsLoading = true, customer_id, ...props }) {
    const router = useRouter();
    const [isDialogOpen, setIsDialogOpen] = useState(false);
    const [messages, setMessages] = useState([]);
-   const { data: session } = useSession();
+   const { data: session, update } = useSession();
+   const httpServices = new HttpServices(session);
 
    // Datos del cliente
    const [name, setName] = useState(session?.user ? session.user.name : '');
@@ -106,8 +116,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
    });
    const [validated, setValidated] = useState(false)
 
-   // Datos para crear transacción
-   const [customer_id, setCustomerId] = useState(null);
 
    // Datos de la transacción
    const [client_secret, setClientSecret] = useState(null);
@@ -126,16 +134,17 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
 
    // Obtener Cliente
    const getCustomer = async () => {
+
       if (customer_id) return customer_id;
 
-      const response = await HttpServices.createCustomer({ email });
+      const response = await httpServices.createCustomer({ email });
 
       if (!response.ok) {
          return setMessages(['Falló al obtener el cliente']);
       }
 
       const { data } = await response.json();
-      setCustomerId(data.customer.id);
+
       return data.customer.id;
    }
 
@@ -143,7 +152,7 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
    const getSubscription = async (customerId) => {
       if (client_secret) return client_secret;
 
-      const response = await HttpServices.createSubscription({ price, customerId });
+      const response = await httpServices.createSubscription({ price, customerId });
 
       if (!response.ok) {
          return setMessages(['Failed to create subscription']);
@@ -185,7 +194,7 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
          // Elementos de tarjeta
          const cardElement = elements.getElement(CardNumberElement);
          // Realizar Suscripción
-         const { error } = await stripe.confirmCardPayment(clientSecret, {
+         const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
                card: cardElement,
                billing_details: { name }
@@ -195,6 +204,12 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
          if (error) { // 
             setMessages([`Payment failed: ${error.message}`]);
          } else {
+            console.log(paymentIntent);
+            console.log(session);
+
+            // Actualiza el customer id del usuario
+            update({ user: { ...session.user, customer_ids: { ...session.user.customer_ids, stripe: data.customer.id } } })
+            
             setIsDialogOpen(true)
             setMessages(['Payment successful!']);
 
@@ -205,7 +220,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
             elements.getElement(CardExpiryElement).clear();
             elements.getElement(CardCvcElement).clear();
 
-            setCustomerId(null)
             setClientSecret(null)
 
             setTimeout(() => {
@@ -290,28 +304,6 @@ function CheckoutForm({ price, setIsLoading = true, ...props }) {
    return (
       <div>
          <form onSubmit={handleSubmit} className="font-comfortaa">
-            <div className="my-2">
-               <label>Nombre titular</label>
-               <Input
-                  type="text"
-                  name="full_name"
-                  placeholder="Escriba su nombre..."
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required />
-            </div>
-
-            <div className="my-2">
-               <label>Correo</label>
-               <Input
-                  type="email"
-                  name="email"
-                  placeholder="Escriba su correo..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required />
-            </div>
-
             <div className="mb-4">
                <label>Número de tarjeta</label>
                <div className="rounded-full border border-gray-300 px-3 py-2 mb-2">

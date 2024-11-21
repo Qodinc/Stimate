@@ -44,7 +44,6 @@ export default function NewProject() {
    const submitProject = async () => {
       if (isFormValid) {
          const dataProject = {
-            owner_id: session.user ? session.user.id : session.id,
             name_project: projectName,
             areas_selected: areasSelected
          };
@@ -73,6 +72,7 @@ export default function NewProject() {
                   <label className="font-poppins font-semibold text-accent text-center text-xl md:text-3xl">Nombre del Proyecto</label>
                   <Input
                      placeholder="Nombre del proyecto"
+                     maxLength={25}
                      onChange={handleProjectNameChange}
                      value={projectName}
                   />
