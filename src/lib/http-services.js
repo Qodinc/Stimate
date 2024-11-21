@@ -229,18 +229,39 @@ class HttpServices {
   };
 
   getPlanesCustomer = async ({ email }) => {
-    return await fetch(
-      `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/customer`,
-      {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.tokenSession}`
-        },
-        body: JSON.stringify({ email }),
-      }
-    );
-  };
-}
+    // Check if token exists 
+    try {
+      if (!email) {
+        throw new Error('Email is required');
+     }
 
+     if (!this.tokenSession) {
+      throw new Error("No access token available");
+    } 
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/customer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.tokenSession}`
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+  
+      // Add error handling for non-ok responses
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorBody}`);
+      }
+  
+      return response;
+    } catch (error) {
+      console.error("Error fetching customer plans:", error);
+      throw error;
+    }
+  };  
+}
 module.exports = HttpServices;

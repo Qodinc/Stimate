@@ -29,9 +29,8 @@ import Head from "next/head"
 import { useSession } from "next-auth/react"
 
 export default function PlanActual() {
-  const { data: session } = useSession();
-  const httpServices = new HttpServices(session)
-
+  const { data: session, status } = useSession();
+  const [httpServices, setHttpServices] = useState(null);
 
   const router = useRouter();
   const [misPlanes, setMisPlanes] = useState(null)
@@ -42,25 +41,34 @@ export default function PlanActual() {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getPlanes()
-  }, [session])
+    // Only create HttpServices when session is available
+    if (status === 'authenticated') {
+      const services = new HttpServices(session);
+      setHttpServices(services);
+    }
+  }, [session, status]);
 
   const getPlanes = async () => {
-    const user = session.user ? session.user : null
+    try {
+      if (status === 'authenticated' && session?.user?.email) {
+        const httpServices = new HttpServices(session);
+        const response = await httpServices.getPlanesCustomer({ 
+          email: session.user.email 
+        });
 
-    if (user) {
-      const response = await httpServices.getPlanesCustomer({ email: user.email })
-
-      if (!response.ok)
-        return
-
-      const { data } = await response.json()
-
-      setMisPlanes(data.subscriptions)
+        const { subscriptions } = await response.json();
+        setMisPlanes(subscriptions);
+      }
+    } catch (error) {
+      console.error('Failed to fetch plans:', error);
+      setError(error);
+      // Optionally redirect or show error message
     }
-  }
+  };
+
 
   const handleCancelSubscription = async () => {
     const response = await httpServices.cancelSubscription(plan.id)
@@ -117,6 +125,15 @@ export default function PlanActual() {
 
       )
     })
+  }
+  useEffect(() => {
+    if (status === 'authenticated') {
+      getPlanes();
+    }
+  }, [status]);
+
+  if (error) {
+    return <div>Error loading subscriptions. Please try again later.</div>;
   }
 
   return (
