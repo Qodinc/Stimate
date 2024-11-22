@@ -25,6 +25,7 @@ import generatePDF from 'react-to-pdf';
 export default function TabsPages() {
   const { data: session, status } = useSession();
   const [httpServices, setHttpServices] = useState(null);
+  const [isActiveSubscription, setIsActiveSubscription] = useState(false);
 
   const router = useRouter();
   const { slug } = router.query;
@@ -51,6 +52,7 @@ export default function TabsPages() {
   useEffect(() => {
     if (session) {
       setHttpServices(new HttpServices(session));
+      setIsActiveSubscription(session.user.isActiveSubscription)
     }
   }, [session]);
 
@@ -268,9 +270,11 @@ export default function TabsPages() {
     
     //TODO: Realizar exportación de proyecto
     // si el usuario es premium, exporta PDF
-    exportToPDF(elementToExport)
+    if (isActiveSubscription)
+      exportToPDF(elementToExport)
     // sino, exporta en PNG
-    // exportToImage(elementToExport)
+    else 
+      exportToImage(elementToExport)
 
     toast.success("Información guardada con éxito");
     
