@@ -13,51 +13,6 @@ import Loading from '@/components/Loading';
 import Head from 'next/head';
 import { useSession } from 'next-auth/react';
 
-const project_status = [
-  {
-    "code": "pending",
-    "color": "#0ea5e9",
-    "translations": {
-      "es": "Pendiente",
-      "en": "Pending"
-    }
-  },
-  {
-    "code": "completed",
-    "color": "#22c55e",
-    "translations": {
-      "es": "Finalizado",
-      "en": "Completed"
-    }
-  },
-  {
-    "code": "in_review",
-    "color": "#eab308",
-    "translations": {
-      "es": "En revisión",
-      "en": "In review"
-    }
-  },
-  {
-    "code": "canceled",
-    "color": "#4c0519",
-    "translations": {
-      "es": "Cancelado",
-      "en": "Canceled"
-    }
-  }
-];
-
-const getStatusColor = (status) => {
-  const statusObj = project_status.find(s => s.code.toLowerCase() === status.toLowerCase());
-  return statusObj ? statusObj.color : '#000000';
-};
-
-const getStatusTranslation = (status) => {
-  const statusObj = project_status.find(s => s.code.toLowerCase() === status.toLowerCase());
-  return statusObj ? statusObj.translations.es : status;
-};
-
 export default function Home() {
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
@@ -67,10 +22,21 @@ export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
   const [proyectos, setProyectos] = useState([]);
+  const [statusList, setStatusList] = useState([]);
 
   useEffect(() => {
     getProyects()
+    getStatus()
   }, [session])
+
+  const getStatus = async () => {
+    try {
+      const statusData = await httpServices.getStatus();
+      setStatusList(statusData); // Almacenar los estados obtenidos
+    } catch (error) {
+      console.error("Error al obtener los estados:", error);
+    }
+  };
 
   const getProyects = async () => {
     try {
@@ -112,6 +78,15 @@ export default function Home() {
     }
   };
 
+  const getStatusColor = (status) => {
+    const statusObj = statusList.find(s => s.code.toLowerCase() === status.toLowerCase());
+    return statusObj ? statusObj.color : '#000000';
+  };
+
+  const getStatusTranslation = (status) => {
+    const statusObj = statusList.find(s => s.code.toLowerCase() === status.toLowerCase());
+    return statusObj ? statusObj.translations.es : status;
+  };
 
   if (isLoading) {
     return <Loading />;
