@@ -1,15 +1,18 @@
 import React from "react";
 import Input from "@/components/input";
 import Timer from "@/components/Icons/Timer";
-import Dinero from "@/components/Icons/DollarSign";
 import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
 import { Card } from "@/components/cardArea";
 import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import formatPrice from "@/lib/formatPrice";
 
 const EquipoContent = ({ team_project, onUpdate }) => {
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleChangeTeamProject = (event, index) => {
     const { name, value } = event.target;
@@ -71,7 +74,7 @@ const EquipoContent = ({ team_project, onUpdate }) => {
 
       return area;
     });
-
+    setIsEditing(false);
     onUpdate(updatedTeamProject);
   }
 
@@ -120,34 +123,56 @@ const EquipoContent = ({ team_project, onUpdate }) => {
                 <span className="font-comfortaa text-base">
                   Sueldo por hora
                 </span>
-                <Input
-                  placeholder="Agregar sueldo"
-                  iconPosition="left"
-                  type="number"
-                  name="hourly_rate"
-                  icon={<Dinero width={24} />}
-                  min={0}
-                  step={0.01}
-                  value={Number(area.hourly_rate ?? 0)}
-                  error={Number(area.hourly_rate) == 0 ? '*Campo requerido' : ''}
-                  onChange={(event) => handleChangeTeamProject(event, index)}
-                  onBlur={(event) => handleBlurTeamProject(event, index)}
-                />
+                {
+                  isEditing ?
+                  (
+                    <Input
+                      placeholder="Agregar sueldo"
+                      type="number"
+                      name="hourly_rate"
+                      min={0}
+                      step={0.01}
+                      value={Number(area.hourly_rate ?? 0)}
+                      error={Number(area.hourly_rate) == 0 ? '*Campo requerido' : ''}
+                      onChange={(event) => handleChangeTeamProject(event, index)}
+                      onBlur={(event) => {handleBlurTeamProject(event, index)}}
+                    />
+                  ) :(
+                    <Input
+                      placeholder="Agregar sueldo"
+                      type="text"
+                      name="hourly_rate"
+                      value={formatPrice(Number(area.hourly_rate ?? 0))}
+                      error={Number(area.hourly_rate) == 0 ? '*Campo requerido' : ''}
+                      onClick={()=>setIsEditing(true)}
+                    />
+                  )
+                }
               </div>
               <div className="w-full">
                 <span className="font-comfortaa text-base">Sueldo por mes</span>
-                <Input
-                  placeholder="Agregar sueldo"
-                  iconPosition="left"
-                  type="number"
-                  name="mouthly_charge"
-                  icon={<Dinero width={24} />}
-                  min={0}
-                  step={0.01}
-                  value={!!area.mouthly_charge ? Number(area.mouthly_charge) : Number((area.hourly_rate * 160))}
-                  onChange={(event) => handleChangeTeamProject(event, index)}
-                  onBlur={(event) => handleBlurTeamProject(event, index)}
-                />
+                {
+                  isEditing ? (
+                    <Input
+                      placeholder="Agregar sueldo"
+                      type="number"
+                      name="mouthly_charge"
+                      min={0}
+                      step={0.01}
+                      value={!!area.mouthly_charge ? Number(area.mouthly_charge) : Number((area.hourly_rate * 160))}
+                      onChange={(event) => handleChangeTeamProject(event, index)}
+                      onBlur={(event) => {handleBlurTeamProject(event, index)}}
+                    />
+                  ) : (
+                    <Input
+                      placeholder="Agregar sueldo"
+                      type="text"
+                      name="mouthly_charge"
+                      value={formatPrice(!!area.mouthly_charge ? Number(area.mouthly_charge) : Number((area.hourly_rate * 160)))}
+                      onClick={()=>setIsEditing(true)}
+                    />
+                  )
+                }
               </div>
               <div className="w-full">
                 <span className="font-comfortaa text-base">Horas al día</span>

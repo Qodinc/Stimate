@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
 import { useSession } from "next-auth/react";
+import formatPrice from "@/lib/formatPrice";
 
 const Preview = ({
   project,
@@ -108,9 +109,9 @@ const Preview = ({
         <div className="font-comfortaa xl:w-1/2">
           <h2 className="font-poppins text-lg font-semibold text-accent mb-3">Datos adicionales</h2>
           <div className="my-3">
-            <p>Salarios estimados: $ {estimated_wages && estimated_wages.toFixed(2)}</p>
-            <p>Gastos operativos: $ {estimated_operating_expenses && estimated_operating_expenses.toFixed(2)}</p>
-            <p>Cargos operativos: $ {estimated_associated_cost && estimated_associated_cost.toFixed(2)}</p>
+            <p>Salarios estimados: {formatPrice(estimated_wages)}</p>
+            <p>Gastos operativos: {formatPrice(estimated_operating_expenses)}</p>
+            <p>Cargos operativos: {formatPrice(estimated_associated_cost)}</p>
             <p>Semanas estimadas: {hours_team && hours_team.reduce((total, team) => total += team.totalWeeklyWorkHours, 0).toFixed(2)}</p>
             <p>Días estimados: {hours_team && hours_team.reduce((total, team) => total += team.totalDailyWorkHours, 0).toFixed(2)}</p>
           </div>
@@ -132,9 +133,7 @@ const Preview = ({
                   className="text-baseColor mb-2"
                 />
                 <Input
-                  icon={<DollarSign width={20} height={20} className="text-secondaryIcon" />}
-                  iconPosition="left"
-                  value={!isNaN(project.sale_comission_total) ? project.sale_comission_total.toFixed(2) : 0}
+                  value={formatPrice(project.sale_comission_total)}
                   placeholder="Ingrese la comisón por venta"
                   disabled={true}
                 />
@@ -154,10 +153,7 @@ const Preview = ({
                   className="text-baseColor mb-2"
                 />
                 <Input
-                  icon={<DollarSign width={20} height={20}
-                  className="text-secondaryIcon" />}
-                  iconPosition="left"
-                  value={!isNaN(project.profit_total) ? project.profit_total.toFixed(2) : 0}
+                  value={formatPrice(project.profit_total)}
                   placeholder="Ingrese el magen de ganancia"
                   disabled={true}
                 />
@@ -177,9 +173,7 @@ const Preview = ({
                   className="text-baseColor mb-2"
                 />
                 <Input
-                  icon={<DollarSign width={20} height={20} className="text-secondaryIcon" />}
-                  iconPosition="left"
-                  value={!isNaN(project.tax_total) ? project.tax_total.toFixed(2) : 0}
+                  value={formatPrice(project.tax_total)}
                   placeholder="Ingrese el impuesto"
                   disabled={true}
                 />
