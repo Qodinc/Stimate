@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Input from "@/components/input";
 import Timer from "@/components/Icons/Timer";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,15 @@ import { Card } from "@/components/cardArea";
 import Trash from "@/components/Icons/Trash";
 import { Delete } from "@/components/alerts-variants";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
 import formatPrice from "@/lib/formatPrice";
 
 const EquipoContent = ({ team_project, onUpdate }) => {
+  const { data: session, status } = useSession();
+  const [isActiveSubscription, setIsActiveSubscription] = useState(session.user.isActiveSubscription);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [maxAreas, setMaxAreas] = useState(4);
 
   const handleChangeTeamProject = (event, index) => {
     const { name, value } = event.target;
@@ -76,6 +79,19 @@ const EquipoContent = ({ team_project, onUpdate }) => {
     });
     setIsEditing(false);
     onUpdate(updatedTeamProject);
+  }
+
+  const addArea = () => {
+    if (isActiveSubscription || team_project.length < maxAreas) {
+      return (
+        <div>
+          <Button onClick={handleAddTeamProject}>
+            <Plus width={24} stroke="white" />
+            Agregar área
+          </Button>
+        </div>
+      )
+    }
   }
 
   const handleAddTeamProject = () => {
@@ -236,12 +252,7 @@ const EquipoContent = ({ team_project, onUpdate }) => {
         ))}
       </div>
 
-      <div>
-        <Button onClick={handleAddTeamProject}>
-          <Plus width={24} stroke="white" />
-          Agregar área
-        </Button>
-      </div>
+      {addArea()}
     </section>
   );
 };

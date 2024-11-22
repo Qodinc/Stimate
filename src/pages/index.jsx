@@ -14,10 +14,12 @@ import Head from 'next/head';
 import { useSession } from 'next-auth/react';
 
 export default function Home() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const httpServices = new HttpServices(session)
 
   const router = useRouter();
+  const [isActiveSubscription, setIsActiveSubscription] = useState(false);
+  const [maxProjects, setMaxProjects] = useState(5);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [proyecto, setProyecto] = useState({name_project: '', slug: ''});
@@ -25,9 +27,12 @@ export default function Home() {
   const [statusList, setStatusList] = useState([]);
 
   useEffect(() => {
-    getProyects()
-    getStatus()
-  }, [session])
+    if (status === 'authenticated') {
+      setIsActiveSubscription(session.user.isActiveSubscription)
+      getProyects()
+      getStatus()
+    }
+  }, [session, status])
 
   const getStatus = async () => {
     try {
@@ -55,6 +60,19 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  const addProjects = () => {
+    if (isActiveSubscription || proyectos.length < maxProjects) {
+      return (
+        <Link href="/crear-proyecto">
+          <Button variant="default" size="default">
+            <PlusCircle width={20} height={20} stroke="white" />
+            Agregar proyecto
+          </Button>
+        </Link>
+      )
+    }
+  }
 
   const handleEdit = (slug) => {
     router.push(`/editar/${slug}`);
@@ -100,12 +118,7 @@ export default function Home() {
       <Navbar />
       <div className="ml-9 mt-7 space-y-3">
         <h1 className="text-accent font-poppins font-semibold text-2xl">Mis Proyectos</h1>
-        <Link href="/crear-proyecto">
-          <Button variant="default" size="default">
-            <PlusCircle width={20} height={20} stroke="white" />
-            Agregar proyecto
-          </Button>
-        </Link>
+        {addProjects()}
       </div>
       <div className="p-4 space-y-4 md:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         {proyectos.map((project) => {

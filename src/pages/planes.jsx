@@ -19,9 +19,8 @@ export default function Pricing() {
       price_text: "Gratis",
       benefits: [
         "Almacenaje para 5 proyectos",
-        "Exportación solo en imagen",
         "Define hasta 4 áreas por proyecto",
-        "Solo 2 exportaciones por proyecto",
+        "Exportación en imagen",
       ],
       button: "Continuar",
       href: "/crear-proyecto",
@@ -34,9 +33,8 @@ export default function Pricing() {
       price_text: "$10 usd /Mensual",
       benefits: [
         "Almacenaje para proyectos ilimitado",
+        "Agregar áreas de trabajo ilimitado",
         "Exportaciones en PDF",
-        "Exportaciones por proyecto ilimitadas",
-        "Agregar más áreas de trabajo por proyecto",
       ],
       button: "Contrata Ahora",
       href: "/suscripcion",

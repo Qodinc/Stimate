@@ -9,14 +9,18 @@ import Router from "next/router"
 import HttpServices from '@/lib/http-services';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Loading from '@/components/Loading';
 
 export default function NewProject() {
    const { data: session, status } = useSession();
-   const httpServices = new HttpServices(session)
+   const [httpServices, setHttpServices] = useState(null);
 
    const [isActiveSubscription, setIsActiveSubscription] = useState(false);
+   const [maxProjects, setMaxProjects] = useState(5);
+   const [countProjects, setCountProjects] = useState(0);
    const [projectName, setProjectName] = useState('');
    const [areasSelected, setAreasSelected] = useState([]);
+   const [isLoading, setIsLoading] = useState(true);
    const [errors, setErrors] = useState({
       project: false,
       areas: false,
@@ -27,8 +31,9 @@ export default function NewProject() {
    useEffect(() => {
       if (status === 'authenticated') {
          setIsActiveSubscription(session.user.isActiveSubscription)
+         getCountProjects()
       }
-   }, [status]);
+   }, [session, status]);
 
    useEffect(() => {
       const newErrors = {
@@ -41,6 +46,33 @@ export default function NewProject() {
       setIsFormValid(isValidated);
    }, [projectName, areasSelected]);
 
+   const getCountProjects = async () => {
+      try {
+         setIsLoading(true);
+         if (session) {
+            const httpServices = new HttpServices(session);
+            const response = await httpServices.getProyects();
+            
+            if (!response.ok) {
+               throw new Error('Failed to get project');
+            }
+
+            const { data } = await response.json();
+            if (!isActiveSubscription && data.projects.length >= maxProjects) {
+               Router.push('/');
+            }
+      
+            setCountProjects(data.projects.length);
+         }
+      } catch (error) {
+         console.error("Error:", error);
+      } finally {
+         setTimeout(() => {
+            setIsLoading(false);
+         }, 300);
+      }
+   }
+
    const handleProjectNameChange = async (event) => {
       setProjectName(event.target.value);
    }
@@ -50,6 +82,8 @@ export default function NewProject() {
    }
 
    const submitProject = async () => {
+      const httpServices = new HttpServices(session);
+
       if (isFormValid) {
          const dataProject = {
             name_project: projectName,
@@ -71,18 +105,8 @@ export default function NewProject() {
       }
    }
 
-   if (!isActiveSubscription) {
-      return (
-         <>
-            <Head>
-               <title>Plan Actual</title>
-            </Head>
-            <Navbar />
-            <div className="flex flex-col items-center">
-               <p className="text-xl text-center my-5">ERROR!! Está mal!! PAGA!</p>
-            </div>
-         </>
-      )
+   if (isLoading) {
+      return <Loading />;
    }
 
    return (

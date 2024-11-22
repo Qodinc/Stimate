@@ -4,16 +4,25 @@ import MultipleSelect from "./MultipleSelect";
 import HttpServices from "@/lib/http-services";
 
 function AddArea({ areasSelected }) {
-   const { data: session } = useSession();
+   const { data: session, status } = useSession();
+   
+   const [isActiveSubscription, setIsActiveSubscription] = useState(false);
+   const [maxAreas, setMaxAreas] = useState(4);
    const [selectedOptions, setSelectedOptions] = useState([]);
    const [areas, setAreas] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
    useEffect(() => {
+      if (status === 'authenticated') {
+         setIsActiveSubscription(session.user.isActiveSubscription)
+      }
+   }, [session, status]);
+
+   useEffect(() => {
       const fetchAreas = async () => {
          try {
-            const httpServices = new HttpServices(); 
+            const httpServices = new HttpServices(session); 
             const areasData = await httpServices.getAreas();
             setAreas(areasData);
             setLoading(false);
@@ -25,9 +34,7 @@ function AddArea({ areasSelected }) {
       };
 
       fetchAreas();
-   }, []);
-
-   const maxAreas = session?.user.state_subscription ? 10 : 3;
+   }, [session]);
 
    const data = areas.map((area) => ({
       value: area._id,
@@ -39,10 +46,9 @@ function AddArea({ areasSelected }) {
    }, [selectedOptions, areasSelected]);
 
    const handleSelectedArea = (selectedArea) => {
-      if (selectedOptions.length < maxAreas) {
+      // Limite de usuario Básico
+      if (isActiveSubscription || selectedOptions.length < maxAreas) {
          setSelectedOptions(prev => [...prev, selectedArea]);
-      } else {
-         alert(`Has alcanzado el límite de ${maxAreas} áreas.`);
       }
    };
 
