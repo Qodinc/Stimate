@@ -4,7 +4,7 @@ import { useState } from "react";
 import Trash from "./Icons/Trash";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Delete } from "@/components/alerts-variants";
-import formatPrice from "@/components/formatPrice";
+import formatPrice from "@/lib/formatPrice";
 
 export default function GastoOperacion({ expense, estimated_time, onUpdate, onRemove }) {
     const [errors, setErrors] = useState({ cost_name: "", total_per_month: "" });

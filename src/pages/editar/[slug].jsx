@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
 import Edit from "@/components/Icons/Edit";
-import formatPrice from "@/components/formatPrice";
+import formatPrice from "@/lib/formatPrice";
 
 export default function TabsPages() {
   const { data: session, status } = useSession();

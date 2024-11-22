@@ -1,4 +1,4 @@
-import formatPrice from "./formatPrice";
+import formatPrice from "../lib/formatPrice";
 
 const TableComponent = ({associatedCosts, developmentCost}) => {
 

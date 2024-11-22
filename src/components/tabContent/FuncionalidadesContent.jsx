@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 import Funcionalidad from "../Funcionalidad";
-import formatPrice from "@/components/formatPrice";
+import formatPrice from "@/lib/formatPrice";
 
 const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate }) => {
   const [isOpen, setIsOpen] = React.useState(false);

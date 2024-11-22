@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
 import { useSession } from "next-auth/react";
-import formatPrice from "@/components/formatPrice";
+import formatPrice from "@/lib/formatPrice";
 
 const Preview = ({
   project,

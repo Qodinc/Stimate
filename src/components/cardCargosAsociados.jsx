@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import HttpServices from "@/lib/http-services";
 import TextArea from "./Textarea";
-import formatPrice from "@/components/formatPrice";
+import formatPrice from "@/lib/formatPrice";
 
 export default function CardCargosAsociados({ cost, onUpdate, onRemove }) {
     const [errors, setErrors] = useState({
