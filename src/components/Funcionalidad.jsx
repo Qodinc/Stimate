@@ -95,7 +95,7 @@ export default function Funcionalidad({ feature, onUpdate, onRemove }) {
             placeholder="Agregar horas"
             iconPosition="left"
             type="number"
-            value={team.time.toFixed(2)}
+            value={team.time}
             icon={<Timer width={24} />}
             min={0}
             step={0.01}
