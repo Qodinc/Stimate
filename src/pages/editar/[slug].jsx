@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import {Button} from "@/components/ui/button";
 import Edit from "@/components/Icons/Edit";
+import formatPrice from "@/lib/formatPrice";
 
 import { toJpeg, toPng } from 'html-to-image';
 import generatePDF from 'react-to-pdf'; 
@@ -443,17 +444,11 @@ export default function TabsPages() {
             <h2>Tiempo estimado:</h2> <strong>{estimatedTime.toFixed(2)} meses</strong>
           </div>
           <div className="flex gap-2">
-            <h2>Costo estimado:</h2> <strong>$ {(estimatedCost).toFixed(2)}</strong>
+            <h2>Costo estimado:</h2> <strong>{formatPrice(estimatedCost)}</strong>
           </div>
         </div>
         <div className="w-full flex justify-between items-end gap-5 pt-5">
           <TabsMenu activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
-          <div className="flex items-end md:cursor-pointer pb-1" onClick={() => saveProject()}>
-            <Button>
-              <Save width={24} stroke="white" />
-              <span className="hidden md:block text-base ml-2">Guardar</span>
-            </Button>
-          </div>
         </div>
         <div className="fixed bottom-6 right-10" onClick={() => saveProject()}>
           <Button>

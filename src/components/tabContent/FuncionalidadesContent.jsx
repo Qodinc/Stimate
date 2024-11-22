@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import Plus from "../Icons/Plus";
 import Funcionalidad from "../Funcionalidad";
+import formatPrice from "@/lib/formatPrice";
 
 const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -95,7 +96,7 @@ const Funcionalidades = ({ features_project, team_project, hours_team, onUpdate 
                   >
                     <p className="font-bold">{team.team}</p>
                     <p>Horas totales: {team.totalTime.toFixed(2)}</p>
-                    <p>Salario: $ {team.wage.toFixed(2)}</p>
+                    <p>Salario: {formatPrice(team.wage)}</p>
                     <p>Días estimados: {team.totalDailyWorkHours.toFixed(3)}</p>
                     <p>Semanas estimadas: {team.totalWeeklyWorkHours.toFixed(3)}</p>
                     <p>Meses estimados: {team.totalMonthlyWorkHours.toFixed(3)}</p>

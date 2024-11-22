@@ -1,4 +1,6 @@
-const TableComponent = ({ associatedCosts, developmentCost }) => {
+import formatPrice from "../lib/formatPrice";
+
+const TableComponent = ({associatedCosts, developmentCost}) => {
 
     const titles = ["Producto", "Descripción", "Cantidad", "Unidad", "Precio Unitario", "Precio"];
     const unity = [
@@ -15,6 +17,7 @@ const TableComponent = ({ associatedCosts, developmentCost }) => {
             unit: "Mes"
         }
     ]
+
     return (
         <div className="w-full mb-5 border-b-4">
             <h2 className="py-1 font-bold border-b-4">Detalles</h2>

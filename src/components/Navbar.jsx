@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import LogoStimate from './Icons/LogoStimate';
 import DropdownProfile from './DropdownProfile';
+import { ArrowBigLeft } from 'lucide-react';
+import DashboardButton from './DashboardButton';
 
 const Navbar = () => {
   return (
@@ -10,7 +12,10 @@ const Navbar = () => {
           <Link href="/" >
             <LogoStimate width={50} height={40} />
             </Link>
+            <DashboardButton />
+
           </div>
+          
           <div className="font-comfortaa flex items-center ">
             <div>
               <DropdownProfile />
