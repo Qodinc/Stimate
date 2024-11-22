@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Input from "@/components/input";
-import Timer from "@/components/Icons/Timer";
 import { Button } from "@/components/ui/button";
 import Plus from "@/components/Icons/Plus";
-import { Card } from "@/components/cardArea";
-import Trash from "@/components/Icons/Trash";
-import { Delete } from "@/components/alerts-variants";
-import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useSession } from "next-auth/react";
-import formatPrice from "@/lib/formatPrice";
+import EquipoTrabajo from "@/components/EquipoTrabajo";
 
 const EquipoContent = ({ team_project, onUpdate }) => {
   const { data: session, status } = useSession();
@@ -105,150 +99,23 @@ const EquipoContent = ({ team_project, onUpdate }) => {
     onUpdate(updatedTeamProject);
   };
 
-  const handleRemoveTeamProject = (index) => {
-    const updatedTeamProject = team_project.filter((_, i) => i !== index);
-    onUpdate(updatedTeamProject); 
+  const handleRemoveContent = (contentIndex) => {
+    const updatedTeamProject = team_project.filter((_, index) => index !== contentIndex);
+    onUpdate(updatedTeamProject);
   };
 
   return (
     <section>
       <div className="flex flex-col gap-5 py-5">
         {team_project.map((area, index) => (
-          <Card
-            size="lg"
-            className="p-3 items-start relative order"
-            key={index}
-          >
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-2">
-              <div className="w-full">
-                <span className="font-comfortaa text-base">
-                  Nombre del área
-                </span>
-                <Input
-                  placeholder="Agregar área"
-                  name="team"
-                  type="text"
-                  icon={<Timer width={24} />}
-                  value={area.team}
-                  error={!area.team ? '*Campo requerido' : ''}
-                  onChange={(event) => handleChangeTeamProject(event, index)}
-                  onBlur={(event) => handleBlurTeamProject(event, index)}
-                />
-              </div>
-              <div className="w-full">
-                <span className="font-comfortaa text-base">
-                  Sueldo por hora
-                </span>
-                {
-                  isEditing ?
-                  (
-                    <Input
-                      placeholder="Agregar sueldo"
-                      type="number"
-                      name="hourly_rate"
-                      min={0}
-                      step={0.01}
-                      value={Number(area.hourly_rate ?? 0)}
-                      error={Number(area.hourly_rate) == 0 ? '*Campo requerido' : ''}
-                      onChange={(event) => handleChangeTeamProject(event, index)}
-                      onBlur={(event) => {handleBlurTeamProject(event, index)}}
-                    />
-                  ) :(
-                    <Input
-                      placeholder="Agregar sueldo"
-                      type="text"
-                      name="hourly_rate"
-                      value={formatPrice(Number(area.hourly_rate ?? 0))}
-                      error={Number(area.hourly_rate) == 0 ? '*Campo requerido' : ''}
-                      onClick={()=>setIsEditing(true)}
-                    />
-                  )
-                }
-              </div>
-              <div className="w-full">
-                <span className="font-comfortaa text-base">Sueldo por mes</span>
-                {
-                  isEditing ? (
-                    <Input
-                      placeholder="Agregar sueldo"
-                      type="number"
-                      name="mouthly_charge"
-                      min={0}
-                      step={0.01}
-                      value={!!area.mouthly_charge ? Number(area.mouthly_charge) : Number((area.hourly_rate * 160))}
-                      onChange={(event) => handleChangeTeamProject(event, index)}
-                      onBlur={(event) => {handleBlurTeamProject(event, index)}}
-                    />
-                  ) : (
-                    <Input
-                      placeholder="Agregar sueldo"
-                      type="text"
-                      name="mouthly_charge"
-                      value={formatPrice(!!area.mouthly_charge ? Number(area.mouthly_charge) : Number((area.hourly_rate * 160)))}
-                      onClick={()=>setIsEditing(true)}
-                    />
-                  )
-                }
-              </div>
-              <div className="w-full">
-                <span className="font-comfortaa text-base">Horas al día</span>
-                <Input
-                  placeholder="Agregar horas"
-                  iconPosition="left"
-                  type="number"
-                  name="work_hours_per_day"
-                  icon={<Timer width={24} />}
-                  min={0}
-                  max={24}
-                  step={0.01}
-                  value={Number(area.work_hours_per_day)}
-                  error={Number(area.work_hours_per_day) == 0 ? '*Campo requerido' : ''}
-                  onChange={(event) => handleChangeTeamProject(event, index)}
-                  onBlur={(event) => handleBlurTeamProject(event, index)}
-                />
-              </div>
-              <div className="w-full">
-                <span className="font-comfortaa  md:text-base text-[15px]">
-                  Horas a la semana
-                </span>
-                <Input
-                  placeholder="0"
-                  iconPosition="left"
-                  type="number"
-                  disabled={true}
-                  name="work_hours_per_day"
-                  icon={<Timer width={24} />}
-                  value={Number((area.work_hours_per_day * 5).toFixed(1))}
-                />
-              </div>
-              <div className="w-full">
-                <span className="font-comfortaa text-base">Horas al mes</span>
-                <Input
-                  placeholder="0"
-                  iconPosition="left"
-                  type="number"
-                  disabled={true}
-                  value={Number((area.work_hours_per_day * 20).toFixed(1))}
-                  icon={<Timer width={24} />}
-                />
-              </div>
-            </div>
-
-            <div className="w-full flex justify-end my-3">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button>
-                    <Trash width={24} stroke="white" />
-                    Eliminar
-                  </Button>
-                </AlertDialogTrigger>
-                <Delete
-                  elemento={area.team}
-                  onClick={() => handleRemoveTeamProject(index)}
-                />
-              </AlertDialog>
-            </div>
-          </Card>
+          <EquipoTrabajo key={index} 
+            team_project={area} 
+            onUpdate={(updatedArea) => {
+              const updatedTeamProject = team_project.map((a, i) => i === index ? updatedArea : a);
+              onUpdate(updatedTeamProject);
+            }}
+            onRemove={() => handleRemoveContent(index)}  
+          />
         ))}
       </div>
 
