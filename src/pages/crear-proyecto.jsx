@@ -8,19 +8,32 @@ import { ArrowRightCircle } from "lucide-react";
 import Router from "next/router"
 import HttpServices from '@/lib/http-services';
 import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Loading from '@/components/Loading';
 
 export default function NewProject() {
-   const { data: session } = useSession();
-   const httpServices = new HttpServices(session)
+   const { data: session, status } = useSession();
+   const [httpServices, setHttpServices] = useState(null);
 
+   const [isActiveSubscription, setIsActiveSubscription] = useState(false);
+   const [maxProjects, setMaxProjects] = useState(5);
+   const [countProjects, setCountProjects] = useState(0);
    const [projectName, setProjectName] = useState('');
    const [areasSelected, setAreasSelected] = useState([]);
+   const [isLoading, setIsLoading] = useState(true);
    const [errors, setErrors] = useState({
       project: false,
       areas: false,
       validator: false
    });
    const [isFormValid, setIsFormValid] = useState(false);
+
+   useEffect(() => {
+      if (status === 'authenticated') {
+         setIsActiveSubscription(session.user.isActiveSubscription)
+         getCountProjects()
+      }
+   }, [session, status]);
 
    useEffect(() => {
       const newErrors = {
@@ -33,6 +46,33 @@ export default function NewProject() {
       setIsFormValid(isValidated);
    }, [projectName, areasSelected]);
 
+   const getCountProjects = async () => {
+      try {
+         setIsLoading(true);
+         if (session) {
+            const httpServices = new HttpServices(session);
+            const response = await httpServices.getProyects();
+            
+            if (!response.ok) {
+               throw new Error('Failed to get project');
+            }
+
+            const { data } = await response.json();
+            if (!isActiveSubscription && data.projects.length >= maxProjects) {
+               Router.push('/');
+            }
+      
+            setCountProjects(data.projects.length);
+         }
+      } catch (error) {
+         console.error("Error:", error);
+      } finally {
+         setTimeout(() => {
+            setIsLoading(false);
+         }, 300);
+      }
+   }
+
    const handleProjectNameChange = async (event) => {
       setProjectName(event.target.value);
    }
@@ -42,6 +82,8 @@ export default function NewProject() {
    }
 
    const submitProject = async () => {
+      const httpServices = new HttpServices(session);
+
       if (isFormValid) {
          const dataProject = {
             name_project: projectName,
@@ -52,15 +94,19 @@ export default function NewProject() {
          if (!response.ok) {
             const errorData = await response.json();
             console.error(errorData.error);
-            
+
             return setErrors({
                validator: true
             })
          }
 
-         const {data} = await response.json(); 
+         const { data } = await response.json();
          Router.push('/editar/' + data.project.slug);
       }
+   }
+
+   if (isLoading) {
+      return <Loading />;
    }
 
    return (

@@ -38,6 +38,7 @@ const authOptions = {
 
         user.id = userRegister._id
         user.customer_ids = userRegister.customer_ids
+        user.isActiveSubscription = userRegister.isActiveSubscription
       }
 
       // Permitir el inicio de sesión
@@ -49,6 +50,7 @@ const authOptions = {
         if (user) {
           token.id = user.id || token.sub
           token.customer_ids = user.customer_ids
+          token.isActiveSubscription = user.isActiveSubscription
         }
       }
       return token;
@@ -58,7 +60,8 @@ const authOptions = {
         id: token.id,
         name: token.name,
         email: token.email,
-        customer_ids: token.customer_ids
+        customer_ids: token.customer_ids,
+        isActiveSubscription: token.isActiveSubscription
       };
 
       if (token.picture) {

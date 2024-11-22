@@ -12,7 +12,7 @@ class HttpServices {
       this.tokenSession = token
     }
   }
-  
+
   // ### Project_status
   getStatus = async () => {
     try {
@@ -23,7 +23,7 @@ class HttpServices {
         throw new Error("Error al obtener el estado");
       }
       const jsonData = await response.json();
-      
+
       // Extrae solo el arreglo en la propiedad 'data'
       return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
     } catch (error) {
@@ -31,7 +31,7 @@ class HttpServices {
       return []; // Retorna un array vacío en caso de error
     }
   };
-  
+
 
   // ### Areas
 
@@ -44,7 +44,7 @@ class HttpServices {
         throw new Error("Error al obtener areas");
       }
       const jsonData = await response.json();
-      
+
       // Extrae solo el arreglo en la propiedad 'data'
       return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
     } catch (error) {
@@ -63,7 +63,7 @@ class HttpServices {
         throw new Error("Error al obtener los tipos");
       }
       const jsonData = await response.json();
-      
+
       // Extrae solo el arreglo en la propiedad 'data'
       return jsonData.data || []; // Retorna un arreglo vacío si 'data' no está definido
     } catch (error) {
@@ -80,7 +80,7 @@ class HttpServices {
     if (!token) {
       throw new Error("No hay token de acceso disponible");
     }
-  
+
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
       method: "POST",
       headers: {
@@ -90,7 +90,7 @@ class HttpServices {
       body: JSON.stringify(project),
     });
   };
-  
+
 
   getProyects = async () => {
     try {
@@ -98,7 +98,7 @@ class HttpServices {
       if (!token) {
         throw new Error("No hay token de acceso disponible");
       }
-      
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project`, {
         method: "GET",
         headers: {
@@ -110,7 +110,7 @@ class HttpServices {
       return response
     } catch (error) {
       throw new Error("Error al obtener proyectos", error);
-      
+
     }
   };
 
@@ -119,7 +119,7 @@ class HttpServices {
     if (!token) {
       throw new Error("No hay token de acceso disponible");
     }
-  
+
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       headers: {
         "Authorization": `Bearer ${this.tokenSession}`,
@@ -127,7 +127,24 @@ class HttpServices {
       }
     });
   };
-  
+
+
+  updateUser = async (user) => {
+    const { token } = this.session;
+    if (!token) {
+      throw new Error("No hay token de acceso disponible");
+    }
+
+    return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.tokenSession}`
+      },
+      body: JSON.stringify({ user }),
+    });
+  };
+
 
   getToken = async (token) => {
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/users/verificacion/`, {
@@ -144,7 +161,7 @@ class HttpServices {
     if (!token) {
       throw new Error("No hay token de acceso disponible");
     }
-  
+
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${slug}`, {
       method: "DELETE",
       headers: {
@@ -153,14 +170,14 @@ class HttpServices {
       }
     });
   };
-  
+
 
   updateProyect = async (project) => {
     const { token } = this.session;
     if (!token) {
       throw new Error("No hay token de acceso disponible");
     }
-  
+
     return await fetch(`${process.env.NEXT_PUBLIC_END_POINT}/project/${project.slug}`, {
       method: "PATCH",
       headers: {
@@ -170,7 +187,7 @@ class HttpServices {
       body: JSON.stringify(project),
     });
   };
-  
+
 
   // ### Payments ###
   /**
@@ -200,7 +217,7 @@ class HttpServices {
     );
   };
 
-  createSubscription = async ({ price, customerId }) => {
+  createSubscription = async ({ price, customer }) => {
     return await fetch(
       `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/create`,
       {
@@ -209,7 +226,7 @@ class HttpServices {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${this.tokenSession}`
         },
-        body: JSON.stringify({ price: price.id, customer: customerId }),
+        body: JSON.stringify({ price, customer }),
       }
     );
   };
@@ -233,11 +250,11 @@ class HttpServices {
     try {
       if (!email) {
         throw new Error('Email is required');
-     }
+      }
 
-     if (!this.tokenSession) {
-      throw new Error("No access token available");
-    } 
+      if (!this.tokenSession) {
+        throw new Error("No access token available");
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_END_POINT}/payment/subscription/customer`,
@@ -250,18 +267,18 @@ class HttpServices {
           body: JSON.stringify({ email }),
         }
       );
-  
+
       // Add error handling for non-ok responses
       if (!response.ok) {
         const errorBody = await response.text();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorBody}`);
       }
-  
+
       return response;
     } catch (error) {
       console.error("Error fetching customer plans:", error);
       throw error;
     }
-  };  
+  };
 }
 module.exports = HttpServices;

@@ -27,12 +27,14 @@ import HttpServices from "@/lib/http-services"
 import { useRouter } from "next/router"
 import Head from "next/head"
 import { useSession } from "next-auth/react"
+import Loading from "@/components/Loading"
 
 export default function PlanActual() {
   const { data: session, status } = useSession();
   const [httpServices, setHttpServices] = useState(null);
 
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [misPlanes, setMisPlanes] = useState(null)
   const [plan, setPlan] = useState({
     id: null,
@@ -44,7 +46,6 @@ export default function PlanActual() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Only create HttpServices when session is available
     if (status === 'authenticated') {
       const services = new HttpServices(session);
       setHttpServices(services);
@@ -53,19 +54,23 @@ export default function PlanActual() {
 
   const getPlanes = async () => {
     try {
+      setError(null);
+      setIsLoading(true)
       if (status === 'authenticated' && session?.user?.email) {
         const httpServices = new HttpServices(session);
         const response = await httpServices.getPlanesCustomer({ 
           email: session.user.email 
         });
 
-        const { subscriptions } = await response.json();
-        setMisPlanes(subscriptions);
+        const { data } = await response.json();
+
+        setMisPlanes(data.subscriptions);
       }
     } catch (error) {
       console.error('Failed to fetch plans:', error);
       setError(error);
-      // Optionally redirect or show error message
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -83,10 +88,6 @@ export default function PlanActual() {
     setShowSuccessDialog(true)
     getPlanes()
   };
-
-  // if (misPlanes && !!!misPlanes.length) {
-  //   router.push(`/suscripcion`);
-  // }
 
   const notSubscribed = () => {
     return (
@@ -132,8 +133,22 @@ export default function PlanActual() {
     }
   }, [status]);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   if (error) {
-    return <div>Error loading subscriptions. Please try again later.</div>;
+    return (
+      <>
+        <Head>
+          <title>Plan Actual</title>
+        </Head>
+        <Navbar />
+        <div className="flex flex-col items-center">
+          <p className="text-xl text-center my-5">Error loading subscriptions. Please try again later.</p>
+        </div>
+      </>
+    )
   }
 
   return (
@@ -142,10 +157,10 @@ export default function PlanActual() {
         <title>Plan Actual</title>
       </Head>
       <Navbar />
-      <div className="font-comfortaa flex gap-5 bg-white px-4 md:px-14 lg:px-20 pt-8">
-        {misPlanes && subscribed()}
+      <div className="font-comfortaa flex justify-center gap-5 bg-white px-4 md:px-14 lg:px-20 pt-8">
+        {!!misPlanes && subscribed()}
 
-        {!misPlanes && notSubscribed()}
+        {!!misPlanes && !!!misPlanes.length && notSubscribed()}
       </div>
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>

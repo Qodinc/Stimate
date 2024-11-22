@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import MultipleSelect from "./MultipleSelect";
 import HttpServices from "@/lib/http-services";
 
 function AddArea({ areasSelected }) {
+   const { data: session, status } = useSession();
+   
+   const [isActiveSubscription, setIsActiveSubscription] = useState(false);
+   const [maxAreas, setMaxAreas] = useState(4);
    const [selectedOptions, setSelectedOptions] = useState([]);
    const [areas, setAreas] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
    useEffect(() => {
+      if (status === 'authenticated') {
+         setIsActiveSubscription(session.user.isActiveSubscription)
+      }
+   }, [session, status]);
+
+   useEffect(() => {
       const fetchAreas = async () => {
          try {
-            const httpServices = new HttpServices(); 
+            const httpServices = new HttpServices(session); 
             const areasData = await httpServices.getAreas();
             setAreas(areasData);
             setLoading(false);
@@ -23,7 +34,7 @@ function AddArea({ areasSelected }) {
       };
 
       fetchAreas();
-   }, []);
+   }, [session]);
 
    const data = areas.map((area) => ({
       value: area._id,
@@ -35,10 +46,17 @@ function AddArea({ areasSelected }) {
    }, [selectedOptions, areasSelected]);
 
    const handleSelectedArea = (selectedArea) => {
+      // Limite de usuario Básico
+      if (isActiveSubscription || selectedOptions.length < maxAreas) {
+         setSelectedOptions(prev => [...prev, selectedArea]);
+      }
+   };
+
+  /*  const handleSelectedArea = (selectedArea) => {
       if (selectedOptions.length < 4) {
          setSelectedOptions(prev => [...prev, selectedArea]);
       }
-   }
+   } */
 
    const handleRemoveArea = (optionToRemove) => {
       setSelectedOptions(prev =>
