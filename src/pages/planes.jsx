@@ -34,7 +34,7 @@ export default function Pricing() {
       benefits: [
         "Almacenaje para proyectos ilimitado",
         "Agregar áreas de trabajo ilimitado",
-        "Exportaciones en PDF",
+        "Exportaciones en Imagen y PDF",
       ],
       button: "Contrata Ahora",
       href: "/suscripcion",
