@@ -25,12 +25,18 @@ const Preview = ({
   estimated_operating_expenses,
   estimated_associated_cost,
   onUpdate,
-  onExport
+  onExport,
+  isActiveSubscription
 }) => {
   const { data: session } = useSession()
   const httpServices = new HttpServices(session)
   const [statusOptions, setStatusOptions] = useState([]);
   const elementRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     const fetchStatusOptions = async () => {
@@ -104,7 +110,38 @@ const Preview = ({
             </SelectGroup>
             </SelectContent>
         </Select>
-        <Button onClick={() => onExport(elementRef)} >Exportar <ExportDownload width={25} height={25} /></Button>
+        <div>
+          {!isActiveSubscription ? (
+            <Button onClick={() => onExport(elementRef,"JPG")}>
+              Exportar <ExportDownload width={25} height={25} />
+            </Button>
+          ) : (
+            <div className="relative">
+              <Button onClick={toggleOpen}>
+                Exportar <ExportDownload width={25} height={25} />
+              </Button>
+              {isOpen && (
+                <div
+                  className="flex rounded-xl border items-center border-baseColor/10 absolute top-10 z-10 right-0 bg-white overflow-hidden gap-2"
+                >
+                  <button
+                    onClick={() => onExport(elementRef,"PDF")}
+                    className="w-full hover:bg-accent hover:text-white p-4 transition-colors duration-200"
+                  >
+                    PDF
+                  </button>
+                  <span>-</span>
+                  <button
+                    onClick={() => onExport(elementRef,"JPG")}
+                    className="w-full hover:bg-accent hover:text-white p-4 transition-colors duration-200"
+                  >
+                    JPG
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className="xl:flex xl:justify-between xl:space-x-6">
         <div className="font-comfortaa xl:w-1/2">
