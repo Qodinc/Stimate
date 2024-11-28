@@ -27,10 +27,10 @@ export default function Pricing() {
       isActive: true
     },
     {
-      id: "price_1Q5x9nLiRxVT0FOqn3MHk88r",
+      id: "price_1QPd2OLiRxVT0FOq2WGESfHL",
       title: "Premium",
-      price: 10,
-      price_text: "$10 usd /Mensual",
+      price: 20,
+      price_text: "$20 MXN /Mensual",
       benefits: [
         "Almacenaje para proyectos ilimitado",
         "Agregar áreas de trabajo ilimitado",
