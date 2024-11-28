@@ -58,7 +58,7 @@ export default function NewProject() {
             }
 
             const { data } = await response.json();
-            if (!isActiveSubscription && data.projects.length >= maxProjects) {
+            if (!session.user?.isActiveSubscription && data.projects.length >= maxProjects) {
                Router.push('/');
             }
       
