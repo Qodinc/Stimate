@@ -271,7 +271,7 @@ export default function TabsPages() {
     
     //TODO: Realizar exportación de proyecto
     // si el usuario es premium, exporta PDF
-    if (!isActiveSubscription && optionSelected == "PDF")
+    if (isActiveSubscription && optionSelected == "PDF")
       exportToPDF(elementToExport)
     else 
       exportToImage(elementToExport)
