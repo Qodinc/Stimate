@@ -232,7 +232,8 @@ export default function TabsPages() {
     }));
   }
 
-  const exportProject = async (elementToExport) => {
+  // Parametro optionSelected: PDF o JPG
+  const exportProject = async (elementToExport, optionSelected) => {
 
     // Verificamos si faltan campos requeridos
     const missingTProject =
@@ -270,16 +271,14 @@ export default function TabsPages() {
     
     //TODO: Realizar exportación de proyecto
     // si el usuario es premium, exporta PDF
-    if (isActiveSubscription)
+    if (isActiveSubscription && optionSelected == "PDF")
       exportToPDF(elementToExport)
-    // sino, exporta en PNG
     else 
       exportToImage(elementToExport)
 
     toast.success("Información guardada con éxito");
-    
   }
-    
+
   const exportToPDF = (element) => {
     const nameFile = `Cotizacion-${project.name_project}`
     const nameFilePdf = nameFile + '.pdf'
@@ -371,6 +370,7 @@ export default function TabsPages() {
           estimated_cost = {estimatedCost}
           onUpdate={updatePreview}
           onExport={exportProject}
+          isActiveSubscription={isActiveSubscription}
         />
       default:
         return null
