@@ -35,8 +35,8 @@ const TableComponent = ({associatedCosts, developmentCost}) => {
                         <td className=""> </td>
                         <td className="">1</td>
                         <td className="">Unidad</td>
-                        <td className="">{developmentCost && formatPrice(developmentCost)}</td>
-                        <td className="">{developmentCost && formatPrice(developmentCost)}</td>
+                        <td className="">{isNaN(developmentCost) ? formatPrice(0) : formatPrice(developmentCost)}</td>
+                        <td className="">{isNaN(developmentCost) ? formatPrice(0) : formatPrice(developmentCost)}</td>
                     </tr>
                     {associatedCosts.map((cost) => {
                         const foundUnity = unity.find((e) => e.type_recurring === cost.type_recurring);
@@ -46,8 +46,8 @@ const TableComponent = ({associatedCosts, developmentCost}) => {
                                 <td className="">{cost.description}</td>
                                 <td className="">{cost.quantity}</td>
                                 <td className="">{foundUnity ? foundUnity.unit : ""}</td>
-                                <td className="">{formatPrice(cost.price_unity)}</td>
-                                <td className="">{formatPrice(cost.price_unity * cost.quantity)}</td>
+                                <td className="">{isNaN(cost.price_unity) ? formatPrice(0) : formatPrice(cost.price_unity)}</td>
+                                <td className="">{isNaN(cost.price_unity) ? formatPrice(0) : formatPrice(cost.price_unity * cost.quantity)}</td>
                             </tr>
                         );
                     })}
