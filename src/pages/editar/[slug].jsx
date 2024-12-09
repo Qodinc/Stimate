@@ -240,16 +240,26 @@ export default function TabsPages() {
       project.team_project.length === 0 || project.team_project.some(team =>
         team.hourly_rate <= 0 || team.work_hours_per_day <= 0 || team.team == ""
       );
+    // Verificación por feature
+    let missingSumFeature = false
+    project.features_project.forEach(feature => {
+      const sumPerFeature = feature.team_features.reduce((total, team) => total + (parseFloat(team.time) || 0), 0)
+
+      if (!!!sumPerFeature) {
+        missingSumFeature = true
+      }
+    });
     const missingFeatures = project.features_project.length === 0 || project.features_project.some(feature => feature.feature == "");
     const missingOperatingExpenses = project.operating_expenses.some(expense => expense.cost_name == "" || !!!expense.total_per_month || expense.total_per_month <= 0);
     const missingAssociatedCosts = project.associated_costs.some(cost =>
       cost.cost_name == "" || cost.description == "" || cost.price_unity <= 0 || cost.quantity <= 0 || cost.type_recurring == null);
     const missingNotes = project.notes == "";
 
-    if (missingTProject || missingFeatures || missingOperatingExpenses || missingAssociatedCosts || missingNotes) {
+    if (missingTProject || missingFeatures || missingOperatingExpenses || missingAssociatedCosts || missingNotes || missingSumFeature) {
       const sections = [
         { condition: missingTProject, name: "Equipo de trabajo" },
         { condition: missingFeatures, name: "Funcionalidades" },
+        { condition: missingSumFeature, name: "Funcionalidades (Sumatorias)" },
         { condition: missingOperatingExpenses, name: "Gastos de operación" },
         { condition: missingAssociatedCosts, name: "Cargos asociados" },
         { condition: missingNotes, name: "Previsualización" }
